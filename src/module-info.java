@@ -1,4 +1,4 @@
-module FINAL_PROJECT {
+module CMSC22_FINAL_PROJECT {
 	requires javafx.controls;
 	requires javafx.graphics;
 	
