@@ -1,4 +1,3 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 .root {
     -fx-font-family: "Roboto";
 }
@@ -10,30 +9,3 @@
     -fx-background-position: center center;
 }
 
-.page-button{
-	-fx-background-radius: 50;
-	-fx-border-color: transparent;
-	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.5, 0.5, 1);
-	-fx-font-size: 12;
-	-fx-padding: 5px 10px;
-}
-
-.page-button:hover{
-	-fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
-}
-
-.page-button:pressed{
-	-fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
-}
-
-.page-button-active{
-	-fx-background-color: #736FDC;
-	-fx-text-fill: white;
-}
-
-.page-button-inactive{
-	-fx-background-color: white;
-	-fx-text-fill: #736FDC;
-}

@@ -10,6 +10,8 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) {
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Regular.ttf"), 14);
+		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Bold.ttf"), 14);
+		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-SemiBold.ttf"), 14);
 		StaffPage staffPage = new StaffPage();
 		staffPage.setStageComponents(stage);
 		
