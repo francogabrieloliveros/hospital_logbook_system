@@ -6,7 +6,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.*;
-import java.util.stream.*;
 
 public class StaffPage {
 
@@ -95,7 +94,7 @@ public class StaffPage {
 		root.getStyleClass().add("default-bg");
 		
 		Scene staffPageScene = new Scene(root, 1080, 720);
-		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/StaffPages.css").toExternalForm());
+		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/StaffPage.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		
 		stage.setScene(staffPageScene);
