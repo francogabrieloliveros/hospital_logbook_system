@@ -7,19 +7,23 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.*;
 
+import application.Main;
+
 public class StaffPage {
 
-	
-	public void setStageComponents(Stage stage) {
+	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
+	//			have a reference when main is called (for the buttons to work)
+	public void setStageComponents(Stage stage, Main main) {
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
 		ArrayList<Button> labelButtons = new ArrayList<>();
 		for(String label : labels) {
 			Button newButton = new Button(label);
 			
 			if(label.equals("STAFF")) {
-				newButton.getStyleClass().addAll("page-button-active", "page-button");
+				newButton.getStyleClass().addAll("page-button-active", "page-button"); 
 			} else {
-				newButton.getStyleClass().addAll("page-button-inactive", "page-button");
+				newButton.getStyleClass().addAll("page-button-inactive", "page-button"); // added functionality (change pages)
+				newButton.setOnAction(e -> main.switchPage(label));
 			}
 			
 			labelButtons.add(newButton);
@@ -81,15 +85,15 @@ public class StaffPage {
 	    VBox logger = new VBox(30, nameInput, roleAndStatus, loggerButtons, separator, findInput);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
 	    
-		HBox main = new HBox(50, listView, logger);
+		HBox mainLedger = new HBox(50, listView, logger); // refactor HBox main -> mainLedger
 		HBox.setHgrow(listView, Priority.ALWAYS);
 		HBox.setHgrow(logger, Priority.ALWAYS);
-		VBox.setVgrow(main, Priority.ALWAYS);
+		VBox.setVgrow(mainLedger, Priority.ALWAYS);
 		
-		listView.prefWidthProperty().bind(main.widthProperty().subtract(50).divide(2));
-		logger.prefWidthProperty().bind(main.widthProperty().subtract(50).divide(2));
+		listView.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
+		logger.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
 		
-		VBox root = new VBox(20, pageButtons, main);
+		VBox root = new VBox(20, pageButtons, mainLedger);
 		root.setPadding(new Insets(50));
 		root.getStyleClass().add("default-bg");
 		
