@@ -1,9 +1,6 @@
 package application;
 	
-import application.pages.LogBookViewPage;
-import application.pages.StaffPage;
-import application.pages.LabExams;
-import application.pages.Patients;
+import application.pages.*;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
