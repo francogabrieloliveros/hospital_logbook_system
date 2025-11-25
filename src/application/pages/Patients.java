@@ -1,15 +1,18 @@
 package application.pages;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
 
-public class StaffPage {
+public class Patients {
 
 	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
 	//			have a reference when main is called (for the buttons to work)
@@ -19,7 +22,7 @@ public class StaffPage {
 		for(String label : labels) {
 			Button newButton = new Button(label);
 			
-			if(label.equals("STAFF")) {
+			if(label.equals("PATIENTS")) {
 				newButton.getStyleClass().addAll("page-button-active", "page-button"); 
 			} else {
 				newButton.getStyleClass().addAll("page-button-inactive", "page-button"); // added functionality (change pages)
@@ -38,29 +41,44 @@ public class StaffPage {
 		listView.getStyleClass().add("list-view");
 		listView.getStyleClass().add("containers-shadow");
 		
+		// patient name label
 	    Label name = new Label("Name");
 	    TextField nameField = new TextField();
-	    VBox nameInput = new VBox(20, name, nameField);
+	    nameField.setPromptText("Enter patient name");
+	    VBox nameInput = new VBox(15, name, nameField);
 	    
-	    Label role = new Label("Role");
-	    ComboBox<String> roleField = new ComboBox<>();
-	    roleField.getItems().addAll("MedTech", "Pathologist", "Phlebotomist", "Clerk", "Other");
-	    roleField.setValue("MedTech");
-	    VBox roleInput = new VBox(20, role, roleField);
-	    roleField.setMaxWidth(Double.MAX_VALUE);
+	    // date label
+	    Label date = new Label("DOB");
+	    DatePicker datePicker = new DatePicker();
+	    datePicker.setPrefHeight(8);
+	    datePicker.setPrefWidth(300);
+	    datePicker.setValue(LocalDate.now());
+	    datePicker.setPromptText("Select Date");
+		datePicker.getStyleClass().add("styled-date-picker");
+	    VBox dateBox = new VBox(5, date, new Label(" "), datePicker); //for alignment
+	    dateBox.setAlignment(Pos.BOTTOM_LEFT);
 	    
-	    Label status = new Label("Status");
-	    ComboBox<String> statusField = new ComboBox<>();
-	    statusField.getItems().addAll("active", "inactive");
-	    statusField.setValue("active");
-	    VBox statusInput = new VBox(20, status, statusField);
-	    statusField.setMaxWidth(Double.MAX_VALUE);
+	    // sex label
+	    Label sexLabel = new Label("Sex");
+	    ComboBox<String> sexCombo = new ComboBox<>();
+	    sexCombo.getItems().addAll("M", "F", "Other");
+	    sexCombo.setPromptText("Select sex");
+	    sexCombo.setPrefWidth(120);
+	    sexCombo.getStyleClass().add("text-field");
+	    VBox sexBox = new VBox(5, sexLabel, sexCombo);
+	    sexBox.setAlignment(Pos.BOTTOM_LEFT);
 	    
+	    // side by side placement of dob and sex
+	    HBox dateSexRow = new HBox(20, dateBox, sexBox);
 	    
-	    HBox roleAndStatus = new HBox(20, roleInput, statusInput);
-	    HBox.setHgrow(roleInput, Priority.ALWAYS);
-	    HBox.setHgrow(statusInput, Priority.ALWAYS);
+	    // patient text box
+	    TextArea infoArea = new TextArea();
+	    infoArea.setPromptText("Enter patient information");
+	    infoArea.setPrefRowCount(10);
+	    infoArea.setWrapText(true);
+	    VBox infoBox = new VBox(5, infoArea);
 	    
+	    // add, update, and delete buttons
 	    Button addButton = new Button("Add");
 	    addButton.getStyleClass().addAll("page-button-active", "page-button");
 	    Button updateButton = new Button("Update");
@@ -69,20 +87,30 @@ public class StaffPage {
 	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
 	    HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
 	    
+	    // line separator
 	    Separator separator = new Separator();
 	    
+	    // find textfield
 	    Label find = new Label("Find");
 	    TextField findField = new TextField();
+	    findField.setPromptText("Search name/notes/id");
+	    findField.setPrefWidth(250);
+	    findField.setAlignment(Pos.BOTTOM_LEFT);
 	    
+	    // search and reset buttons
 	    Button searchButton = new Button("Search");
 	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
 	    Button resetButton = new Button("Reset");
 	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
-	    HBox findButtons = new HBox(10, resetButton, searchButton);
 	    
-	    VBox findInput = new VBox(20, find, findField, findButtons);
+	    // textfield + search/reset HBox
+	    HBox findRow = new HBox(20, findField, searchButton, resetButton);
+	    findRow.setAlignment(Pos.CENTER_LEFT);
+	    
+	    VBox findBox = new VBox(5, find, findRow);
 		
-	    VBox logger = new VBox(30, nameInput, roleAndStatus, loggerButtons, separator, findInput);
+	    // logger
+	    VBox logger = new VBox(30, nameInput, dateSexRow, infoBox, loggerButtons, separator, findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
 	    
 		HBox mainLedger = new HBox(50, listView, logger); // refactor HBox main -> mainLedger
@@ -90,7 +118,7 @@ public class StaffPage {
 		HBox.setHgrow(logger, Priority.ALWAYS);
 		VBox.setVgrow(mainLedger, Priority.ALWAYS);
 		
-		listView.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
+		listView.prefWidthProperty().bind(mainLedger.widthProperty().subtract(500).divide(2));
 		logger.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
 		
 		VBox root = new VBox(20, pageButtons, mainLedger);
@@ -98,7 +126,7 @@ public class StaffPage {
 		root.getStyleClass().add("default-bg");
 		
 		Scene staffPageScene = new Scene(root, 1080, 720);
-		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/StaffPage.css").toExternalForm());
+		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/Patients.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		
 		stage.setScene(staffPageScene);

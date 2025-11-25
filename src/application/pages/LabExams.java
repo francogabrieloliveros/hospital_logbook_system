@@ -8,9 +8,11 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.*;
 
+import application.Main;
+
 public class LabExams {
 	
-	public void setStageComponents(Stage stage) {
+	public void setStageComponents(Stage stage, Main main) {
 		VBox root = new VBox();
 		root.setPadding(new Insets(25));
 		
@@ -25,6 +27,7 @@ public class LabExams {
 				newButton.getStyleClass().addAll("page-button-active", "page-button");
 			} else {
 				newButton.getStyleClass().addAll("page-button-inactive", "page-button");
+				newButton.setOnAction(e -> main.switchPage(label));
 			}
 			
 			labelButtons.add(newButton);
