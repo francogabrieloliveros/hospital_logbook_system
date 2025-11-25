@@ -18,4 +18,22 @@ public class Patient {
 		this.sex = sex;
 		this.notes = notes;
 	}
+	
+	// getters and setters
+	public String getId() { return id; }
+	public String getName() { return name; }
+	public LocalDate getDob() { return dob; }
+	public String getSex() { return sex; }
+    public String getNotes() { return notes; }
+
+    public void setName(String name) { this.name = name; }
+    public void setDob(LocalDate dob) { this.dob = dob; }
+    public void setSex(String sex) { this.sex = sex; }
+    public void setNotes(String notes) { this.notes = notes; }
+    
+    // function for for list viewing
+    @Override
+    public String toString() {
+    	return id + " | " + name + " | " + dob;
+    }
 }
