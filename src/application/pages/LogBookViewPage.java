@@ -17,8 +17,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import application.Main;
+
 public class LogBookViewPage {
-	public void setStageComponents(Stage stage) {
+	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
+	//			have a reference when main is called (for the buttons to work)
+	public void setStageComponents(Stage stage, Main main) {
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
 		ArrayList<Button> labelButtons = new ArrayList<>();
 		for(String label : labels) {
@@ -27,7 +31,8 @@ public class LogBookViewPage {
 			if(label.equals("LOGBOOK")) {
 				newButton.getStyleClass().addAll("page-button-active", "page-button");
 			} else {
-				newButton.getStyleClass().addAll("page-button-inactive", "page-button");
+				newButton.getStyleClass().addAll("page-button-inactive", "page-button"); // added functionality (change pages)
+				newButton.setOnAction(e -> main.switchPage(label));
 			}
 			
 			labelButtons.add(newButton);
