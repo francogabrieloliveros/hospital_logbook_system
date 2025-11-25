@@ -4,7 +4,6 @@ import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 
 public class CreditsPage {
 	private ExtraStage extraStage;
@@ -20,9 +19,43 @@ public class CreditsPage {
 	    
 		Label name = new Label("Credits");
 	    
-		Text text = new Text("Sussy");
+		Label developersHeader = new Label("Developers");
+		developersHeader.getStyleClass().add("header-text");
 		
-		VBox contents = new VBox(text);
+		Label developersParagraph = new Label("""
+				Evan C. Gregorio 
+				Franco Gabriel P. Oliveros
+				Kurt Dylan M. Laraño
+				Tuazon M. Thea
+				"""); 
+		developersParagraph.getStyleClass().add("paragraph-text");
+		
+		Label courseHeader = new Label("Course Information");
+		courseHeader.getStyleClass().add("header-text");
+		
+		Label courseParagraph = new Label("""
+				CMSC22 – Object-Oriented Programming
+				University of the Philippines Los Baños
+				Academic Year 2025
+				"""); 
+		courseParagraph.getStyleClass().add("paragraph-text");
+		
+		Label assetsHeader = new Label("Assets & References");
+		assetsHeader.getStyleClass().add("header-text");
+		
+		Label assetsParagraph = new Label("""
+				Roboto Font – Google Fonts
+				JavaFX Documentation – openjfx.io
+				Backgrounds - canva.com
+				"""); 
+		assetsParagraph.getStyleClass().add("paragraph-text");
+		
+		VBox contents = new VBox(20, developersHeader, 
+				                     developersParagraph, 
+				                     courseHeader, 
+				                     courseParagraph, 
+				                     assetsHeader,
+				                     assetsParagraph);
 	    
 	    VBox loginInput = new VBox(10, returnButton, name, contents);
 	    HBox.setHgrow(loginInput, Priority.ALWAYS);
