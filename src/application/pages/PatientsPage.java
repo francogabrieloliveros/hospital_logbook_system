@@ -37,7 +37,7 @@ public class PatientsPage {
 		HBox.setMargin(pageButtons, new Insets(20));
 		
 		ListView<String> listView = new ListView<>();
-		listView.getItems().add("STF-0001 | fullName=Mylene | role=MedTe");
+		listView.getItems().add("PAT-0001 | fullName=Mylene | dob=2025-10-01");
 		listView.getStyleClass().add("list-view");
 		listView.getStyleClass().add("containers-shadow");
 		
