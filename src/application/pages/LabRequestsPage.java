@@ -31,12 +31,14 @@ public class LabRequestsPage {
 		pageButtons.getChildren().addAll(labelButtons);
 		HBox.setMargin(pageButtons, new Insets(20));
 		
+		// Work here
+		
 		//main container
 		VBox root = new VBox(10, pageButtons); // Add other elements here
 		root.getStyleClass().add("default-bg");
 		root.setPadding(new Insets(50));
 		Scene scene = new Scene(root, 1200, 700);
-		scene.getStylesheets().add(getClass().getResource("/application/styles/LogBookPage.css").toExternalForm());
+		// add LabRequests css
 		scene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		
 		stage.setScene(scene);

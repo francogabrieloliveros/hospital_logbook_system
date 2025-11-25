@@ -1,6 +1,7 @@
 package application;
 	
 import application.pages.*;
+import application.extras.*;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -15,12 +16,17 @@ public class Main extends Application {
 	private LabExamsPage labExams;
 	private LabRequestsPage labRequests;
 	private Stage primaryStage;
+	private ExtraStage extraStage;
 	
 	@Override
 	public void start(Stage stage) {
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Regular.ttf"), 14);
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Bold.ttf"), 14);
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-SemiBold.ttf"), 14);
+		
+		extraStage = new ExtraStage(this);
+		stage.setResizable(false);
+		extraStage.start();
 		
 		this.primaryStage = stage;
 		stage.setResizable(false);
@@ -31,8 +37,6 @@ public class Main extends Application {
 		labExams = new LabExamsPage();
 		logbook = new LogBookViewPage();
 		labRequests = new LabRequestsPage();
-		
-		switchPage("STAFF");
 	}
 	
 	public static void main(String[] args) {
