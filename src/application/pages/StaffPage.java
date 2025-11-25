@@ -40,6 +40,7 @@ public class StaffPage {
 		
 	    Label name = new Label("Name");
 	    TextField nameField = new TextField();
+	    nameField.setPromptText("Full name");
 	    VBox nameInput = new VBox(20, name, nameField);
 	    
 	    Label role = new Label("Role");
@@ -73,6 +74,7 @@ public class StaffPage {
 	    
 	    Label find = new Label("Find");
 	    TextField findField = new TextField();
+	    findField.setPromptText("Search name/role/status");
 	    
 	    Button searchButton = new Button("Search");
 	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
