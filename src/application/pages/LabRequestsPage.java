@@ -9,7 +9,7 @@ import java.util.*;
 
 import application.Main;
 
-public class LabExamsPage {
+public class LabRequestsPage {
 	
 	public void setStageComponents(Stage stage, Main main) {
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
@@ -17,7 +17,7 @@ public class LabExamsPage {
 		for(String label : labels) {
 			Button newButton = new Button(label);
 			
-			if(label.equals("LAB EXAMS")) {
+			if(label.equals("LAB REQUESTS")) {
 				newButton.getStyleClass().addAll("page-button-active", "page-button");
 			} else {
 				newButton.getStyleClass().addAll("page-button-inactive", "page-button"); // added functionality (change pages)

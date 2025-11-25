@@ -12,7 +12,7 @@ import java.util.*;
 
 import application.Main;
 
-public class Patients {
+public class PatientsPage {
 
 	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
 	//			have a reference when main is called (for the buttons to work)

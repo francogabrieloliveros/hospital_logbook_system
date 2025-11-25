@@ -10,10 +10,10 @@ public class Main extends Application {
 	
 	//	moved object declarations above here
 	private StaffPage staffPage;
-	
 	private LogBookViewPage logbook;
-	private Patients patients;
-	private LabExams labExams;
+	private PatientsPage patients;
+	private LabExamsPage labExams;
+	private LabRequestsPage labRequests;
 	private Stage primaryStage;
 	
 	@Override
@@ -27,9 +27,10 @@ public class Main extends Application {
 		
 		//	instantiate objects
 		staffPage = new StaffPage();
-		patients = new Patients();
-		labExams = new LabExams();
+		patients = new PatientsPage();
+		labExams = new LabExamsPage();
 		logbook = new LogBookViewPage();
+		labRequests = new LabRequestsPage();
 		
 		switchPage("STAFF");
 	}
@@ -47,8 +48,10 @@ public class Main extends Application {
 			logbook.setStageComponents(primaryStage, this);
 		} else if (pageName.equals("LAB EXAMS")) {
 			labExams.setStageComponents(primaryStage, this);
+		} else if (pageName.equals("LAB REQUESTS")) {
+			labRequests.setStageComponents(primaryStage, this);
 		} else if (pageName.equals("PATIENTS")) {
 			patients.setStageComponents(primaryStage, this);
-		}
+		} 
 	}
 }
