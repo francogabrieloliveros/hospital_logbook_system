@@ -11,11 +11,13 @@ import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
+import application.models.Patient;
 
 public class PatientsPage {
 
-	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
-	//			have a reference when main is called (for the buttons to work)
+	// patients list
+	private ArrayList<Patient> patients = new ArrayList<>();
+
 	public void setStageComponents(Stage stage, Main main) {
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
 		ArrayList<Button> labelButtons = new ArrayList<>();
@@ -37,7 +39,7 @@ public class PatientsPage {
 		HBox.setMargin(pageButtons, new Insets(20));
 		
 		ListView<String> listView = new ListView<>();
-		listView.getItems().add("STF-0001 | fullName=Mylene | role=MedTe");
+		listView.getItems().add("PAT-0001 | fullName=Mylene | dob=2025-10-01");
 		listView.getStyleClass().add("list-view");
 		listView.getStyleClass().add("containers-shadow");
 		
@@ -132,5 +134,21 @@ public class PatientsPage {
 		stage.setScene(staffPageScene);
 		stage.setResizable(false);
 		stage.show();
+	}
+	
+	// Function to add a patient
+	public void addPatient(String name, LocalDate dob, String sex, String notes,
+							int numPatientCounter, ListView<String> listView) {
+		// generate ID
+		String paddedNumber = String.format("%04d", numPatientCounter);
+		String patientID = "PAT-" + paddedNumber;
+		
+		// create new patient object
+		Patient newPatient = new Patient(patientID, name, dob, sex, notes);
+		
+		patients.add(newPatient);
+		
+		// update list
+		listView.getItems().add(patientID.toString());
 	}
 }
