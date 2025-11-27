@@ -19,6 +19,14 @@ public class PatientsPage {
 	private ArrayList<Patient> patients = new ArrayList<>();
 
 	public void setStageComponents(Stage stage, Main main) {
+		// patient counter
+		int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
+		
+		// buttons
+		Button addButton = new Button("Add");
+	    Button updateButton = new Button("Update");
+	    Button deleteButton = new Button("Delete");	
+		
 		// top navigation buttons functionality
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
 		ArrayList<Button> labelButtons = new ArrayList<>();
@@ -83,12 +91,9 @@ public class PatientsPage {
 	    infoArea.setWrapText(true);
 	    VBox infoBox = new VBox(5, infoArea);
 	    
-	    // add, update, and delete buttons
-	    Button addButton = new Button("Add");
-	    addButton.getStyleClass().addAll("page-button-active", "page-button");
-	    Button updateButton = new Button("Update");
+	    // add, update, and delete buttons display
+	    addButton.getStyleClass().addAll("page-button-active", "page-button");    
 	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
-	    Button deleteButton = new Button("Delete");
 	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
 	    HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
 	    
@@ -152,6 +157,6 @@ public class PatientsPage {
 		patients.add(newPatient);
 		
 		// update list
-		listView.getItems().add(patientID.toString());
+		listView.getItems().add(newPatient.toString());
 	}
 }
