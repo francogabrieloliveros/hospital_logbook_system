@@ -26,7 +26,7 @@ public class PatientsPage {
 		Button addButton = new Button("Add");
 	    Button updateButton = new Button("Update");
 	    Button deleteButton = new Button("Delete");	
-		
+
 		// top navigation buttons functionality
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
 		ArrayList<Button> labelButtons = new ArrayList<>();
@@ -54,7 +54,7 @@ public class PatientsPage {
 		listView.getStyleClass().add("list-view");
 		listView.getStyleClass().add("containers-shadow");
 		
-		// patient name label
+		// patient name label display
 	    Label name = new Label("Name");
 	    TextField nameField = new TextField();
 	    nameField.setPromptText("Enter patient name");
@@ -138,6 +138,19 @@ public class PatientsPage {
 		Scene staffPageScene = new Scene(root, 1200, 720);
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/Patients.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
+		
+		// add button functionality
+		addButton.setOnAction(e -> {
+			String patientName = nameField.getText().trim();
+			LocalDate patientDob = datePicker.getValue();
+			String patientSex = sexCombo.getValue();
+			String patientNotes = infoArea.getText().trim();
+			
+			// check for empty fields
+			if (patientName.isEmpty() || patientDob == null || patientSex == null) {
+				
+			}
+		});
 		
 		stage.setScene(staffPageScene);
 		stage.setResizable(false);
