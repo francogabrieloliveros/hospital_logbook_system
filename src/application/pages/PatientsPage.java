@@ -127,7 +127,7 @@ public class PatientsPage {
 		root.setPadding(new Insets(50));
 		root.getStyleClass().add("default-bg");
 		
-		Scene staffPageScene = new Scene(root, 1080, 720);
+		Scene staffPageScene = new Scene(root, 1200, 720);
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/Patients.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		
