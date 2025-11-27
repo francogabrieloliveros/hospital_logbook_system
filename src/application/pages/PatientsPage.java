@@ -148,8 +148,12 @@ public class PatientsPage {
 			
 			// check for empty fields
 			if (patientName.isEmpty() || patientDob == null || patientSex == null) {
-				
+				showAlert("Missing Fields", "Please fill out name, date of birth, and sex.");
+				return;
 			}
+			
+			addPatient(patientName, patientDob, patientSex, patientNotes, patientCounter[0], listView);
+			patientCounter[0]++; // increment
 		});
 		
 		stage.setScene(staffPageScene);
