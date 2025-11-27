@@ -172,4 +172,13 @@ public class PatientsPage {
 		// update list
 		listView.getItems().add(newPatient.toString());
 	}
+	
+	// function to show an alert
+	private void showAlert(String title, String message) {
+		Alert alert = new Alert(Alert.AlertType.WARNING);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.showAndWait();
+	}
 }
