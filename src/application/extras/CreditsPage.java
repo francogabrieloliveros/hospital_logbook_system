@@ -13,7 +13,7 @@ public class CreditsPage {
 	}
 	
 	public Scene getScene() {
-		Button returnButton = new Button("");
+		Button returnButton = new Button("←");
 	    returnButton.getStyleClass().add("return-button");
 	    returnButton.setOnAction(e -> {extraStage.openWelcomeScene();});
 	    
