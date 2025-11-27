@@ -157,7 +157,7 @@ public class PatientsPage {
 		stage.show();
 	}
 	
-	// Function to add a patient
+	// method to add a patient
 	public void addPatient(String name, LocalDate dob, String sex, String notes,
 							int numPatientCounter, ListView<String> listView) {
 		// generate ID
@@ -173,7 +173,7 @@ public class PatientsPage {
 		listView.getItems().add(newPatient.toString());
 	}
 	
-	// function to show an alert
+	// method to show an alert
 	private void showAlert(String title, String message) {
 		Alert alert = new Alert(Alert.AlertType.WARNING);
 		alert.setTitle(title);
