@@ -32,15 +32,45 @@ public class LabExamsPage {
 		HBox.setMargin(pageButtons, new Insets(20));
 		
 		// Work here
+		//need to fix the format
+		Label labelLabTest = new Label("Laboratory Test:");
+		TextField txtLabTest = new TextField();
+		Label labelTestType = new Label("Test Type:");
+		TextField txtTestType= new TextField();
+		Label labelRemarks= new Label("Remarks:");
+		TextField txtRemark= new TextField();
+		VBox recordDetails = new VBox(10, labelLabTest, txtLabTest, labelTestType, txtTestType, labelRemarks, txtRemark);
 		
+		Label labelDate = new Label("Date:");
+		TextField txtDate = new TextField();
+		Label labelOrderingPhysician = new Label("Ordering Physician:");
+		TextField txtOrderingPhysician= new TextField();
+		Label labelPerformingStaff = new Label("Performing Staff:");
+		TextField txtPerformingStaff= new TextField();
+		VBox recordDetails2 = new VBox(10, labelDate, txtDate, labelOrderingPhysician, txtOrderingPhysician, labelPerformingStaff, txtPerformingStaff);
+		
+		Button btnRecord = new Button("Record");
+		btnRecord.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
+		//onclick here
+		Button btnUpdate = new Button("Update");
+		btnUpdate.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
+		//onclick here
+		
+		HBox recordDetailsFull = new HBox(10, recordDetails, recordDetails2, btnRecord, btnUpdate);
+		
+        ListView<String> listView = new ListView<>();
+		listView.getItems().add("STF-0001 | fullName=Mylene | role=MedTe");
+		listView.getStyleClass().add("list-view");
+		listView.getStyleClass().add("containers-shadow");
+		listView.setPrefHeight(400);
 		//main container
-		VBox root = new VBox(10, pageButtons); // Add other elements here
+		VBox root = new VBox(10, pageButtons, recordDetailsFull ,listView); // Add other elements here
 		root.getStyleClass().add("default-bg");
 		root.setPadding(new Insets(50));
 		Scene scene = new Scene(root, 1200, 700);
 		// Add LabExams css
 		scene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
-		
+		scene.getStylesheets().add(getClass().getResource("/application/styles/LabExamsPage.css").toExternalForm());
 		stage.setScene(scene);
 		stage.setTitle("Log Book System");
 		stage.show();
