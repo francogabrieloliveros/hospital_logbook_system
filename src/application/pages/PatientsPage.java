@@ -19,6 +19,7 @@ public class PatientsPage {
 	private ArrayList<Patient> patients = new ArrayList<>();
 
 	public void setStageComponents(Stage stage, Main main) {
+		// top navigation buttons functionality
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
 		ArrayList<Button> labelButtons = new ArrayList<>();
 		for(String label : labels) {
@@ -34,10 +35,12 @@ public class PatientsPage {
 			labelButtons.add(newButton);
 		}
 		
+		// buttons display
 		HBox pageButtons = new HBox(10);
 		pageButtons.getChildren().addAll(labelButtons);
 		HBox.setMargin(pageButtons, new Insets(20));
 		
+		// list of patients of left side 
 		ListView<String> listView = new ListView<>();
 		listView.getItems().add("PAT-0001 | fullName=Mylene | dob=2025-10-01");
 		listView.getStyleClass().add("list-view");
