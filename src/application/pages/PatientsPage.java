@@ -15,38 +15,22 @@ import application.models.Patient;
 
 public class PatientsPage {
 
-	// patients list
+	// patients data
 	private ArrayList<Patient> patients = new ArrayList<>();
+	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
 
 	public void setStageComponents(Stage stage, Main main) {
-		// patient counter
-		int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
+
+		
 		
 		// buttons
 		Button addButton = new Button("Add");
 	    Button updateButton = new Button("Update");
 	    Button deleteButton = new Button("Delete");	
-
-		// top navigation buttons functionality
-		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
-		ArrayList<Button> labelButtons = new ArrayList<>();
-		for(String label : labels) {
-			Button newButton = new Button(label);
-			
-			if(label.equals("PATIENTS")) {
-				newButton.getStyleClass().addAll("page-button-active", "page-button"); 
-			} else {
-				newButton.getStyleClass().addAll("page-button-inactive", "page-button"); // added functionality (change pages)
-				newButton.setOnAction(e -> main.switchPage(label));
-			}
-			
-			labelButtons.add(newButton);
-		}
 		
 		// buttons display
-		HBox pageButtons = new HBox(10);
-		pageButtons.getChildren().addAll(labelButtons);
-		HBox.setMargin(pageButtons, new Insets(20));
+		HBox pageButtons = buildPageButtons(main);
+
 		
 		// list of patients of left side 
 		ListView<String> listView = new ListView<>();
@@ -177,12 +161,38 @@ public class PatientsPage {
 		listView.getItems().add(newPatient.toString());
 	}
 	
-	// method to show an alert
+	// helper method to show an alert
 	private void showAlert(String title, String message) {
 		Alert alert = new Alert(Alert.AlertType.WARNING);
 		alert.setTitle(title);
 		alert.setHeaderText(null);
 		alert.setContentText(message);
 		alert.showAndWait();
+	}
+	
+	// helper method to build top navigation buttons
+	private HBox buildPageButtons(Main main) {
+		// top navigation buttons functionality
+		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
+		ArrayList<Button> labelButtons = new ArrayList<>();
+		
+		for(String label : labels) {
+			Button newButton = new Button(label);
+			
+			if(label.equals("PATIENTS")) {
+				newButton.getStyleClass().addAll("page-button-active", "page-button"); 
+			} else {
+				newButton.getStyleClass().addAll("page-button-inactive", "page-button");
+				newButton.setOnAction(e -> main.switchPage(label));
+			}
+			
+			labelButtons.add(newButton);
+		}
+		
+		HBox pageButtons = new HBox(10);
+		pageButtons.getChildren().addAll(labelButtons);
+		HBox.setMargin(pageButtons, new Insets(20));
+		
+		return pageButtons;
 	}
 }
