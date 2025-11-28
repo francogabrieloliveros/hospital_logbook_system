@@ -1,7 +1,6 @@
 package application.pages;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -20,11 +19,6 @@ public class PatientsPage {
 	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
 
 	public void setStageComponents(Stage stage, Main main) {
-		// buttons
-		Button addButton = new Button("Add");
-	    Button updateButton = new Button("Update");
-	    Button deleteButton = new Button("Delete");	
-		
 		// buttons display
 		HBox pageButtons = buildPageButtons(main);
 
