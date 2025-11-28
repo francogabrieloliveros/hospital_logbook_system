@@ -20,9 +20,6 @@ public class PatientsPage {
 	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
 
 	public void setStageComponents(Stage stage, Main main) {
-
-		
-		
 		// buttons
 		Button addButton = new Button("Add");
 	    Button updateButton = new Button("Update");
@@ -31,12 +28,8 @@ public class PatientsPage {
 		// buttons display
 		HBox pageButtons = buildPageButtons(main);
 
-		
-		// list of patients of left side 
-		ListView<String> listView = new ListView<>();
-		listView.getItems().add("PAT-0001 | fullName=Mylene | dob=2025-10-01");
-		listView.getStyleClass().add("list-view");
-		listView.getStyleClass().add("containers-shadow");
+		// left panel: list of patients
+		ListView<String> listView = buildPatientListView();
 		
 		// patient name label display
 	    Label name = new Label("Name");
@@ -194,5 +187,16 @@ public class PatientsPage {
 		HBox.setMargin(pageButtons, new Insets(20));
 		
 		return pageButtons;
+	}
+	
+	// helper method to set up left panel
+	private ListView<String> buildPatientListView() {
+		// list of patients of left side 
+		ListView<String> listView = new ListView<>();
+		listView.getItems().add("PAT-0001 | fullName=Mylene | dob=2025-10-01");
+		listView.getStyleClass().add("list-view");
+		listView.getStyleClass().add("containers-shadow");
+		
+		return listView;
 	}
 }
