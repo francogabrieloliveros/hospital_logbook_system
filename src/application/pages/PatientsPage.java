@@ -30,76 +30,10 @@ public class PatientsPage {
 
 		// left panel: list of patients
 		ListView<String> listView = buildPatientListView();
+
+		// right panel: patient form UI
+		VBox logger = buildLoggerSection(listView);
 		
-		// patient name label display
-	    Label name = new Label("Name");
-	    TextField nameField = new TextField();
-	    nameField.setPromptText("Enter patient name");
-	    VBox nameInput = new VBox(15, name, nameField);
-	    
-	    // date label
-	    Label date = new Label("DOB");
-	    DatePicker datePicker = new DatePicker();
-	    datePicker.setPrefHeight(8);
-	    datePicker.setPrefWidth(300);
-	    datePicker.setValue(LocalDate.now());
-	    datePicker.setPromptText("Select Date");
-		datePicker.getStyleClass().add("styled-date-picker");
-	    VBox dateBox = new VBox(5, date, new Label(" "), datePicker); //for alignment
-	    dateBox.setAlignment(Pos.BOTTOM_LEFT);
-	    
-	    // sex label
-	    Label sexLabel = new Label("Sex");
-	    ComboBox<String> sexCombo = new ComboBox<>();
-	    sexCombo.getItems().addAll("M", "F", "Other");
-	    sexCombo.setPromptText("Select sex");
-	    sexCombo.setPrefWidth(120);
-	    sexCombo.getStyleClass().add("text-field");
-	    VBox sexBox = new VBox(5, sexLabel, sexCombo);
-	    sexBox.setAlignment(Pos.BOTTOM_LEFT);
-	    
-	    // side by side placement of dob and sex
-	    HBox dateSexRow = new HBox(20, dateBox, sexBox);
-	    
-	    // patient text box
-	    TextArea infoArea = new TextArea();
-	    infoArea.setPromptText("Enter patient information");
-	    infoArea.setPrefRowCount(10);
-	    infoArea.setWrapText(true);
-	    VBox infoBox = new VBox(5, infoArea);
-	    
-	    // add, update, and delete buttons display
-	    addButton.getStyleClass().addAll("page-button-active", "page-button");    
-	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
-	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
-	    HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
-	    
-	    // line separator
-	    Separator separator = new Separator();
-	    
-	    // find textfield
-	    Label find = new Label("Find");
-	    TextField findField = new TextField();
-	    findField.setPromptText("Search name/notes/id");
-	    findField.setPrefWidth(250);
-	    findField.setAlignment(Pos.BOTTOM_LEFT);
-	    
-	    // search and reset buttons
-	    Button searchButton = new Button("Search");
-	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
-	    Button resetButton = new Button("Reset");
-	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
-	    
-	    // textfield + search/reset HBox
-	    HBox findRow = new HBox(20, findField, searchButton, resetButton);
-	    findRow.setAlignment(Pos.CENTER_LEFT);
-	    
-	    VBox findBox = new VBox(5, find, findRow);
-		
-	    // logger
-	    VBox logger = new VBox(30, nameInput, dateSexRow, infoBox, loggerButtons, separator, findBox);
-	    logger.getStyleClass().addAll("logger", "containers-shadow");
-	    
 		HBox mainLedger = new HBox(50, listView, logger); // refactor HBox main -> mainLedger
 		HBox.setHgrow(listView, Priority.ALWAYS);
 		HBox.setHgrow(logger, Priority.ALWAYS);
@@ -115,24 +49,7 @@ public class PatientsPage {
 		Scene staffPageScene = new Scene(root, 1200, 720);
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/Patients.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
-		
-		// add button functionality
-		addButton.setOnAction(e -> {
-			String patientName = nameField.getText().trim();
-			LocalDate patientDob = datePicker.getValue();
-			String patientSex = sexCombo.getValue();
-			String patientNotes = infoArea.getText().trim();
-			
-			// check for empty fields
-			if (patientName.isEmpty() || patientDob == null || patientSex == null) {
-				showAlert("Missing Fields", "Please fill out name, date of birth, and sex.");
-				return;
-			}
-			
-			addPatient(patientName, patientDob, patientSex, patientNotes, patientCounter[0], listView);
-			patientCounter[0]++; // increment
-		});
-		
+
 		stage.setScene(staffPageScene);
 		stage.setResizable(false);
 		stage.show();
@@ -189,7 +106,7 @@ public class PatientsPage {
 		return pageButtons;
 	}
 	
-	// helper method to set up left panel
+	// helper method to set up left panel (patients list)
 	private ListView<String> buildPatientListView() {
 		// list of patients of left side 
 		ListView<String> listView = new ListView<>();
@@ -198,5 +115,75 @@ public class PatientsPage {
 		listView.getStyleClass().add("containers-shadow");
 		
 		return listView;
+	}
+	
+	// helper method to set up left panel (input fields)
+	private VBox buildLoggerSection(ListView<String> listView) {
+		// name input
+		Label name = new Label("Name");
+		TextField nameField = new TextField();
+		nameField.setPromptText("Enter patient name");
+		VBox nameInput = new VBox(15, name, nameField);
+		
+		// date of birth (dob)
+		Label date = new Label("DOB");
+		DatePicker datePicker = new DatePicker(LocalDate.now());
+		datePicker.setPrefWidth(300);
+		VBox dateBox = new VBox(5, date, new Label(" "), datePicker);
+		
+		// sex ComboBox
+		Label sexLabel = new Label("Sex");
+		ComboBox<String> sexCombo = new ComboBox<>();
+		sexCombo.getItems().addAll("M", "F", "Other");
+		sexCombo.setPrefWidth(120);
+		VBox sexBox = new VBox(5, sexLabel, sexCombo);
+		
+		HBox dateSexRow = new HBox(20, dateBox, sexBox);
+		
+		// info area
+		TextArea infoArea = new TextArea();
+		infoArea.setPromptText("Enter patient information");
+		infoArea.setPrefRowCount(10);
+		
+		// CRUD buttons
+		Button addButton = new Button("Add");
+		Button updateButton = new Button("Update");
+		Button deleteButton = new Button("Delete");
+		HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
+		
+		// Search section
+		Label find = new Label("find");
+		TextField findField = new TextField();
+		Button searchButton = new Button("Search");
+		Button resetButton = new Button("Reset");
+		HBox findRow = new HBox(20, findField, searchButton, resetButton);
+		VBox findBox = new VBox(5, find, findRow);
+		
+		// styling
+		addButton.getStyleClass().addAll("page-button-active", "page-button");    
+	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
+	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
+	    
+	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), findBox);
+	    logger.getStyleClass().addAll("logger", "containers-shadow");
+	    
+	    // add event handler
+		addButton.setOnAction(e -> {
+			String patientName = nameField.getText().trim();
+			LocalDate patientDob = datePicker.getValue();
+			String patientSex = sexCombo.getValue();
+			String patientNotes = infoArea.getText().trim();
+			
+			// check for empty fields
+			if (patientName.isEmpty() || patientDob == null || patientSex == null) {
+				showAlert("Missing Fields", "Please fill out name, date of birth, and sex.");
+				return;
+			}
+			
+			addPatient(patientName, patientDob, patientSex, patientNotes, patientCounter[0], listView);
+			patientCounter[0]++; // increment
+		});
+		
+		return logger;
 	}
 }
