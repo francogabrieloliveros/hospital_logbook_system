@@ -17,13 +17,6 @@ public class PatientsPage {
 	// patients data
 	private ArrayList<Patient> patients = new ArrayList<>();
 	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
-	
-	// form input components
-	private TextField nameField;
-	private DatePicker datePicker;
-	private ComboBox<String> sexCombo;
-	private TextArea infoArea;
-	private TextField findField;
 
 	public void setStageComponents(Stage stage, Main main) {
 		// buttons display
@@ -122,19 +115,19 @@ public class PatientsPage {
 	private VBox buildLoggerSection(ListView<String> listView) {
 		// name input
 		Label name = new Label("Name");
-		nameField = new TextField();
+		TextField nameField = new TextField();
 		nameField.setPromptText("Enter patient name");
 		VBox nameInput = new VBox(15, name, nameField);
 		
 		// date of birth (dob)
 		Label date = new Label("DOB");
-		datePicker = new DatePicker(LocalDate.now());
+		DatePicker datePicker = new DatePicker(LocalDate.now());
 		datePicker.setPrefWidth(300);
 		VBox dateBox = new VBox(5, date, new Label(" "), datePicker);
 		
 		// sex ComboBox
 		Label sexLabel = new Label("Sex");
-		sexCombo = new ComboBox<>();
+		ComboBox<String> sexCombo = new ComboBox<>();
 		sexCombo.getItems().addAll("M", "F", "Other");
 		sexCombo.setPrefWidth(120);
 		VBox sexBox = new VBox(5, sexLabel, sexCombo);
@@ -142,7 +135,7 @@ public class PatientsPage {
 		HBox dateSexRow = new HBox(20, dateBox, sexBox);
 		
 		// info area
-		infoArea = new TextArea();
+		TextArea infoArea = new TextArea();
 		infoArea.setPromptText("Enter patient information");
 		infoArea.setPrefRowCount(10);
 		
@@ -154,7 +147,7 @@ public class PatientsPage {
 		
 		// Search section
 		Label find = new Label("find");
-		findField = new TextField();
+		TextField findField = new TextField();
 		Button searchButton = new Button("Search");
 		Button resetButton = new Button("Reset");
 		HBox findRow = new HBox(20, findField, searchButton, resetButton);
@@ -168,8 +161,7 @@ public class PatientsPage {
 	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
 	    
-	    // ~~~ event handlers ~~~
-	    // add button logic
+	    // add event handler
 		addButton.setOnAction(e -> {
 			String patientName = nameField.getText().trim();
 			LocalDate patientDob = datePicker.getValue();
@@ -184,15 +176,6 @@ public class PatientsPage {
 			
 			addPatient(patientName, patientDob, patientSex, patientNotes, patientCounter[0], listView);
 			patientCounter[0]++; // increment
-		});
-		
-		// reset button logic
-		resetButton.setOnAction(e -> {
-			nameField.clear();
-			datePicker.setValue(null);
-			sexCombo.getSelectionModel().clearSelection();
-			infoArea.clear();
-			findField.clear();
 		});
 		
 		return logger;
