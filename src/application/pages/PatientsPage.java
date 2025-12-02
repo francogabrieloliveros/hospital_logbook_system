@@ -141,6 +141,7 @@ public class PatientsPage {
 		// sex ComboBox
 		Label sexLabel = new Label("Sex");
 		sexCombo = new ComboBox<>();
+		sexCombo.setPromptText("Select Sex");
 		sexCombo.getItems().addAll("M", "F", "Other");
 		sexCombo.setPrefWidth(120);
 		VBox sexBox = new VBox(5, sexLabel, sexCombo);
@@ -170,6 +171,10 @@ public class PatientsPage {
 		addButton.getStyleClass().addAll("page-button-active", "page-button");    
 	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
 	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
+	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
+	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
+
+	    
 	    
 	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
