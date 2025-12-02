@@ -11,7 +11,7 @@ import java.util.*;
 import application.Main;
 
 public class LabRequestsPage {
-	
+	//butotns above
 	public void setStageComponents(Stage stage, Main main) {
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
 		ArrayList<Button> labelButtons = new ArrayList<>();
