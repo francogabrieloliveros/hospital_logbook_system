@@ -8,8 +8,13 @@ import javafx.stage.Stage;
 import java.util.*;
 
 import application.Main;
+import application.models.Hospital;
 
 public class LabRequestsPage {
+	
+	private Hospital hospital;
+	
+	public LabRequestsPage(Hospital hospital) { this.hospital = hospital; }
 	
 	public void setStageComponents(Stage stage, Main main) {
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};

@@ -11,10 +11,15 @@ import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
+import application.models.Hospital;
 import application.models.Patient;
 
 public class PatientsPage {
 
+	private Hospital hospital;
+	
+	public PatientsPage(Hospital hospital) { this.hospital = hospital; }
+	
 	// patients list
 	private ArrayList<Patient> patients = new ArrayList<>();
 
