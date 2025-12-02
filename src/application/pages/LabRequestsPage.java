@@ -12,7 +12,9 @@ import application.Main;
 import application.models.Hospital;
 
 public class LabRequestsPage {
+	
 	private Hospital hospital;
+	
 	public LabRequestsPage(Hospital hospital) {
 		this.hospital = hospital;
 	}
