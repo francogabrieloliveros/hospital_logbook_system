@@ -40,3 +40,30 @@
 	-fx-background-color: white;
 	-fx-text-fill: #736FDC;
 }
+
+.styled-date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #d0d0d0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-width: 1px;
+    
+
+    -fx-font-size: 12px;
+    -fx-text-fill: #333;
+    -fx-padding: 0;
+}
+
+.styled-date-picker .arrow-button {
+    -fx-background-color: #736FDC;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.styled-date-picker .arrow-button:hover {
+    -fx-background-color: #5f5ac6;
+}
+
+.styled-date-picker .arrow-button:hover .arrow {
+    -fx-background-color: white;
+}

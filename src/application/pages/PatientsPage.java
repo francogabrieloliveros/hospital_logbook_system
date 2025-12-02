@@ -173,7 +173,7 @@ public class PatientsPage {
 	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
 	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
 	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
-
+	    datePicker.getStyleClass().add("styled-date-picker");
 	    
 	    
 	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), findBox);
