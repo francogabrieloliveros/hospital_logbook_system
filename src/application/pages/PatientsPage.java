@@ -10,11 +10,20 @@ import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
+import application.models.Hospital;
 import application.models.Patient;
 
 public class PatientsPage {
 
+<<<<<<< HEAD
 	// patients data
+=======
+	private Hospital hospital;
+	
+	public PatientsPage(Hospital hospital) { this.hospital = hospital; }
+	
+	// patients list
+>>>>>>> main
 	private ArrayList<Patient> patients = new ArrayList<>();
 	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
 
