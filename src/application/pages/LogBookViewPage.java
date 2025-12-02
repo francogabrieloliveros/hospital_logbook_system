@@ -9,14 +9,8 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import application.Main;
-import application.models.Hospital;
 
 public class LogBookViewPage {
-	
-	private Hospital hospital;
-	
-	public LogBookViewPage(Hospital hospital) { this.hospital = hospital; }
-	
 	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
 	//			have a reference when main is called (for the buttons to work)
 	public void setStageComponents(Stage stage, Main main) {
