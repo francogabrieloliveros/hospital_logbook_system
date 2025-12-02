@@ -1,10 +1,13 @@
 package application.pages;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
@@ -32,23 +35,41 @@ public class LabExamsPage {
 		HBox.setMargin(pageButtons, new Insets(20));
 		
 		// Work here
-		//need to fix the format
-		Label labelLabTest = new Label("Laboratory Test:");
-		TextField txtLabTest = new TextField();
-		Label labelTestType = new Label("Test Type:");
-		TextField txtTestType= new TextField();
-		Label labelRemarks= new Label("Remarks:");
-		TextField txtRemark= new TextField();
-		VBox recordDetails = new VBox(10, labelLabTest, txtLabTest, labelTestType, txtTestType, labelRemarks, txtRemark);
+		
+		//listView
+        ListView<String> listView = new ListView<>();
+		listView.getItems().add("LBE-0001 | testType=X-ray| orderingPhysician=Evan | performingStaff=Thea | status=completed\"");
+		listView.getStyleClass().add("list-view");
+		listView.getStyleClass().add("containers-shadow");
+		
+		//Labels and TextFields and ComboBoxes and DatePicker and yes
+		Label labelLabRequest = new Label("Lab Request:");
+		ComboBox<String> labRequest = new ComboBox<>();
+		labRequest.getItems().addAll("Request#1", "Request#2", "Request#3");
+		labRequest.getSelectionModel().selectFirst();
+		
+		Label labelPerformingStaff = new Label("Performing Staff:");
+		ComboBox<String> performingStaff = new ComboBox<>();
+		performingStaff.getItems().addAll("Staff#1", "Staff#2", "Staff#3");
+		performingStaff.getSelectionModel().selectFirst();
+		
 		
 		Label labelDate = new Label("Date:");
-		TextField txtDate = new TextField();
-		Label labelOrderingPhysician = new Label("Ordering Physician:");
-		TextField txtOrderingPhysician= new TextField();
-		Label labelPerformingStaff = new Label("Performing Staff:");
-		TextField txtPerformingStaff= new TextField();
-		VBox recordDetails2 = new VBox(10, labelDate, txtDate, labelOrderingPhysician, txtOrderingPhysician, labelPerformingStaff, txtPerformingStaff);
+		DatePicker datePicker = new DatePicker();
+		datePicker.setValue(LocalDate.now());
+		datePicker.setPromptText("Select Date");
+		datePicker.getStyleClass().add("styled-date-picker");
+					
+		Label labelStatus = new Label("Status:");
+		ComboBox<String> cmbStatus = new ComboBox<>();
+		cmbStatus.getItems().addAll("Status#1", "Status#2", "Status#3");
+		cmbStatus.getSelectionModel().selectFirst();
 		
+		Label labelRemarks = new Label("Remarks:");
+		TextArea txtRemarks = new TextArea();
+		txtRemarks.setPrefHeight(150); 
+		
+		//Buttons
 		Button btnRecord = new Button("Record");
 		btnRecord.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
 		//onclick here
@@ -56,15 +77,36 @@ public class LabExamsPage {
 		btnUpdate.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
 		//onclick here
 		
-		HBox recordDetailsFull = new HBox(10, recordDetails, recordDetails2, btnRecord, btnUpdate);
+		//vbucks for the form
+		VBox labRequestBox = new VBox(5, labelLabRequest, labRequest);
+		labRequest.setMaxWidth(Double.MAX_VALUE);
+		VBox performingStaffBox = new VBox(5, labelPerformingStaff, performingStaff);
+		VBox dateBox= new VBox(5, labelDate, datePicker);
+		VBox statusBox = new VBox(5, labelStatus, cmbStatus);
+		VBox remarks = new VBox(5, labelRemarks, txtRemarks);
 		
-        ListView<String> listView = new ListView<>();
-		listView.getItems().add("STF-0001 | fullName=Mylene | role=MedTe");
-		listView.getStyleClass().add("list-view");
-		listView.getStyleClass().add("containers-shadow");
-		listView.setPrefHeight(400);
+		//Grouping buttons
+		HBox buttonBox = new HBox(10, btnRecord, btnUpdate);
+		buttonBox.setAlignment(Pos.CENTER_RIGHT); // Align buttons to the right
+
+		//Grouping date and status
+		HBox grpBox = new HBox(10, dateBox, statusBox);
+		
+		//one final vbuck for the grouping of all elements inside the form
+		VBox recordDetailsFull = new VBox(20, labRequestBox, performingStaffBox, grpBox, remarks, buttonBox);
+		recordDetailsFull.getStyleClass().add("record-box");
+		recordDetailsFull.setPrefWidth(500); 
+		recordDetailsFull.setMaxWidth(400);
+		
+		//https://stackoverflow.com/questions/29489880/javafx-how-to-make-combobox-hgrow
+		HBox mainPage = new HBox(20, listView, recordDetailsFull);
+		labRequest.setMaxWidth(Double.MAX_VALUE);
+		performingStaff.setMaxWidth(Double.MAX_VALUE);
+		HBox.setHgrow(listView, Priority.ALWAYS);
+		VBox.setVgrow(mainPage, Priority.ALWAYS);
+		
 		//main container
-		VBox root = new VBox(10, pageButtons, recordDetailsFull ,listView); // Add other elements here
+		VBox root = new VBox(20, pageButtons, mainPage); // Add other elements here
 		root.getStyleClass().add("default-bg");
 		root.setPadding(new Insets(50));
 		Scene scene = new Scene(root, 1200, 700);
@@ -72,7 +114,7 @@ public class LabExamsPage {
 		scene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		scene.getStylesheets().add(getClass().getResource("/application/styles/LabExamsPage.css").toExternalForm());
 		stage.setScene(scene);
-		stage.setTitle("Log Book System");
+		stage.setTitle("Lab Exams View");
 		stage.show();
 	}
 

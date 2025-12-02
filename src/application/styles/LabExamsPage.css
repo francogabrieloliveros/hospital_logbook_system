@@ -4,6 +4,12 @@
 	-fx-border-radius: 20;
 	-fx-border-color: transparent;
 	-fx-padding:20;
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.5, 0.5, 1);
+}
+
+.list-cell{
+	-fx-border-radius: 20;
+	-fx-background-radius: 20;
 }
 
 .list-cell:even{
@@ -12,4 +18,61 @@
 
 .list-cell:odd{
 	-fx-background-color: #f5f5f5;
+}
+
+.list-cell:selected{
+	-fx-background-color: #736FDC;
+	-fx-text-fill:white;
+}
+
+.record-box{
+	-fx-background-radius: 20;
+	-fx-background-color: white;
+	-fx-border-radius: 20;
+	-fx-border-color: transparent;
+	-fx-padding:20;
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.5, 0.5, 1);
+}
+
+.label {
+	-fx-text-fill: #736FDC;
+	-fx-font-weight: bold;
+}
+
+.text-field{
+	-fx-padding: 10;
+	-fx-border-radius: 50;
+	-fx-background-radius: 50;
+}
+
+.combo-box{
+	-fx-padding: 5;
+	-fx-border-radius: 50;
+	-fx-background-radius: 50;
+	-fx-background-color: #736FDC;
+}
+
+.combo-box .arrow {
+    -fx-background-color: white;
+}
+
+.styled-date-picker .arrow-button {
+    -fx-background-color: #736FDC;
+    -fx-border-radius: 0 5px 5px 0;
+    -fx-background-radius: 0 5px 5px 0;
+}
+
+.styled-date-picker .arrow-button:hover {
+    -fx-background-color: #6259d4;
+}
+
+.styled-date-picker .arrow {
+    -fx-background-color: white;
+}
+
+.styled-date-picker .text-field {
+    -fx-border-radius: 5px 0 0 5px;
+    -fx-background-radius: 5px 0 0 5px;
+    -fx-background-color: white;
+    -fx-border-color: transparent;
 }
