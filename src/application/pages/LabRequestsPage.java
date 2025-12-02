@@ -11,6 +11,7 @@ import application.Main;
 import application.models.Hospital;
 
 public class LabRequestsPage {
+	//butotns above
 	
 	private Hospital hospital;
 	
