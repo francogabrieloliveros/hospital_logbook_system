@@ -11,8 +11,13 @@ import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
+import application.models.Hospital;
 
 public class LabExamsPage {
+	
+	private Hospital hospital;
+	
+	public LabExamsPage(Hospital hospital) { this.hospital = hospital; }
 	
 	public void setStageComponents(Stage stage, Main main) {
 		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
