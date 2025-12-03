@@ -103,3 +103,46 @@
 	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 7, 0.5, 1, 2);
 }
 
+.table-view{
+	-fx-background-radius: 20;
+	-fx-background-color: white;
+	-fx-border-radius: 20;
+	-fx-border-color: transparent;
+	-fx-padding:10;
+}
+
+.table-view .label {
+	-fx-text-fill: white;
+}
+
+.table-row-cell {
+	-fx-background-color: transparent;
+}
+
+.table-cell {
+	-fx-alignment: center-left;
+	-fx-border-radius: 20;
+	-fx-background-radius: 20;
+	-fx-padding: 0 0 0 5px;
+}
+
+.table-cell:even {
+	-fx-background-color: #C5C4E8;
+}
+
+.table-cell:odd {
+	-fx-background-color: #f5f5f5;
+}
+
+.table-view .column-header {
+	-fx-alignment: center-left;
+	-fx-border-radius: 20;
+	-fx-background-radius: 20;
+	-fx-background-color: #736FDC;
+	-fx-border-color: transparent;
+}
+
+.table-view .column-header-background {
+	-fx-background-color: transparent;
+	-fx-padding: 0 0 5px 0;
+}

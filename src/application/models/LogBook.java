@@ -14,4 +14,9 @@ public class LogBook {
 		this.tag = tag;
 		this.message = message;
 	}
+	
+	public LocalDateTime getTimestamp() { return this.timestamp; }
+	public String getAuthor() { return this.author; }
+	public String getTag() { return this.tag; }
+	public String getMessage() { return this.message; }
 }
