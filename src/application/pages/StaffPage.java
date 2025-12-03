@@ -48,6 +48,7 @@ public class StaffPage {
 		
 		// Set list view items
 		ObservableList<Staff> items = FXCollections.observableArrayList();
+		items.setAll(hospital.getStaffs());
 		listView.setItems(items);
 		
 		

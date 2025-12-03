@@ -139,7 +139,6 @@ public class LogBookViewPage {
         
         filterRow.getChildren().addAll(filterBox, comboBoxes, dateBox, boxes);
 		
-        
 		/* TABLE */
 		hospital.addLogBook(new LogBook("coco", "something", "this is a message"));
 		hospital.addLogBook(new LogBook("thea", "something", "this is a message"));
