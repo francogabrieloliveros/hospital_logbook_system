@@ -60,22 +60,6 @@ public class PatientsPage {
 		stage.show();
 	}
 	
-	// method to add a patient
-	public void addPatient(String name, LocalDate dob, String sex, String notes,
-							int numPatientCounter, ListView<String> listView) {
-		// generate ID
-		String paddedNumber = String.format("%04d", numPatientCounter);
-		String patientID = "PAT-" + paddedNumber;
-		
-		// create new patient object
-		Patient newPatient = new Patient(hospital, patientID, name, dob, sex, notes);
-		
-		hospital.addPatient(newPatient);
-		
-		// update list
-		listView.getItems().add(newPatient.toString());
-	}
-	
 	// helper method to show an alert
 	private void showAlert(String title, String message) {
 		Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -209,7 +193,6 @@ public class PatientsPage {
 				return;
 			}
 			
-			addPatient(patientName, patientDob, patientSex, patientNotes, patientCounter[0], listView);
 			patientCounter[0]++; // increment
 		});
 		
