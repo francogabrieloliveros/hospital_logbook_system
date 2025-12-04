@@ -208,6 +208,35 @@ public class PatientsPage {
 		    findField.clear();
 		});
 		
+		// update button logic
+		updateButton.setOnAction(e -> {
+			int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+			if (selectedIndex < 0) {
+				showAlert("No Selection", "Please select a patient to update.");
+				return;
+			}
+			
+			Patient selectedPatient = hospital.getPatients().get(selectedIndex);
+			
+			// validation
+			String updatedName = nameField.getText().trim();
+			LocalDate updatedDob = datePicker.getValue();
+			String updatedSex = sexCombo.getValue();
+			
+			if (updatedName.isEmpty() || updatedDob == null || updatedSex == null) {
+				showAlert("Missing Fields", "Please fill out name, date of birth, and sex.");
+				return;
+			}
+			
+			selectedPatient.setName(updatedName);
+			selectedPatient.setDob(updatedDob);
+			selectedPatient.setSex(updatedSex);
+			selectedPatient.setNotes(infoArea.getText().trim());
+			
+			// refresh list
+			listView.getItems().set(selectedIndex, selectedPatient.toString());
+		});
+		
 		return logger;
 	}
 }
