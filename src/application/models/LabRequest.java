@@ -16,12 +16,11 @@ public class LabRequest implements HospitalElement{
 		this.status = status;
 		this.staff = staff;
 		this.id = generateId();
-		LabRequest.counter++;
 	}
 
 	@Override
 	public void addLogToHospital(String message) {
-		this.hospital.addLogBook(new LogBook("", "staff", message));
+		this.hospital.addLabRequest(this);
 	}
 
 	@Override

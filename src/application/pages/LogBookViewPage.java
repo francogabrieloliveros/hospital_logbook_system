@@ -17,10 +17,27 @@ import application.Main;
 import application.models.*;
 
 public class LogBookViewPage {
-	
+	//initialization so other fxns can access these
 	private Hospital hospital;
-	
+    private TableView<LogBook> table;
+    private ObservableList<LogBook> data;
+    private TextField authorField;
+    private TextField tagField;
+    private TextArea messageArea;
+    private TextField filterField;
+    private ComboBox<String> authorComboBox;
+    private ComboBox<String> tagComboBox;
+    private DatePicker datePicker;
+    private CheckBox matchAllCheckBox;
+    private Button appendButton;
+    private Button clearButton;
+    private Button applyButton;
+    private Button resetButton;
+    private Button exportTXTButton;
+    private Button exportCSVButton;
+    
 	public LogBookViewPage(Hospital hospital) { this.hospital = hospital; }
+	
 	
 	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
 	//			have a reference when main is called (for the buttons to work)
@@ -46,22 +63,25 @@ public class LogBookViewPage {
 		
 		//author label
 		Label authorLabel = new Label("Author:");
-		TextField authorField = new TextField();
-		authorField.setPromptText("Enter author name");
+		authorField = new TextField();
+		authorField.setPromptText("Author");
 		VBox authorBox = new VBox(5, authorLabel, authorField);
 		authorBox.setAlignment(Pos.BOTTOM_LEFT);
 		
 		//tag label
 		Label tagLabel = new Label("Tag:");
-		TextField tagField = new TextField();
+		tagField = new TextField();
+		tagField.setPromptText("Tag (e.g., incident, note)");
 		VBox tagBox = new VBox(5, tagLabel, tagField);
 		tagBox.setAlignment(Pos.BOTTOM_LEFT);
 		
 		//buttons beside the author and tag
-		Button appendButton = new Button("Append Entry");
+		appendButton = new Button("Append Entry");
 		appendButton.getStyleClass().addAll("page-button-inactive", "page-button");
-		Button clearButton = new Button("Clear");
+		appendButton.setDisable(true); //initialization
+		clearButton = new Button("Clear");
 		clearButton.getStyleClass().addAll("page-button-inactive", "page-button");
+		clearButton.setDisable(true);//initialization
 		HBox actionButtons = new HBox(10, appendButton, clearButton);	
 		actionButtons.setAlignment(Pos.BOTTOM_LEFT);
 		
@@ -71,11 +91,20 @@ public class LogBookViewPage {
 		
 		//message box
 		Label messageLabel = new Label("Message:");
-		TextArea messageArea = new TextArea();
-		messageArea.setPromptText("Enter Log Message");
+		messageArea = new TextArea();
+		messageArea.setPromptText("Message (single paragraph; newlines flattened)");
 		messageArea.setPrefRowCount(4);
 		messageArea.getStyleClass().add("message-textarea");
 		VBox messageBox = new VBox(5, messageLabel, messageArea);
+		
+		//listeners to know if user has input
+        authorField.textProperty().addListener((observable, oldValue, newValue) -> validateInputs());
+        tagField.textProperty().addListener((observable, oldValue, newValue) -> validateInputs());
+        messageArea.textProperty().addListener((observable, oldValue, newValue) -> validateInputs());
+        
+        //append and clear buttons functionality
+        appendButton.setOnAction(e -> appendLogEntry());
+        clearButton.setOnAction(e -> clearInputs());
 		
 		//upper box containing the author row and the messagebox
 		VBox logger = new VBox(20);
@@ -85,20 +114,19 @@ public class LogBookViewPage {
 		
 		//filter box
 		Label filterLabel = new Label("Filter:");
-		TextField filterField = new TextField();
+		filterField = new TextField();
+		filterField.setPromptText("keyword(s)");
 		VBox filterBox = new VBox(3, filterLabel, filterField);
 		filterBox.setAlignment(Pos.BOTTOM_LEFT);
 		
 		//author dropdown
-		ComboBox<String> authorComboBox = new ComboBox<String>();
-		authorComboBox.getItems().addAll("IDK1", "IDK2", "IDK3", "IDK4", "Others"); //will depend on the user input, ayusin sa backend later
+		authorComboBox = new ComboBox<String>();
 		authorComboBox.setPromptText("Author");
 		VBox authorFilterBox = new VBox(5, new Label(" "), authorComboBox); //for alignment
 		authorFilterBox.setAlignment(Pos.BOTTOM_LEFT);
 		
 		//tag dropdown
-		ComboBox<String> tagComboBox = new ComboBox<String>();
-		tagComboBox.getItems().addAll("IDK1", "IDK2", "IDK3", "IDK4", "Others"); //will depend on the user input, ayusin sa backend later
+		tagComboBox = new ComboBox<String>();
 		tagComboBox.setPromptText("Tag");
 		VBox tagFilterBox = new VBox(5, new Label(" "), tagComboBox); //for alignment
 		tagFilterBox.setAlignment(Pos.BOTTOM_LEFT);
@@ -107,26 +135,40 @@ public class LogBookViewPage {
 		HBox comboBoxes = new HBox(5, authorFilterBox, tagFilterBox);
 		
 		//date picker
-		DatePicker datePicker = new DatePicker();
+		datePicker = new DatePicker();
 		datePicker.setValue(LocalDate.now());
-		datePicker.setPromptText("Select Date");
+		datePicker.setPromptText("Date");
 		datePicker.getStyleClass().add("styled-date-picker");
 		VBox dateBox = new VBox(5, new Label(" "), datePicker); //for alignment
 		dateBox.setAlignment(Pos.BOTTOM_LEFT);
 		
 		//match all keywords checkbox
-		CheckBox matchAllCheckBox = new CheckBox();
 		Label matchAllLabel = new Label("Match ALL keywords");
+		matchAllCheckBox = new CheckBox();
 		HBox matchAllBox = new HBox(5, matchAllCheckBox, matchAllLabel);
 		matchAllBox.setAlignment(Pos.BOTTOM_CENTER);
 		
 		//apply and reset buttons
-		Button applyButton = new Button("   Apply   ");
+		applyButton = new Button("   Apply   ");
         applyButton.getStyleClass().addAll("page-button-inactive", "page-button", "long-button");
-		Button resetButton = new Button("   Reset   ");
+        applyButton.setDisable(true); //initialization
+		resetButton = new Button("   Reset   ");
 		resetButton.getStyleClass().addAll("page-button-inactive", "page-button", "long-button");
+		resetButton.setDisable(true); //initialization
 		HBox filterButtonsBox = new HBox(5, applyButton, resetButton);
 		filterButtonsBox.setAlignment(Pos.BOTTOM_LEFT);
+		
+		//apply and reset buttons functionality
+		applyButton.setOnAction(e -> applyFilters());
+		resetButton.setOnAction(e -> resetFilters());
+		
+		updateAuthorComboBox(); //initialize with existing authors
+		updateTagComboBox(); //initialize with existing tags
+		
+		//filter field listener
+		filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+            validateFilterButtons();
+        });
 		
 		//hbox for alignment
 		HBox boxes = new HBox(10, matchAllBox, filterButtonsBox);
@@ -139,13 +181,13 @@ public class LogBookViewPage {
         
         filterRow.getChildren().addAll(filterBox, comboBoxes, dateBox, boxes);
 		
-		/* TABLE */
-		hospital.addLogBook(new LogBook("coco", "something", "this is a message"));
-		hospital.addLogBook(new LogBook("thea", "something", "this is a message"));
-		hospital.addLogBook(new LogBook("evan", "something", "this is a message"));
-		hospital.addLogBook(new LogBook("kurt", "something", "this is a message"));
+//		/* TABLE */
+//		hospital.addLogBook(new LogBook(hospital, "coco", "something", "this is a message"));
+//		hospital.addLogBook(new LogBook(hospital,"thea", "something", "this is a message"));
+//		hospital.addLogBook(new LogBook(hospital,"evan", "something", "this is a message"));
+//		hospital.addLogBook(new LogBook(hospital,"kurt", "something", "this is a message"));
 		
-		TableView<LogBook> table = new TableView<>();
+		table = new TableView<>();
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		
 		/* TABLE COLUMNS */
@@ -163,23 +205,57 @@ public class LogBookViewPage {
         colAuthor.setPrefWidth(30);
         colTag.setPrefWidth(30);
         
-        table.getColumns().addAll(colTimestamp, 
-                                  colAuthor, 
-                                  colTag, 
-                                  colMessage);
+        table.getColumns().addAll(colTimestamp, colAuthor, colTag, colMessage);
         
         // Add sample data
-        ObservableList<LogBook> data = FXCollections.observableArrayList(hospital.getLogBooks());
+        data = FXCollections.observableArrayList(hospital.getLogBooks());
         table.setItems(data);
 		
+        updateLogBookTableView(); // Initialize table view
+        
 		//export buttons
-		Button exportTXTButton = new Button("EXPORT TXT");
-		exportTXTButton.getStyleClass().addAll("page-button-active", "page-button", "long-button");
-		Button exportCSVButton = new Button("EXPORT CSV");
-		exportCSVButton.getStyleClass().addAll("page-button-active", "page-button", "long-button");
+		exportTXTButton = new Button("EXPORT TXT");
+		exportTXTButton.getStyleClass().addAll("page-button-inactive", "page-button", "long-button");
+		exportTXTButton.setDisable(true); //initialization
+		exportCSVButton = new Button("EXPORT CSV");
+		exportCSVButton.getStyleClass().addAll("page-button-inactive", "page-button", "long-button");
+		exportCSVButton.setDisable(true); //initialization
 		HBox exportBox = new HBox(5, exportTXTButton, exportCSVButton);
 		exportBox.setAlignment(Pos.BOTTOM_LEFT);
-        
+		
+		//export button listeners
+		exportTXTButton.setOnAction(e -> exportToTXT());
+		exportCSVButton.setOnAction(e -> exportToCSV());
+		
+		//initial check for the automatic logging
+		if (data.isEmpty()) {
+		    exportTXTButton.setDisable(true);
+		    exportCSVButton.setDisable(true);
+		    exportTXTButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
+		    exportCSVButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
+		} else {
+		    exportTXTButton.setDisable(false);
+		    exportCSVButton.setDisable(false);
+		    exportTXTButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
+		    exportCSVButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
+		}
+		
+		//listener to enable or disable the export buttons
+		data.addListener((javafx.collections.ListChangeListener.Change<? extends LogBook> change) -> {
+		    // Check if data is empty
+		    if (data.isEmpty()) {
+		        exportTXTButton.setDisable(true);
+		        exportCSVButton.setDisable(true);
+		        exportTXTButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
+		        exportCSVButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
+		    } else {
+		        exportTXTButton.setDisable(false);
+		        exportCSVButton.setDisable(false);
+		        exportTXTButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
+		        exportCSVButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
+		    }
+		});
+
 		//main container
 		VBox root = new VBox(10, pageButtons ,logger, filterRow, table, exportBox);
 		root.getStyleClass().add("default-bg");
@@ -191,5 +267,209 @@ public class LogBookViewPage {
 		stage.setScene(scene);
 		stage.setTitle("Log Book System");
 		stage.show();
+	}
+
+	private void updateLogBookTableView() { //used in different fxns
+		data.clear(); //so no duplicate whenever this is called
+        data.addAll(hospital.getLogBooks());
+	}
+
+
+	private void updateAuthorComboBox() {     
+        //add authors from log books
+        ArrayList<LogBook> logBooks = hospital.getLogBooks();
+        ArrayList<String> authors = new ArrayList<>();
+        for(LogBook logBook:logBooks){
+            String author = logBook.getAuthor();
+            if(!authors.contains(author)){
+                authors.add(author);
+                authorComboBox.getItems().add(author);
+            }
+        }
+        validateFilterButtons(); 
+	}
+
+
+	private void updateTagComboBox() {
+		ArrayList<LogBook> logBooks = hospital.getLogBooks();
+        ArrayList<String> tags = new ArrayList<>();
+        for(LogBook logBook:logBooks){
+            String tag = logBook.getTag();
+            if(!tags.contains(tag)){
+                tags.add(tag);
+                tagComboBox.getItems().add(tag);
+            }
+        }
+        validateFilterButtons();
+	}
+
+	private void validateFilterButtons() {
+		boolean hasFilterText = !filterField.getText().isEmpty();
+        if(hasFilterText){
+            applyButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
+            applyButton.setDisable(false);
+        } else {
+            applyButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
+            applyButton.setDisable(true);
+        }
+        
+        //reset button should always be enabled if there are filters applied
+        boolean hasFilters = hasFilterText || authorComboBox.getValue() != null || tagComboBox.getValue() != null || (datePicker.getValue() != null && !datePicker.getValue().equals(LocalDate.now()));
+        if(hasFilters){
+            resetButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
+            resetButton.setDisable(false);
+        }else{
+            resetButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
+            resetButton.setDisable(true);
+        }
+	}
+
+	private void validateInputs() {
+		boolean allFilled = !authorField.getText().isEmpty() && !tagField.getText().isEmpty() && !messageArea.getText().isEmpty();
+		boolean hasInput = !authorField.getText().isEmpty() || !tagField.getText().isEmpty() || !messageArea.getText().isEmpty();
+		if(hasInput){
+			clearButton.getStyleClass().setAll("page-button-active", "page-button");
+			clearButton.setDisable(false);
+		}else{
+			clearButton.getStyleClass().setAll("page-button-inactive", "page-button");
+			clearButton.setDisable(true);
+		}
+		
+		if(allFilled) {
+			appendButton.getStyleClass().setAll("page-button-active", "page-button");
+			appendButton.setDisable(false);
+		}else {
+			appendButton.getStyleClass().setAll("page-button-inactive", "page-button");
+			appendButton.setDisable(true);
+		}
+	}
+
+	private void resetFilters() {
+		filterField.clear();
+		
+		//putting it to its initial state
+		authorComboBox.getSelectionModel().clearSelection();
+	    authorComboBox.setValue(null);
+	    authorComboBox.setPromptText("Author");
+	    
+	    tagComboBox.getSelectionModel().clearSelection();
+	    tagComboBox.setValue(null);
+	    tagComboBox.setPromptText("Tag");
+	    
+	    datePicker.getEditor().clear();
+	    datePicker.setValue(null);
+	    datePicker.setPromptText("Date");
+	    
+        matchAllCheckBox.setSelected(false);
+        updateLogBookTableView();
+        validateFilterButtons();
+	}
+
+
+	private void applyFilters() {
+		String filterText = filterField.getText().toLowerCase();
+        String selectedAuthor = authorComboBox.getValue();
+        String selectedTag = tagComboBox.getValue();
+        LocalDate selectedDate = datePicker.getValue();
+        boolean matchAll = matchAllCheckBox.isSelected();
+        
+        data.clear(); //so the only one appearing to the table view is the one that fits the filter
+        ArrayList<LogBook> logBooks = hospital.getLogBooks();
+        
+        for(LogBook logBook : logBooks){
+            boolean allMatches = true;
+            
+            if(selectedAuthor != null){
+                if(!logBook.getAuthor().equals(selectedAuthor)){
+                    allMatches = false;
+                }
+            }
+            
+            if(selectedTag != null){
+                if(!logBook.getTag().equals(selectedTag)){
+                    allMatches = false;
+                }
+            }
+            
+            if(selectedDate != null){
+                LocalDate logDate = logBook.getTimestamp().toLocalDate();
+                if (!logDate.equals(selectedDate)) {
+                    allMatches = false;
+                }
+            }
+            
+            if(!filterText.isEmpty()){
+                String searchText = filterText;
+                String logText = (logBook.getAuthor() + " " + logBook.getTag() + " " + logBook.getMessage()).toLowerCase();
+                String[] keywords = searchText.split("\\s+");//splits the text inside the filter text field using the space as the seperator
+                if(matchAll){
+                    for (String keyword : keywords) {
+                        if (!logText.contains(keyword)) {
+                            allMatches = false;
+                            break;
+                        }
+                    }
+                }else{
+                    boolean foundKeyword = false;
+                    for (String keyword : keywords) {
+                        if (logText.contains(keyword)) {
+                            foundKeyword = true;
+                            break;
+                        }
+                    }
+                    if (!foundKeyword) {
+                        allMatches = false;
+                    }
+                }
+            }
+            if(allMatches){
+                data.add(logBook);
+            }
+        }
+	}
+
+
+	private void clearInputs() {
+		authorField.clear();
+        tagField.clear();
+        messageArea.clear();
+        validateInputs(); //calling again to disable the buttons again after clearing
+	}
+
+
+	private void appendLogEntry() {
+		String author = authorField.getText().trim();
+		String tag = tagField.getText().trim();
+		String message = messageArea.getText().trim().replaceAll("\n", " "); // Flatten newlines
+		
+		LogBook logBook = new LogBook(hospital, author, tag, message);
+		hospital.addLogBook(logBook);
+		
+		//update the ui elements
+		updateLogBookTableView();
+		updateAuthorComboBox();
+		updateTagComboBox();
+		
+		clearInputs();
+		showAlert("Success", "Log entry added successfully!");
+	}
+
+
+	private void showAlert(String title, String message) {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+	}
+
+	//persistence
+	private void exportToCSV() {
+		
+	}
+
+
+	private void exportToTXT() {
+		
 	}
 }
