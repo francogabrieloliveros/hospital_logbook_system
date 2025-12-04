@@ -1,7 +1,6 @@
 package application.pages;
 
 import application.models.*;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -14,6 +13,15 @@ import application.Main;
 
 public class StaffPage {
 	
+    private TextField nameField = new TextField();
+    private ComboBox<String> roleField = new ComboBox<>();
+    private ComboBox<String> statusField = new ComboBox<>();
+    private Button addButton = new Button("Add");
+    private Button updateButton = new Button("Update");
+    private Button deleteButton = new Button("Delete");
+    private TextField findField = new TextField();
+    private Button searchButton = new Button("Search");
+    private Button resetButton = new Button("Reset");
 	private Hospital hospital;
 	
 	public StaffPage(Hospital hospital) { this.hospital = hospital; }
@@ -55,23 +63,21 @@ public class StaffPage {
 		/* ------------------------------------------- LOGGER -------------------------------------------*/
 		// Name text field
 	    Label name = new Label("Name");
-	    TextField nameField = new TextField();
 	    nameField.setPromptText("Full name");
 	    VBox nameInput = new VBox(20, name, nameField);
 	    
 	    // Role combo box
 	    Label role = new Label("Role");
-	    ComboBox<String> roleField = new ComboBox<>();
 	    roleField.getItems().addAll("MedTech", "Pathologist", "Phlebotomist", "Clerk", "Other");
-	    roleField.setValue("MedTech");
+	    roleField.setPromptText("Select role");
+	    roleField.getSelectionModel().clearSelection();
 	    VBox roleInput = new VBox(20, role, roleField);
 	    roleField.setMaxWidth(Double.MAX_VALUE);
 	    
 	    // Status combo box
 	    Label status = new Label("Status");
-	    ComboBox<String> statusField = new ComboBox<>();
 	    statusField.getItems().addAll("active", "inactive");
-	    statusField.setValue("active");
+	    statusField.setPromptText("Select status");
 	    VBox statusInput = new VBox(20, status, statusField);
 	    statusField.setMaxWidth(Double.MAX_VALUE);
 
@@ -81,11 +87,8 @@ public class StaffPage {
 	    HBox.setHgrow(statusInput, Priority.ALWAYS);
 	    
 	    // Logger buttons for adding new staff
-	    Button addButton = new Button("Add");
 	    addButton.getStyleClass().addAll("page-button-active", "page-button");
-	    Button updateButton = new Button("Update");
 	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
-	    Button deleteButton = new Button("Delete");
 	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
 	    HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
 	    
@@ -100,13 +103,10 @@ public class StaffPage {
 	    /* ------------------------------------------- FINDING -------------------------------------------*/
 	    // Find text input
 	    Label find = new Label("Find");
-	    TextField findField = new TextField();
 	    findField.setPromptText("Search name/role/status");
 	    
 	    // Finding/search buttons
-	    Button searchButton = new Button("Search");
 	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
-	    Button resetButton = new Button("Reset");
 	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
 	    HBox findButtons = new HBox(10, resetButton, searchButton);
 	    
@@ -133,15 +133,9 @@ public class StaffPage {
 		
 		
 		/* ------------------------------------------- FUNCTIONALITY -------------------------------------------*/
-		Runnable resetInputFields = () -> {
-			nameField.setText("");
-			roleField.setValue("MedTech");
-			statusField.setValue("active");
-			findField.setText("");
-		};
 		
 		// Set input field values to selected values
-		listView.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+		listView.getSelectionModel().selectedItemProperty().addListener((a, b, selected) -> {
 		    if (selected != null) {
 		        nameField.setText(selected.getName());
 		        roleField.setValue(selected.getRole());
@@ -149,29 +143,13 @@ public class StaffPage {
 		    }
 		});
 		
-		// Disable buttons if nameField is empty
-		nameField.textProperty().addListener((a, oldVal, newVal) -> {
-			if(newVal.isBlank()) {
-				addButton.setDisable(true);
-				updateButton.setDisable(true);
-				deleteButton.setDisable(true);
-			} else {
-				addButton.setDisable(false);
-				updateButton.setDisable(false);
-				deleteButton.setDisable(false);
-			}
-		});
+		// Disable buttons if logger inputs is empty
+		nameField.textProperty().addListener((a, b, c) -> updateLoggerButtons());
+		roleField.valueProperty().addListener((a, b, c) -> updateLoggerButtons());
+		statusField.valueProperty().addListener((a, b, c) ->updateLoggerButtons());
 		
 		// Disable buttons if findField is empty
-		findField.textProperty().addListener((a, oldVal, newVal) -> {
-			if(newVal.isBlank()) {
-				searchButton.setDisable(true);
-				resetButton.setDisable(true);
-			} else {
-				searchButton.setDisable(false);
-				resetButton.setDisable(false);
-			}
-		});
+		findField.textProperty().addListener((a, b, c) -> updateFindButtons());
 		
 		// Adds new staff to hospital and list view
 		addButton.setOnAction(e -> {
@@ -181,7 +159,7 @@ public class StaffPage {
 										statusField.getValue()));
 			
 			items.setAll(hospital.getStaffs());
-			resetInputFields.run();
+			resetInputFields();
 		});
 		
 		// Updates selected staff from hospital staffs and updates list view
@@ -191,7 +169,7 @@ public class StaffPage {
 			if (selected != null) {
 				selected.update(nameField.getText(), roleField.getValue(), statusField.getValue());
 				items.setAll(hospital.getStaffs());
-				resetInputFields.run();
+				resetInputFields();
 			}
 		});
 		
@@ -202,7 +180,7 @@ public class StaffPage {
 			if(selected != null) {
 				hospital.removeStaff(selected);
 				items.setAll(hospital.getStaffs());
-				resetInputFields.run();
+				resetInputFields();
 			}
 		});
 		
@@ -220,10 +198,10 @@ public class StaffPage {
 			}
 			
 			items.setAll(searchResults);
-			resetInputFields.run();
+			resetInputFields();
 		});
 		
-		resetButton.setOnAction(e -> { resetInputFields.run(); });
+		resetButton.setOnAction(e -> resetInputFields());
 
 		
 		/* ------------------------------------------- ROOT & SCENE -------------------------------------------*/
@@ -239,5 +217,42 @@ public class StaffPage {
 		
 		stage.setScene(staffPageScene);
 		stage.show();
+	}
+	
+	private void updateLoggerButtons() {
+	    boolean nameFilled = !nameField.getText().isBlank();
+	    boolean roleFilled = roleField.getValue() != null;
+	    boolean statusFilled = statusField.getValue() != null;
+
+	    if (nameFilled && roleFilled && statusFilled) {
+	    	addButton.setDisable(false);
+			updateButton.setDisable(false);
+			deleteButton.setDisable(false);
+	    } else {
+	    	addButton.setDisable(true);
+			updateButton.setDisable(true);
+			deleteButton.setDisable(true);
+	    }
+	}
+	
+	private void updateFindButtons() {
+	    boolean findFilled = !findField.getText().isBlank();
+
+	    if (findFilled) {
+	    	searchButton.setDisable(false);
+			resetButton.setDisable(false);
+	    } else {
+	    	searchButton.setDisable(true);
+			resetButton.setDisable(true);
+	    }
+	}
+	
+	private void resetInputFields() {
+		nameField.setText("");
+		roleField.setValue(null);
+		roleField.getSelectionModel().clearSelection();
+		statusField.setValue(null);
+		statusField.getSelectionModel().clearSelection();
+		findField.setText("");
 	}
 }
