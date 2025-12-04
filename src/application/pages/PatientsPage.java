@@ -240,6 +240,8 @@ public class PatientsPage {
 			selectedPatient.setSex(updatedSex);
 			selectedPatient.setNotes(infoArea.getText().trim());
 			
+			// add to log
+			selectedPatient.addLogToHospital("Updated patient information");
 			// refresh list
 			listView.getItems().set(selectedIndex, selectedPatient.toString());
 		});
@@ -257,6 +259,8 @@ public class PatientsPage {
 			hospital.removePatient(selectedPatient);
 			listView.getItems().remove(selectedIndex);
 			
+			// add to log
+			selectedPatient.addLogToHospital("Deleted patient");
 			// refresh list
 			listView.getItems().set(selectedIndex, selectedPatient.toString());
 		});
