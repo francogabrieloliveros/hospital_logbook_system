@@ -136,11 +136,21 @@ public class LogBookViewPage {
 		
 		//date picker
 		datePicker = new DatePicker();
-		datePicker.setValue(LocalDate.now());
 		datePicker.setPromptText("Date");
 		datePicker.getStyleClass().add("styled-date-picker");
 		VBox dateBox = new VBox(5, new Label(" "), datePicker); //for alignment
 		dateBox.setAlignment(Pos.BOTTOM_LEFT);
+		
+		//adding listeners so that even if one has input then the apply button is enabled
+		datePicker.valueProperty().addListener((observable, oldValue, newValue) -> { 
+		    validateFilterButtons();
+		});
+		authorComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+		    validateFilterButtons();
+		});
+		tagComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+		    validateFilterButtons();
+		});
 		
 		//match all keywords checkbox
 		Label matchAllLabel = new Label("Match ALL keywords");
@@ -236,7 +246,6 @@ public class LogBookViewPage {
 		
 		//listener to enable or disable the export buttons
 		data.addListener((javafx.collections.ListChangeListener.Change<? extends LogBook> change) -> {
-		    // Check if data is empty
 		    if (data.isEmpty()) {
 		        exportTXTButton.setDisable(true);
 		        exportCSVButton.setDisable(true);
@@ -271,6 +280,7 @@ public class LogBookViewPage {
 
 	private void updateAuthorComboBox() {     
         //add authors from log books
+		authorComboBox.getItems().clear(); //to prevent duplication
         ArrayList<LogBook> logBooks = hospital.getLogBooks();
         ArrayList<String> authors = new ArrayList<>();
         for(LogBook logBook:logBooks){
@@ -285,6 +295,7 @@ public class LogBookViewPage {
 
 
 	private void updateTagComboBox() {
+		tagComboBox.getItems().clear(); //to prevent duplication
 		ArrayList<LogBook> logBooks = hospital.getLogBooks();
         ArrayList<String> tags = new ArrayList<>();
         for(LogBook logBook:logBooks){
@@ -298,21 +309,16 @@ public class LogBookViewPage {
 	}
 
 	private void validateFilterButtons() {
-		boolean hasFilterText = !filterField.getText().isEmpty();
-        if(hasFilterText){
-            applyButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
-            applyButton.setDisable(false);
-        } else {
-            applyButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
-            applyButton.setDisable(true);
-        }
-        
-        //reset button should always be enabled if there are filters applied
-        boolean hasFilters = hasFilterText || authorComboBox.getValue() != null || tagComboBox.getValue() != null || (datePicker.getValue() != null && !datePicker.getValue().equals(LocalDate.now()));
+        //buttons should always be enabled if there are filters applied
+        boolean hasFilters = !filterField.getText().isEmpty() || authorComboBox.getValue() != null || tagComboBox.getValue() != null || datePicker.getValue() != null;
         if(hasFilters){
+        	applyButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
+            applyButton.setDisable(false);
             resetButton.getStyleClass().setAll("page-button-active", "page-button", "long-button");
             resetButton.setDisable(false);
         }else{
+        	applyButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
+            applyButton.setDisable(true);
             resetButton.getStyleClass().setAll("page-button-inactive", "page-button", "long-button");
             resetButton.setDisable(true);
         }
@@ -365,45 +371,57 @@ public class LogBookViewPage {
         String selectedAuthor = authorComboBox.getValue();
         String selectedTag = tagComboBox.getValue();
         LocalDate selectedDate = datePicker.getValue();
-        boolean matchAll = matchAllCheckBox.isSelected();
+        boolean matchAllKeywords = matchAllCheckBox.isSelected();
         
         data.clear(); //so the only one appearing to the table view is the one that fits the filter
         ArrayList<LogBook> logBooks = hospital.getLogBooks();
         
+        //check which filters has value
+        boolean hasAuthorFilter = selectedAuthor != null && !selectedAuthor.isEmpty();
+        boolean hasTagFilter = selectedTag != null && !selectedTag.isEmpty();
+        boolean hasDateFilter = selectedDate != null;
+        boolean hasTextFilter = !filterText.isEmpty();
+        boolean hasAnyFilter = hasAuthorFilter || hasTagFilter || hasDateFilter || hasTextFilter;
+        
+        //if no filters, show everything
+        if (!hasAnyFilter) {
+            data.addAll(logBooks);
+            return;
+        }
+        
         for(LogBook logBook : logBooks){
-            boolean allMatches = true;
+            boolean matchesAuthor = true;
+            boolean matchesTag = true;
+            boolean matchesDate = true;
+            boolean matchesText = true;
             
-            if(selectedAuthor != null){
-                if(!logBook.getAuthor().equals(selectedAuthor)){
-                    allMatches = false;
-                }
+            if(hasAuthorFilter){
+                matchesAuthor = logBook.getAuthor().equals(selectedAuthor);
             }
             
-            if(selectedTag != null){
-                if(!logBook.getTag().equals(selectedTag)){
-                    allMatches = false;
-                }
+            if(hasTagFilter){
+                matchesTag = logBook.getTag().equals(selectedTag);
             }
             
-            if(selectedDate != null){
+            if(hasDateFilter){
                 LocalDate logDate = logBook.getTimestamp().toLocalDate();
-                if (!logDate.equals(selectedDate)) {
-                    allMatches = false;
-                }
+                matchesDate = logDate.equals(selectedDate);
             }
             
-            if(!filterText.isEmpty()){
-                String searchText = filterText;
-                String logText = (logBook.getAuthor() + " " + logBook.getTag() + " " + logBook.getMessage()).toLowerCase();
-                String[] keywords = searchText.split("\\s+");//splits the text inside the filter text field using the space as the seperator
-                if(matchAll){
+            if(hasTextFilter){ //checking the filter text field
+                String logDateString = logBook.getTimestamp().toLocalDate().toString();
+                String logText = (logBook.getAuthor() + " " + logBook.getTag() + " " + logBook.getMessage() + " " + logDateString).toLowerCase();
+                String[] keywords = filterText.split("\\s+"); //input in textfield split at spaces
+                
+                if(matchAllKeywords){ //if match all checkbox checked
+                    //all key word must be in the log book
                     for (String keyword : keywords) {
                         if (!logText.contains(keyword)) {
-                            allMatches = false;
+                            matchesText = false;
                             break;
                         }
                     }
-                }else{
+                }else{ //if match all is not selected
                     boolean foundKeyword = false;
                     for (String keyword : keywords) {
                         if (logText.contains(keyword)) {
@@ -411,17 +429,34 @@ public class LogBookViewPage {
                             break;
                         }
                     }
-                    if (!foundKeyword) {
-                        allMatches = false;
-                    }
+                    matchesText = foundKeyword;
                 }
             }
-            if(allMatches){
+            
+            // Determine if log entry should be shown
+            boolean shouldShow;
+            
+            if (matchAllKeywords) { 
+                //when match all keywords is checked, all applied filters must match (author AND tag AND date AND text)
+                shouldShow = true;
+                if (hasAuthorFilter) shouldShow = shouldShow && matchesAuthor;
+                if (hasTagFilter) shouldShow = shouldShow && matchesTag;
+                if (hasDateFilter) shouldShow = shouldShow && matchesDate;
+                if (hasTextFilter) shouldShow = shouldShow && matchesText;
+            } else {
+            	 //when match all keywords is not checked, show if any applied filter matches (author OR tag OR date OR text)
+                shouldShow = false;
+                if (hasAuthorFilter && matchesAuthor) shouldShow = true;
+                if (hasTagFilter && matchesTag) shouldShow = true;
+                if (hasDateFilter && matchesDate) shouldShow = true;
+                if (hasTextFilter && matchesText) shouldShow = true;
+            }
+            
+            if(shouldShow){ //add or show the ones that fit the filter
                 data.add(logBook);
             }
         }
 	}
-
 
 	private void clearInputs() {
 		authorField.clear();
@@ -447,7 +482,6 @@ public class LogBookViewPage {
 		clearInputs();
 		showAlert("Success", "Log entry added successfully!");
 	}
-
 
 	private void showAlert(String title, String message) {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
