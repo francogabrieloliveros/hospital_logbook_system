@@ -23,6 +23,7 @@ public class Patient implements HospitalElement {
 		this.notes = notes;
 		
 		hospital.addPatient(this);
+		addLogToHospital("Added new patient");
 	}
 	
     @Override
