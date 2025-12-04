@@ -25,6 +25,23 @@ public class Patient implements HospitalElement {
 		hospital.addPatient(this);
 	}
 	
+    @Override
+    public String toString() {
+    	return id + " | fullName=" + name + " | dob=" + dob + " | sex=" + sex + " | info=" + notes;
+    }
+    
+	@Override
+	public void addLogToHospital(String message) {
+		hospital.addLogBook(new LogBook("", "patient", message));
+		
+	}
+
+	@Override
+	public String generateId() {
+		Patient.lastId++;
+		return "PAT-" + String.format("%04d", Patient.lastId);
+	}
+	
 	// getters and setters
 	public String getId() { return id; }
 	public String getName() { return name; }
@@ -36,22 +53,4 @@ public class Patient implements HospitalElement {
     public void setDob(LocalDate dob) { this.dob = dob; }
     public void setSex(String sex) { this.sex = sex; }
     public void setNotes(String notes) { this.notes = notes; }
-    
-    // function for for list viewing
-    @Override
-    public String toString() {
-    	return id + " | " + name + " | " + dob;
-    }
-
-	@Override
-	public void addLogToHospital(String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String generateId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
