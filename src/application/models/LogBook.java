@@ -30,4 +30,16 @@ public class LogBook implements HospitalElement{
 	public String getMessage() {
 		return this.message;
 	}
+
+	@Override
+	public void addLogToHospital(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String generateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
