@@ -15,7 +15,7 @@ import application.models.Patient;
 
 public class PatientsPage {
 
-	// patients data
+	// patients data (hospital)
 	private Hospital hospital;
 	
 	// form input components
