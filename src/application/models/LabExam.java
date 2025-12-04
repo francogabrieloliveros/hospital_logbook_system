@@ -29,7 +29,6 @@ public class LabExam implements HospitalElement{
 		addLogToHospital("Added new lab exam");
 	}
 	
-	// Update information
 	public void update (Hospital hospital, 
 						String testType, 
 						Staff orderingPhysician, 
@@ -45,7 +44,6 @@ public class LabExam implements HospitalElement{
 		addLogToHospital("Updated lab exam information");
 	}
 	
-	// HospitalElement functions
 	@Override
 	public String toString() {
 		return String.format("%s | testType=%s| orderingPhysician=%s | performingStaff=%s | status=%s",
