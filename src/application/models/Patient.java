@@ -14,9 +14,9 @@ public class Patient implements HospitalElement {
 	private String notes;
 	
 	// constructor
-	public Patient(Hospital hospital, String id, String name, LocalDate dob, String sex, String notes) {
+	public Patient(Hospital hospital, String name, LocalDate dob, String sex, String notes) {
 		this.hospital = hospital;
-		this.id = id;
+		this.id = generateId();
 		this.name = name;
 		this.dob = dob;
 		this.sex = sex;
