@@ -11,6 +11,7 @@ import java.util.*;
 
 import application.Main;
 import application.models.Hospital;
+import application.models.LabExam;
 import application.models.Patient;
 
 public class PatientsPage {
@@ -139,6 +140,12 @@ public class PatientsPage {
 		infoArea.setPromptText("Enter patient information");
 		infoArea.setPrefRowCount(10);
 		
+		// Lab exams list
+		Label labExamLabel = new Label ("Lab Exams");
+		ListView<String> labExamListView = new ListView<>();
+		labExamListView.getStyleClass().addAll("list-view", "containers=shadow");
+		labExamListView.setPrefHeight(50);
+		
 		// CRUD buttons
 		Button addButton = new Button("Add");
 		Button updateButton = new Button("Update");
@@ -173,10 +180,17 @@ public class PatientsPage {
 				datePicker.setValue(selectedPatient.getDob());
 				sexCombo.setValue(selectedPatient.getSex());
 				infoArea.setText(selectedPatient.getNotes());
+				
+				// update lab exams list
+				labExamListView.getItems().clear();
+				for (LabExam le : selectedPatient.getLabExams()) {
+					labExamListView.getItems().add(le.toString());
+				}
 			}
 		});
-		
-	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), findBox);
+
+		// VBOX logger
+	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, labExamLabel, labExamListView, loggerButtons, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
 	    
 	    // ~~~ event handlers ~~~

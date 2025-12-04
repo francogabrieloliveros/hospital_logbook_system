@@ -53,21 +53,18 @@ public class Patient implements HospitalElement {
 	public void addLabExam(LabExam exam) {
 		labExams.add(exam);
 	}
-	
-	// Get all lab exams for this patient
-	public ArrayList<LabExam> getLabExams() {
-		return labExams;
-	}
-	
+
 	// getters and setters
 	public String getId() { return id; }
 	public String getName() { return name; }
 	public LocalDate getDob() { return dob; }
 	public String getSex() { return sex; }
     public String getNotes() { return notes; }
-
+    public ArrayList<LabExam> getLabExams() { return labExams; }
+    
     public void setName(String name) { this.name = name; }
     public void setDob(LocalDate dob) { this.dob = dob; }
     public void setSex(String sex) { this.sex = sex; }
     public void setNotes(String notes) { this.notes = notes; }
+    public void setLabExams(ArrayList<LabExam> labExams) { this.labExams = labExams; } 
 }
