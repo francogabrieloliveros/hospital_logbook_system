@@ -3,7 +3,7 @@ package application.models;
 import java.time.LocalDate;
 
 // patient class
-public class Patient {
+public class Patient implements HospitalElement {
 	private String id;
 	private String name;
 	private LocalDate dob; // date of birth
@@ -36,4 +36,16 @@ public class Patient {
     public String toString() {
     	return id + " | " + name + " | " + dob;
     }
+
+	@Override
+	public void addLogToHospital(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String generateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
