@@ -2,7 +2,7 @@ package application.models;
 
 import java.time.LocalDateTime;
 
-public class LogBook {
+public class LogBook implements HospitalElement{
 	private LocalDateTime timestamp;
 	private String author;
 	private String tag;
@@ -13,5 +13,21 @@ public class LogBook {
 		this.author = author;
 		this.tag = tag;
 		this.message = message;
+	}
+	
+	public LocalDateTime getTimeStamp() {
+		return this.timestamp;
+	}
+	
+	public String getAuthor() {
+		return this.author;
+	}
+	
+	public String getTag() {
+		return this.tag;
+	}
+	
+	public String getMessage() {
+		return this.message;
 	}
 }
