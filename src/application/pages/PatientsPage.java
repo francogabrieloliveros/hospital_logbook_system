@@ -237,6 +237,22 @@ public class PatientsPage {
 			listView.getItems().set(selectedIndex, selectedPatient.toString());
 		});
 		
+		// delete button logic
+		deleteButton.setOnAction(e -> {
+			int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+			if (selectedIndex < 0) {
+				showAlert("No Selection", "Please select a patient to delete.");
+				return;
+			}
+			
+			Patient selectedPatient = hospital.getPatients().get(selectedIndex);
+			
+			hospital.removePatient(selectedPatient);
+			listView.getItems().remove(selectedIndex);
+			
+			// refresh list
+			listView.getItems().set(selectedIndex, selectedPatient.toString());
+		});
 		return logger;
 	}
 }
