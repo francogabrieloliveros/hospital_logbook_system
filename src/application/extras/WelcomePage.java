@@ -16,6 +16,7 @@ public class WelcomePage {
 		Label welcomeMessage= new Label("Welcome, admin!");
 	    
 	    Button startButton = new Button("START");
+	    startButton.setDefaultButton(true);
 	    startButton.getStyleClass().addAll("buttons", "page-button", "page-button-active");
 	    startButton.setOnAction(e -> { extraStage.openMain(); });
 	    

@@ -26,6 +26,7 @@ public class LoginPage {
 	    
 	    Button loginButton = new Button("Log in");
 	    loginButton.getStyleClass().addAll("buttons", "page-button", "page-button-active");
+	    loginButton.setDefaultButton(true);
 	    VBox loginButtonContainer = new VBox(loginButton);
 	    loginButtonContainer.setAlignment(Pos.CENTER);
 	    
