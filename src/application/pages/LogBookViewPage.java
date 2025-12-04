@@ -181,12 +181,6 @@ public class LogBookViewPage {
         
         filterRow.getChildren().addAll(filterBox, comboBoxes, dateBox, boxes);
 		
-//		/* TABLE */
-//		hospital.addLogBook(new LogBook(hospital, "coco", "something", "this is a message"));
-//		hospital.addLogBook(new LogBook(hospital,"thea", "something", "this is a message"));
-//		hospital.addLogBook(new LogBook(hospital,"evan", "something", "this is a message"));
-//		hospital.addLogBook(new LogBook(hospital,"kurt", "something", "this is a message"));
-		
 		table = new TableView<>();
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		
@@ -442,7 +436,7 @@ public class LogBookViewPage {
 		String tag = tagField.getText().trim();
 		String message = messageArea.getText().trim().replaceAll("\n", " "); // Flatten newlines
 		
-		LogBook logBook = new LogBook(hospital, author, tag, message);
+		LogBook logBook = new LogBook(author, tag, message);
 		hospital.addLogBook(logBook);
 		
 		//update the ui elements

@@ -38,7 +38,7 @@ public class Staff implements HospitalElement{
 	
 	@Override
 	public void addLogToHospital(String message) {
-		hospital.addLogBook(new LogBook(hospital, "", "staff", message));
+		hospital.addLogBook(new LogBook("", "staff", message));
 	}
 	
 	@Override
