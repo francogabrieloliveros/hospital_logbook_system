@@ -205,13 +205,13 @@ public class LabRequestsPage {
 	private void validateSearchButtons() {
 		boolean isFieldEmpty = findField.getText().isEmpty();
         
-        if (isFieldEmpty) {
+        if(isFieldEmpty){
             //disable buttons when empty find field
             searchButton.getStyleClass().setAll("page-button-inactive", "page-button");
             resetButton.getStyleClass().setAll("page-button-inactive", "page-button");
             searchButton.setDisable(true);
             resetButton.setDisable(true);
-        } else { //when find field is not empty
+        }else{ //when find field is not empty
             searchButton.getStyleClass().setAll("page-button-active", "page-button");
             resetButton.getStyleClass().setAll("page-button-active", "page-button");
             searchButton.setDisable(false);
@@ -220,28 +220,25 @@ public class LabRequestsPage {
 	}
 
 	private void loadLabRequestData(String selectedItem) { 
-		try {
             String[] parts = selectedItem.split(" \\| ");
             String id = parts[0];
             
             //find the lab request in hospital
             LabRequest labRequest = null;
             List<LabRequest> labRequests = hospital.getLabRequests();
-            for (LabRequest lr : labRequests) {
-                if (lr.getID().equals(id)) {
+            for(LabRequest lr : labRequests){
+                if(lr.getID().equals(id)){
                     labRequest = lr;
                     break;
                 }
             }
             
-            if (labRequest != null) {
+            if(labRequest != null){
                 patientComboBox.setValue(labRequest.getPatient());
                 requestComboBox.setValue(labRequest.getRequest());
                 statusComboBox.setValue(labRequest.getStatus());
                 staffComboBox.setValue(labRequest.getStaff());
             }
-        } catch (Exception e) {
-        }
 	}
 
 	private void searchLabRequests() {
@@ -265,7 +262,6 @@ public class LabRequestsPage {
 	}
 
 	private void deleteLabRequest(String selectedItem) {
-		try {
             //getting the id form the listview
             String[] parts = selectedItem.split(" \\| ");
             String id = parts[0];
@@ -285,13 +281,9 @@ public class LabRequestsPage {
                 updateListView();
                 showAlert("Success", "Lab Request deleted successfully!");
             }
-        } catch (Exception e) {
-            showAlert("Error", "Failed to delete lab request: " + e.getMessage());
-        }
 	}
 
 	private void updateLabRequest(String selectedItem) {
-		try {
             //extract the id in teh selected item in listview
             String[] parts = selectedItem.split(" \\| ");
             String id = parts[0];
@@ -310,14 +302,10 @@ public class LabRequestsPage {
                 labRequest.update(statusComboBox.getValue());
                 updateListView();
                 showAlert("Success", "Lab Request updated successfully!");
-            }
-        } catch (Exception e) {
-            showAlert("Error", "Failed to update lab request: " + e.getMessage());
-        }		
+            }	
 	}
 
 	private void createLabRequest() {
-		try {
 			String patientName = patientComboBox.getValue();
             String requestType = requestComboBox.getValue();
             String status = statusComboBox.getValue();
@@ -358,7 +346,6 @@ public class LabRequestsPage {
             }else {
             	showAlert("Error", "Could not find patient or staff");
             }
-		}catch(Exception e) {showAlert("Error", "Failed to create lab Request");}
 	}
 
 	private void showAlert(String title, String message) {
