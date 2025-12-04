@@ -115,7 +115,11 @@ public class PatientsPage {
 	private ListView<String> buildPatientListView() {
 		// list of patients of left side 
 		ListView<String> listView = new ListView<>();
-		listView.getItems().add("PAT-0001 | fullName=Mylene | dob=2025-10-01");
+		// format: "PAT-0001 | fullName=Mylene | dob=2025-10-01"
+		for (Patient p: hospital.getPatients()) {
+			listView.getItems().add(p.toString());
+		}
+		
 		listView.getStyleClass().add("list-view");
 		listView.getStyleClass().add("containers-shadow");
 		
