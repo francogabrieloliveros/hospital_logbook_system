@@ -177,7 +177,21 @@ public class PatientsPage {
 	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
 	    datePicker.getStyleClass().add("styled-date-picker");
 	    
-	    
+		// listView listener
+		// this will make selecting a patient auto-fill the form (QOF)
+		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
+			int index = newVal.intValue();
+			if (index >= 0) {
+				Patient selectedPatient = hospital.getPatients().get(index);
+				
+				// auto-fill form
+				nameField.setText(selectedPatient.getName());
+				datePicker.setValue(selectedPatient.getDob());
+				sexCombo.setValue(selectedPatient.getSex());
+				infoArea.setText(selectedPatient.getNotes());
+			}
+		});
+		
 	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
 	    
@@ -253,6 +267,7 @@ public class PatientsPage {
 			// refresh list
 			listView.getItems().set(selectedIndex, selectedPatient.toString());
 		});
+		
 		return logger;
 	}
 }
