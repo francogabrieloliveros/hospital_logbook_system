@@ -52,8 +52,8 @@ public class LabRequest implements HospitalElement{
 	
 	// Getters
 	public String getID() { return this.id; }
-	public String getPatient() { return this.patient.getName(); }
+	public Patient getPatient() { return this.patient; }
 	public String getStatus() { return this.status; }
-	public String getStaff() { return this.staff.getName(); }
+	public Staff getStaff() { return this.staff; }
 	public String getRequest() { return this.request; }
 }

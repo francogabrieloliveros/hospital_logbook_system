@@ -7,6 +7,7 @@ public class LabExam implements HospitalElement{
 	private Hospital hospital;
 	private String id;
 	private String testType;
+	private Patient patient;
 	private Staff orderingPhysician;
 	private Staff performingStaff;
 	private String status;
@@ -14,14 +15,14 @@ public class LabExam implements HospitalElement{
 	
 	public LabExam (Hospital hospital,
 					LabRequest labRequest,
-			        Staff orderingPhysician, 
 			        Staff performingStaff, 
 			        String status) {
 		
 		this.hospital = hospital;
 		this.labRequest = labRequest;
 		this.testType = labRequest.getRequest();
-		this.orderingPhysician = orderingPhysician;
+		this.patient = labRequest.getPatient();
+		this.orderingPhysician = labRequest.getStaff();
 		this.performingStaff = performingStaff;
 		this.status = status;
 		
@@ -29,15 +30,17 @@ public class LabExam implements HospitalElement{
 		addLogToHospital("Added new lab exam");
 	}
 	
-	public void update (Hospital hospital, 
-						String testType, 
-						Staff orderingPhysician, 
+	public void update (Hospital hospital,
+						Patient patient,
+						LabRequest labRequest,
 						Staff performingStaff, 
 						String status) {
 
 		this.hospital = hospital;
-		this.testType = testType;
-		this.orderingPhysician = orderingPhysician;
+		this.labRequest = labRequest;
+		this.testType = labRequest.getRequest();
+		this.patient = labRequest.getPatient();
+		this.orderingPhysician = labRequest.getStaff();
 		this.performingStaff = performingStaff;
 		this.status = status;
 		
@@ -46,9 +49,10 @@ public class LabExam implements HospitalElement{
 	
 	@Override
 	public String toString() {
-		return String.format("%s | testType=%s| orderingPhysician=%s | performingStaff=%s | status=%s",
+		return String.format("%s | testType=%s| patient=%s | orderingPhysician=%s | performingStaff=%s | status=%s",
                              id, 
                              testType, 
+                             patient.getName(),
                              orderingPhysician.getName(), 
                              performingStaff.getName(),
                              status);
