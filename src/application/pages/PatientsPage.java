@@ -193,7 +193,17 @@ public class PatientsPage {
 				return;
 			}
 			
-			patientCounter[0]++; // increment
+			// Create patient (should auto-add to hospital and l)
+			Patient newPatient = new Patient(hospital, patientName, patientDob, patientSex, patientNotes);
+			
+			// update listView
+			listView.getItems().add(newPatient.toString());
+			
+			// clear form
+			nameField.clear();
+			datePicker.setValue(null);
+			sexCombo.getSelectionModel().clearSelection();
+			infoArea.clear();
 		});
 		
 		// reset button logic
