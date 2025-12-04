@@ -68,7 +68,7 @@ public class PatientsPage {
 		String patientID = "PAT-" + paddedNumber;
 		
 		// create new patient object
-		Patient newPatient = new Patient(patientID, name, dob, sex, notes);
+		Patient newPatient = new Patient(hospital, patientID, name, dob, sex, notes);
 		
 		hospital.addPatient(newPatient);
 		

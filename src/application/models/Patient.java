@@ -4,6 +4,9 @@ import java.time.LocalDate;
 
 // patient class
 public class Patient implements HospitalElement {
+	// class fields
+	public static int lastId = 0;
+	private Hospital hospital;
 	private String id;
 	private String name;
 	private LocalDate dob; // date of birth
@@ -11,12 +14,15 @@ public class Patient implements HospitalElement {
 	private String notes;
 	
 	// constructor
-	public Patient(String id, String name, LocalDate dob, String sex, String notes) {
+	public Patient(Hospital hospital, String id, String name, LocalDate dob, String sex, String notes) {
+		this.hospital = hospital;
 		this.id = id;
 		this.name = name;
 		this.dob = dob;
 		this.sex = sex;
 		this.notes = notes;
+		
+		hospital.addPatient(this);
 	}
 	
 	// getters and setters
