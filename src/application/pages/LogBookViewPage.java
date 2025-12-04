@@ -1,15 +1,20 @@
 package application.pages;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import application.Main;
-import application.models.Hospital;
+import application.models.*;
 
 public class LogBookViewPage {
 	
@@ -134,12 +139,38 @@ public class LogBookViewPage {
         
         filterRow.getChildren().addAll(filterBox, comboBoxes, dateBox, boxes);
 		
-        //list view
-        ListView<String> listView = new ListView<>();
-		listView.getItems().add("STF-0001 | fullName=Mylene | role=MedTe");
-		listView.getStyleClass().add("list-view");
-		listView.getStyleClass().add("containers-shadow");
-		listView.setPrefHeight(400);
+		/* TABLE */
+		hospital.addLogBook(new LogBook("coco", "something", "this is a message"));
+		hospital.addLogBook(new LogBook("thea", "something", "this is a message"));
+		hospital.addLogBook(new LogBook("evan", "something", "this is a message"));
+		hospital.addLogBook(new LogBook("kurt", "something", "this is a message"));
+		
+		TableView<LogBook> table = new TableView<>();
+		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		
+		/* TABLE COLUMNS */
+		TableColumn<LogBook, LocalDateTime> colTimestamp = new TableColumn<>("Timestamp");
+		TableColumn<LogBook, String> colAuthor = new TableColumn<>("Author");
+		TableColumn<LogBook, String> colTag = new TableColumn<>("Tag");
+		TableColumn<LogBook, String> colMessage = new TableColumn<>("Message");
+		
+		colTimestamp.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
+        colAuthor.setCellValueFactory(new PropertyValueFactory<>("author"));
+        colTag.setCellValueFactory(new PropertyValueFactory<>("tag"));
+        colMessage.setCellValueFactory(new PropertyValueFactory<>("message"));
+        
+        colTimestamp.setPrefWidth(40);
+        colAuthor.setPrefWidth(30);
+        colTag.setPrefWidth(30);
+        
+        table.getColumns().addAll(colTimestamp, 
+                                  colAuthor, 
+                                  colTag, 
+                                  colMessage);
+        
+        // Add sample data
+        ObservableList<LogBook> data = FXCollections.observableArrayList(hospital.getLogBooks());
+        table.setItems(data);
 		
 		//export buttons
 		Button exportTXTButton = new Button("EXPORT TXT");
@@ -150,7 +181,7 @@ public class LogBookViewPage {
 		exportBox.setAlignment(Pos.BOTTOM_LEFT);
         
 		//main container
-		VBox root = new VBox(10, pageButtons ,logger, filterRow, listView, exportBox);
+		VBox root = new VBox(10, pageButtons ,logger, filterRow, table, exportBox);
 		root.getStyleClass().add("default-bg");
 		root.setPadding(new Insets(50));
 		Scene scene = new Scene(root, 1200, 700);
