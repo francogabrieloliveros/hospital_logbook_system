@@ -26,6 +26,8 @@ public class LabExam implements HospitalElement{
 		this.performingStaff = performingStaff;
 		this.status = status;
 		
+		this.patient.addLabExam(this);
+		
 		this.id = generateId();
 		addLogToHospital("Added new lab exam");
 	}
