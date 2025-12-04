@@ -26,9 +26,7 @@ public class PatientsPage {
 	private TextField findField;
 	
 	public PatientsPage(Hospital hospital) { this.hospital = hospital; }
-	
-	// patients list
-	private ArrayList<Patient> patients = new ArrayList<>();
+
 	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
 
 	public void setStageComponents(Stage stage, Main main) {
@@ -72,7 +70,7 @@ public class PatientsPage {
 		// create new patient object
 		Patient newPatient = new Patient(patientID, name, dob, sex, notes);
 		
-		patients.add(newPatient);
+		hospital.addPatient(newPatient);
 		
 		// update list
 		listView.getItems().add(newPatient.toString());
