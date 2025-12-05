@@ -508,6 +508,30 @@ public class LogBookViewPage {
 
 
 	private void exportToTXT() {
+		//specify path
+		Path path = Paths.get("src/storage/Logbooks.txt");
 		
+		try {
+			Files.createFile(path); //create file first, if it exists then catch will be used
+		}catch(IOException e) {}
+		
+		try{
+			//build one string
+			String content =  "Logbook Records\n";
+			content += String.format("%-20s | %-20s | %-20s | %-25s\n", "Author", "Tag", "Message", "Timestamp");
+			content += String.format("%-20s | %-20s | %-20s | %-25s\n", "--------------------", "--------------------", "--------------------", "-------------------------");
+			ArrayList<LogBook> logbooks = this.hospital.getLogBooks();
+			for(LogBook lb:logbooks) {
+				content += String.format("%-20s | %-20s | %-20s | %-25s\n", lb.getAuthor(), lb.getTag(), lb.getMessage(), lb.getTimestamp().toString());
+			}
+			
+			content += "\nTotal Entries:" + logbooks.size() + "\n";
+			content += "Exported on: " + LocalDateTime.now().toString() + "\n";
+			
+			//write the whole string into the file
+			Files.writeString(path, content); //overwrites the prev if there is one
+			showAlert("TXT Export Successful", "Logbook exported successfully!");
+		}catch(IOException e) {}
+
 	}
 }
