@@ -234,10 +234,10 @@ public class LabRequestsPage {
             }
             
             if(labRequest != null){
-                patientComboBox.setValue(labRequest.getPatient());
+                patientComboBox.setValue(labRequest.getPatient().getName());
                 requestComboBox.setValue(labRequest.getRequest());
                 statusComboBox.setValue(labRequest.getStatus());
-                staffComboBox.setValue(labRequest.getStaff());
+                staffComboBox.setValue(labRequest.getStaff().getName());
             }
 	}
 

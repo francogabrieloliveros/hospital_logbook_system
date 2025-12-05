@@ -140,6 +140,8 @@ public class StaffPage {
 		        nameField.setText(selected.getName());
 		        roleField.setValue(selected.getRole());
 		        statusField.setValue(selected.getStatus());
+		    } else {
+		    	resetInputFields();
 		    }
 		});
 		
@@ -250,9 +252,12 @@ public class StaffPage {
 	private void resetInputFields() {
 		nameField.setText("");
 		roleField.setValue(null);
-		roleField.getSelectionModel().clearSelection();
+//		roleField.getSelectionModel().clearSelection();
+		roleField.setPromptText("Select role");
 		statusField.setValue(null);
 		statusField.getSelectionModel().clearSelection();
+		statusField.setPromptText("Select status");
 		findField.setText("");
+		nameField.requestFocus();
 	}
 }
