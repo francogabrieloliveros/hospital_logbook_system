@@ -1,7 +1,9 @@
 Logbook Records
 Author               | Tag                  | Message              | Timestamp                
 -------------------- | -------------------- | -------------------- | -------------------------
-Thea                 | incident             | hi                   | 2025-12-05T19:49:59.071068976
+                     | staff                | Added new staff      | 2025-12-05T22:07:16.688934709
+                     | patient              | Added new patient    | 2025-12-05T22:07:42.929181493
+                     | labrequest           | Added new lab request | 2025-12-05T22:07:59.452542407
 
-Total Entries:1
-Exported on: 2025-12-05T19:50:01.884807119
+Total Entries:3
+Exported on: 2025-12-05T22:08:25.513527481

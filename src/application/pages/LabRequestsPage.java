@@ -138,7 +138,7 @@ public class LabRequestsPage {
 	    
 	    //find specifications
 	    Label find = new Label("Find");
-	    TextField findField = new TextField();
+	    findField = new TextField();
 	    findField.setPromptText("Search patient/request/status");
 	    findField.setPrefWidth(260);
 	    findField.textProperty().addListener((observable, oldValue, newValue) -> { //functionalities of the search buttons
@@ -147,13 +147,13 @@ public class LabRequestsPage {
 	    VBox findBox = new VBox(10, find, findField);
 	    
 	    //search button specifications with funcionality
-	    Button searchButton = new Button("Search");
+	    searchButton = new Button("Search");
 	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
 	    searchButton.setDisable(true);
 	    searchButton.setOnAction(e -> searchLabRequests());
 	    
 	    //reset button specifications with functionalities
-	    Button resetButton = new Button("Reset");
+	    resetButton = new Button("Reset");
 	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
 	    resetButton.setDisable(true);
 	    resetButton.setOnAction(e -> {
