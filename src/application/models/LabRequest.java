@@ -45,6 +45,10 @@ public class LabRequest implements HospitalElement{
 		addLogToHospital("Updated lab request information");
 	}
 	
+	public void delete() {
+		addLogToHospital("Deleted lab request information");
+	}
+	
 	// Getters
 	public String getID() { return this.id; }
 	public Patient getPatient() { return this.patient; }
