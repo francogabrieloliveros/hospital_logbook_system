@@ -1,5 +1,9 @@
 package application.pages;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -417,7 +421,7 @@ public class LogBookViewPage {
             if(hasTextFilter){ //checking the filter text field
                 String logDateString = logBook.getTimestamp().toLocalDate().toString();
                 String logText = (logBook.getAuthor() + " " + logBook.getTag() + " " + logBook.getMessage() + " " + logDateString).toLowerCase();
-                String[] keywords = filterText.split("\\s+"); //input in textfield split at spaces
+                String[] keywords = filterText.split(","); //input in textfield split at commas
                 
                 if(matchAllKeywords){ //if match all checkbox checked
                     //all key word must be in the log book
@@ -444,18 +448,11 @@ public class LogBookViewPage {
             
             if (matchAllKeywords) { 
                 //when match all keywords is checked, all applied filters must match (author AND tag AND date AND text)
-                shouldShow = true;
-                if (hasAuthorFilter) shouldShow = shouldShow && matchesAuthor;
-                if (hasTagFilter) shouldShow = shouldShow && matchesTag;
-                if (hasDateFilter) shouldShow = shouldShow && matchesDate;
-                if (hasTextFilter) shouldShow = shouldShow && matchesText;
+            	//either there is no input or it matches are the acceptable outcomes
+            	shouldShow = (!hasAuthorFilter || matchesAuthor) && (!hasTagFilter || matchesTag) && (!hasDateFilter || matchesDate) && (!hasTextFilter || matchesText);
             } else {
-            	 //when match all keywords is not checked, show if any applied filter matches (author OR tag OR date OR text)
-                shouldShow = false;
-                if (hasAuthorFilter && matchesAuthor) shouldShow = true;
-                if (hasTagFilter && matchesTag) shouldShow = true;
-                if (hasDateFilter && matchesDate) shouldShow = true;
-                if (hasTextFilter && matchesText) shouldShow = true;
+            	 //when match all keywords is not checked, show if any applied filter matches
+                shouldShow = (hasAuthorFilter && matchesAuthor) || (hasTagFilter && matchesTag) || (hasDateFilter && matchesDate) || (hasTextFilter && matchesText);
             }
             
             if(shouldShow){ //add or show the ones that fit the filter
@@ -499,6 +496,13 @@ public class LogBookViewPage {
 
 	//persistence
 	private void exportToCSV() {
+		//specify path
+		Path path = Paths.get("src/storage/Logbooks.csv");
+		//create file first, if it exists then catch will be used
+		try {
+			Files.createFile(path);
+		}catch(IOException e) {}
+		
 		
 	}
 
