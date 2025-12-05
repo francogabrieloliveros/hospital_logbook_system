@@ -22,6 +22,7 @@ public class StaffPage {
     private TextField findField = new TextField();
     private Button searchButton = new Button("Search");
     private Button resetButton = new Button("Reset");
+    private ListView<Staff> listView = new ListView<>();
 	private Hospital hospital;
 	
 	public StaffPage(Hospital hospital) { this.hospital = hospital; }
@@ -50,7 +51,6 @@ public class StaffPage {
 		
 		/* ------------------------------------------- LIST VIEW -------------------------------------------*/
 		// List view
-		ListView<Staff> listView = new ListView<>();
 		listView.getStyleClass().add("list-view");
 		listView.getStyleClass().add("containers-shadow");
 		
@@ -68,16 +68,15 @@ public class StaffPage {
 	    
 	    // Role combo box
 	    Label role = new Label("Role");
-	    roleField.getItems().addAll("MedTech", "Pathologist", "Phlebotomist", "Clerk", "Other");
-	    roleField.setPromptText("Select role");
-	    roleField.getSelectionModel().clearSelection();
+	    roleField.getItems().addAll("Select role", "MedTech", "Pathologist", "Phlebotomist", "Clerk", "Other");
+	    roleField.setValue("Select role");
 	    VBox roleInput = new VBox(20, role, roleField);
 	    roleField.setMaxWidth(Double.MAX_VALUE);
 	    
 	    // Status combo box
 	    Label status = new Label("Status");
-	    statusField.getItems().addAll("active", "inactive");
-	    statusField.setPromptText("Select status");
+	    statusField.getItems().addAll("Select status", "active", "inactive");
+	    statusField.setValue("Select status");
 	    VBox statusInput = new VBox(20, status, statusField);
 	    statusField.setMaxWidth(Double.MAX_VALUE);
 
@@ -112,7 +111,6 @@ public class StaffPage {
 	    
 	    // Disable Buttons
 	    searchButton.setDisable(true);
-	    resetButton.setDisable(true);
 	    
 	    // Finding section
 	    VBox findInput = new VBox(20, find, findField, findButtons);
@@ -203,14 +201,32 @@ public class StaffPage {
 			resetInputFields();
 		});
 		
-		resetButton.setOnAction(e -> resetInputFields());
-
+		resetButton.setOnAction(e -> {
+			resetInputFields();
+			
+			// Reset listview to show all staffs
+			items.setAll(hospital.getStaffs());
+			listView.setItems(items);
+		});
 		
 		/* ------------------------------------------- ROOT & SCENE -------------------------------------------*/
 		// Create root
 		VBox root = new VBox(20, pageButtons, mainLedger);
 		root.setPadding(new Insets(50));
 		root.getStyleClass().add("default-bg");
+		
+		// Remove listview selection on keypress ESC
+		root.setOnKeyPressed(e -> {
+		    if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+		        listView.getSelectionModel().clearSelection();
+		    }
+		});
+		listView.setOnKeyPressed(e -> {
+		    if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+		        listView.getSelectionModel().clearSelection();
+		    }
+		});
+		
 		
 		// Create scene and add styles
 		Scene staffPageScene = new Scene(root, 1200, 720);
@@ -223,13 +239,18 @@ public class StaffPage {
 	
 	private void updateLoggerButtons() {
 	    boolean nameFilled = !nameField.getText().isBlank();
-	    boolean roleFilled = roleField.getValue() != null;
-	    boolean statusFilled = statusField.getValue() != null;
+	    boolean roleFilled = roleField.getValue() != "Select role";
+	    boolean statusFilled = statusField.getValue() != "Select status";
+	    boolean listViewSelected = listView.getSelectionModel().getSelectedItem() != null;
 
-	    if (nameFilled && roleFilled && statusFilled) {
-	    	addButton.setDisable(false);
+	    if (nameFilled && roleFilled && statusFilled && listViewSelected) {
+	    	addButton.setDisable(true);
 			updateButton.setDisable(false);
 			deleteButton.setDisable(false);
+	    } else if (nameFilled && roleFilled && statusFilled && !listViewSelected) {
+	    	addButton.setDisable(false);
+			updateButton.setDisable(true);
+			deleteButton.setDisable(true);
 	    } else {
 	    	addButton.setDisable(true);
 			updateButton.setDisable(true);
@@ -242,22 +263,18 @@ public class StaffPage {
 
 	    if (findFilled) {
 	    	searchButton.setDisable(false);
-			resetButton.setDisable(false);
 	    } else {
 	    	searchButton.setDisable(true);
-			resetButton.setDisable(true);
 	    }
 	}
 	
 	private void resetInputFields() {
 		nameField.setText("");
-		roleField.setValue(null);
-//		roleField.getSelectionModel().clearSelection();
-		roleField.setPromptText("Select role");
-		statusField.setValue(null);
-		statusField.getSelectionModel().clearSelection();
-		statusField.setPromptText("Select status");
+		roleField.setValue("Select role");
+		statusField.setValue("Select status");
 		findField.setText("");
 		nameField.requestFocus();
+		
+		listView.getSelectionModel().clearSelection();
 	}
 }
