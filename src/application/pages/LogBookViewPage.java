@@ -511,7 +511,7 @@ public class LogBookViewPage {
 	    )) {
 	    	
 	    	w.write("Timestamp,Author,Tag,Message\n"); // Header
-	    	for(LogBook log : hospital.getLogBooks()) {
+	    	for(LogBook log : data) {
 	    		w.write(String.join(",", 
 	    				log.getTimestamp().toString(),
 	    				log.getAuthor(),
