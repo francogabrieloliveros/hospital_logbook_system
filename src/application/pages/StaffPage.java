@@ -68,7 +68,7 @@ public class StaffPage {
 	    
 	    // Role combo box
 	    Label role = new Label("Role");
-	    roleField.getItems().setAll("Select role", "MedTech", "Pathologist", "Phlebotomist", "Clerk", "Other");
+	    roleField.getItems().setAll("Select role", "MedTech", "Pathologist", "Phlebotomist", "RadTech", "Clerk", "Other");
 	    roleField.setValue("Select role");
 	    VBox roleInput = new VBox(20, role, roleField);
 	    roleField.setMaxWidth(Double.MAX_VALUE);
