@@ -123,7 +123,7 @@ public class PatientsPage {
 		Label date = new Label("DOB");
 		datePicker = new DatePicker(LocalDate.now());
 		datePicker.setPrefWidth(300);
-		VBox dateBox = new VBox(5, date, new Label(" "), datePicker);
+		VBox dateBox = new VBox(5, date, datePicker);
 		
 		// sex ComboBox
 		Label sexLabel = new Label("Sex");
