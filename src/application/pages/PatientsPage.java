@@ -138,7 +138,7 @@ public class PatientsPage {
 		// info area
 		infoArea = new TextArea();
 		infoArea.setPromptText("Enter patient information");
-		infoArea.setPrefRowCount(10);
+		infoArea.setPrefRowCount(4);
 		
 		// Lab exams list
 		Label labExamLabel = new Label ("Lab Exams");
@@ -152,7 +152,6 @@ public class PatientsPage {
 		
 			// Layout for Lab Exams section
 		VBox labExamBox = new VBox(5, labExamLabel, labExamListView, addLabExamButton);
-		labExamBox.setPadding(new Insets(10));
 		
 		// CRUD buttons
 		Button addButton = new Button("Add");
@@ -195,7 +194,7 @@ public class PatientsPage {
 		});
 
 		// VBOX logger
-	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), labExamBox, new Separator(), findBox);
+	    VBox logger = new VBox(15, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), labExamBox, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
 	    
 	    // ~~~ event handlers ~~~
