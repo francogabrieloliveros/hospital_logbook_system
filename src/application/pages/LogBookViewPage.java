@@ -1,9 +1,7 @@
 package application.pages;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import application.Main;
@@ -490,14 +489,37 @@ public class LogBookViewPage {
 
 	//persistence
 	private void exportToCSV() {
-		//specify path
-		Path path = Paths.get("src/storage/Logbooks.csv");
-		//create file first, if it exists then catch will be used
-		try {
-			Files.createFile(path);
-		}catch(IOException e) {}
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Export to CSV");
+		fileChooser.setInitialFileName("logs.csv");
 		
+		// Limit to csv files
+		fileChooser.getExtensionFilters().add(
+		    new FileChooser.ExtensionFilter("CSV Files", "*.csv")
+		);
+
+		// File selection stage
+		File file = fileChooser.showSaveDialog(new Stage());
+		if (file == null) return;
 		
+		Path path = file.toPath();
+
+	    try (BufferedWriter w = Files.newBufferedWriter(
+	    		path, 
+	    		StandardOpenOption.CREATE,
+	    		StandardOpenOption.TRUNCATE_EXISTING
+	    )) {
+	    	
+	    	w.write("Date,Author,Tag,Message\n"); // Header
+	    	for(LogBook log : hospital.getLogBooks()) {
+	    		w.write(String.join(",", 
+	    				log.getTimestamp().toString(),
+	    				log.getAuthor(),
+	    				log.getTag(),
+	    				log.getMessage()));
+	    		w.write("\n");
+	    	}
+	    } catch (IOException e) { e.printStackTrace(); }
 	}
 
 
