@@ -146,6 +146,20 @@ public class PatientsPage {
 		labExamListView.getStyleClass().addAll("list-view", "containers=shadow");
 		labExamListView.setPrefHeight(50);
 		
+		/*
+		 * 	We want the Lab Exams in a patient's profile to show all existing
+		 * 	lab exams and allow adding new ones via the Lab Exams Page
+		 * 
+		 * 	TODO:
+		 * 		- Make sure `Patient` will store lab exams properly
+		 * 		- Update Patients Page to be able to show lab exams
+		 * 		- Make the Lab Exams Page actually create lab exams for the patient
+		 * 		- Make the Patients Page and Lab Exams Page share a selected patient
+		 * 
+		 * 	hopefully after doing this, the Patients Page will be able to show 
+		 * 	all the existing lab exams of a patient, and also be able to create new ones
+		 *  via the LabExamsPage.
+		 */
 		// CRUD buttons
 		Button addButton = new Button("Add");
 		Button updateButton = new Button("Update");
