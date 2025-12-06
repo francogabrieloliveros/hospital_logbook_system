@@ -301,13 +301,15 @@ public class PatientsPage {
 			// public Staff (Hospital hospital, String name, String role, String status)
 			// public LabRequest(Hospital hospital, Patient patient, String request, String status, Staff staff)
 			Staff dummyStaff = new Staff(hospital, "Dr. Thea", "test role", "active");
-			LabRequest dummyRequest = new LabRequest(hospital, selectedPatient, "test request", "X-ray", dummyStaff);
+			if (!hospital.getStaffs().contains(dummyStaff)) { // add dummy staff to hospital
+				hospital.addStaff(dummyStaff);
+			}
 			
-			String status = "Pending";
+			LabRequest dummyRequest = new LabRequest(hospital, selectedPatient, "test request", "X-ray", dummyStaff);
 			
 			// create new lab exam
 			// public LabExam (Hospital hospital, LabRequest labRequest, Staff performingStaff, String status)
-			LabExam newExam = new LabExam(hospital, dummyRequest, dummyStaff, status);
+			LabExam newExam = new LabExam(hospital, dummyRequest, dummyStaff, "Pending");
 			
 			// patient already adds this exam automatically
 			refreshLabExamsListView(selectedPatient, labExamListView);
