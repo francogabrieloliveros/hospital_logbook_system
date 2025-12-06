@@ -510,7 +510,7 @@ public class LogBookViewPage {
 	    		StandardOpenOption.TRUNCATE_EXISTING
 	    )) {
 	    	
-	    	w.write("Date,Author,Tag,Message\n"); // Header
+	    	w.write("Timestamp,Author,Tag,Message\n"); // Header
 	    	for(LogBook log : hospital.getLogBooks()) {
 	    		w.write(String.join(",", 
 	    				log.getTimestamp().toString(),
