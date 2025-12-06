@@ -68,7 +68,7 @@ public class LabExam implements HospitalElement{
 	@Override
 	public String generateId() {
 		LabExam.lastId++;
-		String idNumber = String.format("%04d", Staff.lastId);
+		String idNumber = String.format("%04d", LabExam.lastId);
 		
 		return "LBE-" + idNumber;
 	}
