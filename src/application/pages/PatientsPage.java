@@ -40,15 +40,14 @@ public class PatientsPage {
 		ListView<String> listView = buildPatientListView();
 
 		// right panel: patient form UI
-		VBox logger = buildLoggerSection(listView);
+		ScrollPane logger = buildLoggerSection(listView);
 		
-		HBox mainLedger = new HBox(50, listView, logger); // refactor HBox main -> mainLedger
+		HBox mainLedger = new HBox(25, listView, logger); // refactor HBox main -> mainLedger
 		HBox.setHgrow(listView, Priority.ALWAYS);
 		HBox.setHgrow(logger, Priority.ALWAYS);
-		VBox.setVgrow(mainLedger, Priority.ALWAYS);
 		
-		listView.prefWidthProperty().bind(mainLedger.widthProperty().subtract(500).divide(2));
-		logger.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
+		listView.prefWidthProperty().bind(mainLedger.heightProperty().multiply(0.4));
+		logger.prefWidthProperty().bind(mainLedger.heightProperty().multiply(0.6));
 		
 		VBox root = new VBox(20, pageButtons, mainLedger);
 		root.setPadding(new Insets(50));
@@ -114,7 +113,7 @@ public class PatientsPage {
 	}
 	
 	// helper method to set up left panel (input fields)
-	private VBox buildLoggerSection(ListView<String> listView) {
+	private ScrollPane buildLoggerSection(ListView<String> listView) {
 		// name input
 		Label name = new Label("Name");
 		nameField = new TextField();
@@ -142,24 +141,38 @@ public class PatientsPage {
 		infoArea.setPromptText("Enter patient information");
 		infoArea.setPrefRowCount(4);
 		
-		// Lab exams list
-		Label labExamLabel = new Label ("Lab Exams");
-		ListView<String> labExamListView = new ListView<>();
-		labExamListView.getStyleClass().addAll("list-view", "containers=shadow");
-		labExamListView.setPrefHeight(100);
-		
-			// add lab exam button
-		Button addLabExamButton = new Button("Add Lab Exam");
-		addLabExamButton.getStyleClass().addAll("page-button-active", "page-button");
-		
-			// Layout for Lab Exams section
-		VBox labExamBox = new VBox(5, labExamLabel, labExamListView, addLabExamButton);
-		
 		// CRUD buttons
 		Button addButton = new Button("Add");
 		Button updateButton = new Button("Update");
 		Button deleteButton = new Button("Delete");
 		HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
+		
+		// Lab exams list
+		Label labExamLabel = new Label ("Lab Exams");
+		ListView<String> labExamListView = new ListView<>();
+		labExamListView.getStyleClass().addAll("list-view", "containers-shadow");
+		labExamListView.setMinHeight(150);
+		labExamListView.setPrefHeight(200);
+		VBox.setVgrow(labExamListView, Priority.ALWAYS);
+		
+		// Lab Exam controls
+		Label staffLabel = new Label("Performing Staff:");
+		ComboBox<Staff> staffCombo = new ComboBox<>();
+		staffCombo.getItems().addAll(hospital.getStaffs());
+		staffCombo.setPromptText("Select Staff");
+		
+		Label requestLabel = new Label("Lab Request:");
+		ComboBox<LabRequest> requestCombo = new ComboBox<>();
+		requestCombo.getItems().addAll(hospital.getLabRequests());
+		requestCombo.setPromptText("Select Lab Request");
+
+		VBox labControlsBox = new VBox(10, staffLabel, staffCombo, requestLabel, requestCombo);
+			
+		Button addLabExamButton = new Button("Add Lab Exam");
+		addLabExamButton.getStyleClass().addAll("page-button-active", "page-button");
+		
+		// Layout for Lab Exams section
+		VBox labExamBox = new VBox(10, labExamLabel, labExamListView, labControlsBox, addLabExamButton);
 		
 		// Search section
 		Label find = new Label("find");
@@ -198,6 +211,15 @@ public class PatientsPage {
 		// VBOX logger
 	    VBox logger = new VBox(15, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), labExamBox, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
+	    
+	    // scroll pane for logger VBox
+	    ScrollPane loggerScroll = new ScrollPane(logger);
+	    loggerScroll.setFitToWidth(true);
+	    loggerScroll.setFitToHeight(true);
+	    loggerScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+	    loggerScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	    
+	    loggerScroll.getStyleClass().add("logger-scroll");
 	    
 	    // ~~~ event handlers ~~~
 	    // add button logic
@@ -315,7 +337,7 @@ public class PatientsPage {
 			refreshLabExamsListView(selectedPatient, labExamListView);
 		});
 		
-		return logger;
+		return loggerScroll;
 	}
 	
 	// helper method to update/refresh the lab exams list

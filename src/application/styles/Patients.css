@@ -105,3 +105,14 @@
 .containers-shadow {
 	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 7, 0.5, 1, 2);
 }
+
+.logger-scroll {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.logger-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
