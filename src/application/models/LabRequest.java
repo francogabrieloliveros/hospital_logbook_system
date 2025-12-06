@@ -35,7 +35,7 @@ public class LabRequest implements HospitalElement{
 	@Override
 	public String generateId() {
 		LabRequest.lastId++;
-		String idNumber = String.format("%04d", Staff.lastId);
+		String idNumber = String.format("%04d", LabRequest.lastId);
 		
 		return "LBR-" + idNumber;
 	}
