@@ -24,12 +24,7 @@ public class LabRequest implements HospitalElement{
 
 	@Override
 	public String toString() {
-		return String.format("%s | testType=%s | patient=%s | physician=%s | status=%s", 
-				             this.id, 
-				             this.request, 
-				             this.patient.getName(), 
-				             this.staff.getName(), 
-				             this.status);
+		return String.format("%s | testType=%s | patient=%s | physician=%s | status=%s", this.id, this.request, this.patient.getName(), this.staff.getName(), this.status);
 	}
 	
 	@Override
@@ -48,6 +43,10 @@ public class LabRequest implements HospitalElement{
 	public void update(String status) {
 		this.status = status;
 		addLogToHospital("Updated lab request information");
+	}
+	
+	public void delete() {
+		addLogToHospital("Deleted lab request information");
 	}
 	
 	// Getters

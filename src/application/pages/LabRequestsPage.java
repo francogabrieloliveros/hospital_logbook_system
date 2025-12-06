@@ -86,10 +86,11 @@ public class LabRequestsPage {
 	    //staff dropdown and label 
 	    Label staffLabel = new Label("Available Staff:");
 	    staffComboBox = new ComboBox<>();
-	    ArrayList<Staff> staffArray = hospital.getStaffs();
-	    for(Staff staff:staffArray) {
-	    	staffComboBox.getItems().add(staff.getName());
-	    }
+	    staffComboBox.setDisable(true); //to be enabled when other inputs are complete first
+//	    ArrayList<Staff> staffArray = hospital.getStaffs();
+//	    for(Staff staff:staffArray) {
+//	    	staffComboBox.getItems().add(staff.getName());
+//	    }
 	    staffComboBox.setPrefWidth(400);
 	    VBox staffBox = new VBox(5, staffLabel, staffComboBox);
 	    
@@ -138,7 +139,7 @@ public class LabRequestsPage {
 	    
 	    //find specifications
 	    Label find = new Label("Find");
-	    TextField findField = new TextField();
+	    findField = new TextField();
 	    findField.setPromptText("Search patient/request/status");
 	    findField.setPrefWidth(260);
 	    findField.textProperty().addListener((observable, oldValue, newValue) -> { //functionalities of the search buttons
@@ -147,13 +148,13 @@ public class LabRequestsPage {
 	    VBox findBox = new VBox(10, find, findField);
 	    
 	    //search button specifications with funcionality
-	    Button searchButton = new Button("Search");
+	    searchButton = new Button("Search");
 	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
 	    searchButton.setDisable(true);
 	    searchButton.setOnAction(e -> searchLabRequests());
 	    
 	    //reset button specifications with functionalities
-	    Button resetButton = new Button("Reset");
+	    resetButton = new Button("Reset");
 	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
 	    resetButton.setDisable(true);
 	    resetButton.setOnAction(e -> {
@@ -165,7 +166,7 @@ public class LabRequestsPage {
 	    HBox findButtons = new HBox(10, resetButton, searchButton);
 	    findButtons.setAlignment(Pos.BOTTOM_LEFT);
 	    
-	    HBox findInput = new HBox(20, findBox, findButtons);
+	    VBox findInput = new VBox(20, findBox, findButtons);
 		
 	    VBox logger = new VBox(20, patientBox, requestStatusRow, staffBox, buttonsBox, separator, findInput);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
@@ -175,17 +176,26 @@ public class LabRequestsPage {
 		HBox.setHgrow(logger, Priority.ALWAYS);
 		VBox.setVgrow(mainLedger, Priority.ALWAYS);
 		
-		listView.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
-		logger.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
+		listView.prefWidthProperty().bind(mainLedger.widthProperty().multiply(0.60));
+		logger.prefWidthProperty().bind(mainLedger.widthProperty().multiply(0.40));
 		
 		//adding a listener in the listview for the update and delete buttons
 		listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue!= null) {
+				//disable combo boxes that should not be changed
+				patientComboBox.setDisable(true);
+				requestComboBox.setDisable(true);
+				staffComboBox.setDisable(true);
+				assignButton.setDisable(true);
+				
+				//enable buttons that are needed
 				updateButton.getStyleClass().setAll("page-button-active", "page-button");
                 deleteButton.getStyleClass().setAll("page-button-active", "page-button");
                 updateButton.setDisable(false);
                 deleteButton.setDisable(false);
                 loadLabRequestData(newValue);
+			}else { //if there is no selected
+				clearInputs();
 			}
 		});
 		
@@ -193,15 +203,26 @@ public class LabRequestsPage {
 		root.setPadding(new Insets(50));
 		root.getStyleClass().add("default-bg");
 		
-		Scene staffPageScene = new Scene(root, 1080, 720);
-		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/StaffPage.css").toExternalForm());
-		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
+		Scene labReqPageScene = new Scene(root, 1080, 720);
+		labReqPageScene.getStylesheets().add(getClass().getResource("/application/styles/LabRequest.css").toExternalForm());
+		labReqPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		
-		stage.setScene(staffPageScene);
+		stage.setScene(labReqPageScene);
 		stage.setResizable(false);
 		stage.show();
 	}
-
+	
+	private void loadStaffs() { //show staff depending on the request of the patient
+		
+	}
+	
+	private void clearInputs() {
+		patientComboBox.setPromptText("");
+		requestComboBox.setPromptText("");
+		statusComboBox.setPromptText("");
+		staffComboBox.setPromptText("");
+	}
+	
 	private void validateSearchButtons() {
 		boolean isFieldEmpty = findField.getText().isEmpty();
         
@@ -219,26 +240,26 @@ public class LabRequestsPage {
         }
 	}
 
-	private void loadLabRequestData(String selectedItem) { 
-            String[] parts = selectedItem.split(" \\| ");
-            String id = parts[0];
-            
-            //find the lab request in hospital
-            LabRequest labRequest = null;
-            List<LabRequest> labRequests = hospital.getLabRequests();
-            for(LabRequest lr : labRequests){
-                if(lr.getID().equals(id)){
-                    labRequest = lr;
-                    break;
-                }
+	private void loadLabRequestData(String selectedItem) { //gets the values of the lab request selected from the hospital and sets the values of the combo box to it
+        String[] parts = selectedItem.split(" \\| ");
+        String id = parts[0];
+        
+        //find the lab request in hospital
+        LabRequest labRequest = null;
+        List<LabRequest> labRequests = hospital.getLabRequests();
+        for(LabRequest lr : labRequests){
+            if(lr.getID().equals(id)){
+                labRequest = lr;
+                break;
             }
-            
-            if(labRequest != null){
-                patientComboBox.setValue(labRequest.getPatient().getName());
-                requestComboBox.setValue(labRequest.getRequest());
-                statusComboBox.setValue(labRequest.getStatus());
-                staffComboBox.setValue(labRequest.getStaff().getName());
-            }
+        }
+        
+        if(labRequest != null){
+            patientComboBox.setValue(labRequest.getPatient().getName());
+            requestComboBox.setValue(labRequest.getRequest());
+            statusComboBox.setValue(labRequest.getStatus());
+            staffComboBox.setValue(labRequest.getStaff().getName());
+        }
 	}
 
 	private void searchLabRequests() {
@@ -262,90 +283,94 @@ public class LabRequestsPage {
 	}
 
 	private void deleteLabRequest(String selectedItem) {
-            //getting the id form the listview
-            String[] parts = selectedItem.split(" \\| ");
-            String id = parts[0];
-            
-            //remove the labrequest fromt the hospital
-            boolean removed = false;
-            List<LabRequest> labRequests = hospital.getLabRequests();
-            for (int i = 0; i < labRequests.size(); i++) {
-                if (labRequests.get(i).getID().equals(id)) {
-                    labRequests.remove(i);
-                    removed = true;
-                    break;
-                }
+        //getting the id form the listview
+        String[] parts = selectedItem.split(" \\| ");
+        String id = parts[0];
+        
+        //remove the labrequest fromt the hospital
+        boolean removed = false;
+        List<LabRequest> labRequests = hospital.getLabRequests();
+        for (int i = 0; i < labRequests.size(); i++) {
+            if (labRequests.get(i).getID().equals(id)) {
+            	labRequests.get(i).delete();
+                labRequests.remove(i);
+                removed = true;
+                break;
             }
-            
-            if (removed) {
-                updateListView();
-                showAlert("Success", "Lab Request deleted successfully!");
-            }
+        }
+        
+        if (removed) {
+            updateListView();
+            showAlert("Success", "Lab Request deleted successfully!");
+        }
+        clearInputs();
 	}
 
 	private void updateLabRequest(String selectedItem) {
-            //extract the id in teh selected item in listview
-            String[] parts = selectedItem.split(" \\| ");
-            String id = parts[0];
-            
-            //find the lab request
-            LabRequest labRequest = null;
-            List<LabRequest> labRequestArray = hospital.getLabRequests();
-            for (LabRequest lr : labRequestArray) {
-                if (lr.getID().equals(id)) {
-                    labRequest = lr;
-                    break;
-                }
+		
+        //extract the id in teh selected item in listview
+        String[] parts = selectedItem.split(" \\| ");
+        String id = parts[0];
+        
+        //find the lab request
+        LabRequest labRequest = null;
+        List<LabRequest> labRequestArray = hospital.getLabRequests();
+        for (LabRequest lr : labRequestArray) {
+            if (lr.getID().equals(id)) {
+                labRequest = lr;
+                break;
             }
-            
-            if (labRequest != null && statusComboBox.getValue() != null) {
-                labRequest.update(statusComboBox.getValue());
-                updateListView();
-                showAlert("Success", "Lab Request updated successfully!");
-            }	
+        }
+        
+        if (labRequest != null && statusComboBox.getValue() != null) {
+            labRequest.update(statusComboBox.getValue());
+            updateListView();
+            showAlert("Success", "Lab Request updated successfully!");
+        }	
+        clearInputs();
 	}
 
 	private void createLabRequest() {
-			String patientName = patientComboBox.getValue();
-            String requestType = requestComboBox.getValue();
-            String status = statusComboBox.getValue();
-            String staffName = staffComboBox.getValue();
+		String patientName = patientComboBox.getValue();
+        String requestType = requestComboBox.getValue();
+        String status = statusComboBox.getValue();
+        String staffName = staffComboBox.getValue();
+        
+        //find the patient in the array in hospital
+        Patient patient = null; //initialization
+        ArrayList<Patient> patientsArray = this.hospital.getPatients();
+        for(Patient p:patientsArray) {
+        	if(p.getName().equals(patientName)) {
+        		patient = p;
+        		break;
+        	}
+        }
+        
+        //find staff in staffarray in hospital
+        Staff staff = null;
+        ArrayList<Staff> staffArray = this.hospital.getStaffs();
+        for(Staff s:staffArray) {
+        	if(s.getName().equals(staffName)) {
+        		staff = s;
+        		break;
+        	}
+        }
+        
+        if(patient!=null && staff!= null) {
+        	hospital.addLabRequest(new LabRequest(hospital, patient, requestType, status, staff));
+        	
+        	//clear the previous inputs
+        	patientComboBox.setValue(null);
+            requestComboBox.setValue(null);
+            statusComboBox.setValue(null);
+            staffComboBox.setValue(null);
             
-            //find the patient in the array in hospital
-            Patient patient = null; //initialization
-            ArrayList<Patient> patientsArray = this.hospital.getPatients();
-            for(Patient p:patientsArray) {
-            	if(p.getName().equals(patientName)) {
-            		patient = p;
-            		break;
-            	}
-            }
-            
-            //find staff in staffarray in hospital
-            Staff staff = null;
-            ArrayList<Staff> staffArray = this.hospital.getStaffs();
-            for(Staff s:staffArray) {
-            	if(s.getName().equals(staffName)) {
-            		staff = s;
-            		break;
-            	}
-            }
-            
-            if(patient!=null && staff!= null) {
-            	LabRequest labRequest = new LabRequest(hospital, patient, requestType, status, staff);
-            	hospital.addLabRequest(labRequest);
-            	
-            	//clear the previous inputs
-            	patientComboBox.setValue(null);
-                requestComboBox.setValue(null);
-                statusComboBox.setValue(null);
-                staffComboBox.setValue(null);
-                
-                updateListView();
-                showAlert("Success", "Lab Request created successfully!");
-            }else {
-            	showAlert("Error", "Could not find patient or staff");
-            }
+            updateListView();
+            showAlert("Success", "Lab Request created successfully!");
+        }else {
+        	showAlert("Error", "Could not find patient or staff");
+        }
+        clearInputs();
 	}
 
 	private void showAlert(String title, String message) {
@@ -356,7 +381,13 @@ public class LabRequestsPage {
         alert.showAndWait();
 	}
 
-	private void validateInputs() {
+	private void validateInputs() { //check if all input is complete
+		boolean filledForStaff = patientComboBox.getValue() != null && requestComboBox.getValue() != null && statusComboBox.getValue() != null;
+		if(filledForStaff) {
+			staffComboBox.setDisable(false);
+		}else {
+			staffComboBox.setDisable(true);
+		}
 		boolean allFilled = patientComboBox.getValue() != null && requestComboBox.getValue() != null && statusComboBox.getValue() != null && staffComboBox.getValue() != null;
 		if(allFilled) {
 			assignButton.getStyleClass().setAll("page-button-active", "page-button");
@@ -367,7 +398,7 @@ public class LabRequestsPage {
 		}
 	}
 
-	private void updateListView() {
+	private void updateListView() { //updates the listview depending on the array list in the hospital
 		 listView.getItems().clear();
 	        List<LabRequest> labRequests = hospital.getLabRequests();
 	        for (LabRequest labRequest : labRequests) {

@@ -512,11 +512,11 @@ public class LogBookViewPage {
 		try{
 			//build one string
 			String content =  "Logbook Records\n";
-			content += String.format("%-20s | %-20s | %-20s | %-25s\n", "Author", "Tag", "Message", "Timestamp");
-			content += String.format("%-20s | %-20s | %-20s | %-25s\n", "--------------------", "--------------------", "--------------------", "-------------------------");
+			content += String.format("%-20s | %-20s | %-60s | %-25s\n", "Author", "Tag", "Message", "Timestamp");
+			content += String.format("%-20s | %-20s | %-60s | %-25s\n", "--------------------", "--------------------", "--------------------", "-------------------------");
 			ArrayList<LogBook> logbooks = this.hospital.getLogBooks();
 			for(LogBook lb:logbooks) {
-				content += String.format("%-20s | %-20s | %-20s | %-25s\n", lb.getAuthor(), lb.getTag(), lb.getMessage(), lb.getTimestamp().toString());
+				content += String.format("%-20s | %-20s | %-60s | %-25s\n", lb.getAuthor(), lb.getTag(), lb.getMessage(), lb.getTimestamp().toString());
 			}
 			
 			content += "\nTotal Entries:" + logbooks.size() + "\n";

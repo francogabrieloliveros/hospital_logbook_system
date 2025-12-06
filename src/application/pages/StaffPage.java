@@ -68,14 +68,14 @@ public class StaffPage {
 	    
 	    // Role combo box
 	    Label role = new Label("Role");
-	    roleField.getItems().addAll("Select role", "MedTech", "Pathologist", "Phlebotomist", "Clerk", "Other");
+	    roleField.getItems().setAll("Select role", "MedTech", "Pathologist", "Phlebotomist", "Clerk", "Other");
 	    roleField.setValue("Select role");
 	    VBox roleInput = new VBox(20, role, roleField);
 	    roleField.setMaxWidth(Double.MAX_VALUE);
 	    
 	    // Status combo box
 	    Label status = new Label("Status");
-	    statusField.getItems().addAll("Select status", "active", "inactive");
+	    statusField.getItems().setAll("Select status", "active", "inactive");
 	    statusField.setValue("Select status");
 	    VBox statusInput = new VBox(20, status, statusField);
 	    statusField.setMaxWidth(Double.MAX_VALUE);
