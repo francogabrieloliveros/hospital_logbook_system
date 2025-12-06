@@ -144,7 +144,15 @@ public class PatientsPage {
 		Label labExamLabel = new Label ("Lab Exams");
 		ListView<String> labExamListView = new ListView<>();
 		labExamListView.getStyleClass().addAll("list-view", "containers=shadow");
-		labExamListView.setPrefHeight(50);
+		labExamListView.setPrefHeight(100);
+		
+			// add lab exam button
+		Button addLabExamButton = new Button("Add Lab Exam");
+		addLabExamButton.getStyleClass().addAll("page-button-active", "page-button");
+		
+			// Layout for Lab Exams section
+		VBox labExamBox = new VBox(5, labExamLabel, labExamListView, addLabExamButton);
+		labExamBox.setPadding(new Insets(10));
 		
 		// CRUD buttons
 		Button addButton = new Button("Add");
@@ -187,7 +195,7 @@ public class PatientsPage {
 		});
 
 		// VBOX logger
-	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, labExamLabel, labExamListView, loggerButtons, new Separator(), findBox);
+	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), labExamBox, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
 	    
 	    // ~~~ event handlers ~~~
