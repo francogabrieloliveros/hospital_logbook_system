@@ -13,6 +13,8 @@ import application.Main;
 import application.models.Hospital;
 import application.models.LabExam;
 import application.models.Patient;
+import application.models.Staff;
+import application.models.LabRequest;
 
 public class PatientsPage {
 
@@ -281,6 +283,34 @@ public class PatientsPage {
 			selectedPatient.addLogToHospital("Deleted patient");
 			// refresh list
 			listView.getItems().set(selectedIndex, selectedPatient.toString());
+		});
+		
+		// Add Lab Exam button logic
+		addLabExamButton.setOnAction(e -> {
+			int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+			if (selectedIndex < 0) {
+				showAlert("No Selecton", "Please select a patient to add a lab exam.");
+				return;
+			}
+			
+			Patient selectedPatient = hospital.getPatients().get(selectedIndex);
+			
+			// for demonstration: dummy lab request and staff object
+			// replace with actual form inputs later
+			
+			// public Staff (Hospital hospital, String name, String role, String status)
+			// public LabRequest(Hospital hospital, Patient patient, String request, String status, Staff staff)
+			Staff dummyStaff = new Staff(hospital, "Dr. Thea", "test role", "active");
+			LabRequest dummyRequest = new LabRequest(hospital, selectedPatient, "test request", "X-ray", dummyStaff);
+			
+			String status = "Pending";
+			
+			// create new lab exam
+			// public LabExam (Hospital hospital, LabRequest labRequest, Staff performingStaff, String status)
+			LabExam newExam = new LabExam(hospital, dummyRequest, dummyStaff, status);
+			
+			// patient already adds this exam automatically
+			refreshLabExamsListView(selectedPatient, labExamListView);
 		});
 		
 		return logger;
