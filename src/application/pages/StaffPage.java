@@ -179,6 +179,7 @@ public class StaffPage {
 			
 			if(selected != null) {
 				hospital.removeStaff(selected);
+				Staff.lastId--;
 				items.setAll(hospital.getStaffs());
 				resetInputFields();
 			}

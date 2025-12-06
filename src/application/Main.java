@@ -2,6 +2,8 @@ package application;
 
 import application.models.*;
 import application.pages.*;
+
+
 import application.extras.*;
 import javafx.application.Application;
 import javafx.scene.text.Font;
@@ -9,14 +11,16 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
-	//	moved object declarations above here
-	private Hospital hospital = new Hospital();
-	private StaffPage staffPage = new StaffPage(hospital);
-	private PatientsPage patients= new PatientsPage(hospital);
-	private LabExamsPage labExams = new LabExamsPage(hospital);
-	private LogBookViewPage logbook= new LogBookViewPage(hospital);
-	private LabRequestsPage labRequests = new LabRequestsPage(hospital);
-	private ExtraStage extraStage = new ExtraStage(this);
+    // Declare fields without initializing the pages yet,
+    // to prevent them from referencing an empty Hospital object.
+	private Hospital hospital;
+	private StaffPage staffPage;
+	private PatientsPage patients;
+	private LabExamsPage labExams;
+	private LogBookViewPage logbook;
+	private LabRequestsPage labRequests;
+    
+	private ExtraStage extraStage;
 	private Stage primaryStage;
 	
 	@Override
@@ -30,6 +34,17 @@ public class Main extends Application {
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Bold.ttf"), 14);
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-SemiBold.ttf"), 14);
 		
+        // 1. INITIALIZE and SEED the Hospital object first
+		this.hospital = new Hospital();
+        
+        // 2. INITIALIZE all Page objects using the NOW-POPULATED Hospital
+        this.staffPage = new StaffPage(hospital);
+        this.patients = new PatientsPage(hospital);
+        this.labExams = new LabExamsPage(hospital);
+        this.logbook = new LogBookViewPage(hospital);
+        this.labRequests = new LabRequestsPage(hospital);
+        this.extraStage = new ExtraStage(this); // extraStage needs 'this' (Main)
+
 		extraStage.start(); // Open intro stage first
 	}
 	
