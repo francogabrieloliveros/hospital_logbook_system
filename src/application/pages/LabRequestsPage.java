@@ -199,10 +199,12 @@ public class LabRequestsPage {
                 deleteButton.getStyleClass().setAll("page-button-active", "page-button");
                 updateButton.setDisable(false);
                 deleteButton.setDisable(false);
-			}else { //if there is no selected
+			}else { //if there is no selected, enable user to create another lab req
 				clearInputs();
+				
 				assignButton.getStyleClass().setAll("page-button-inactive", "page-button");
 				assignButton.setDisable(true);
+				
 				updateButton.getStyleClass().setAll("page-button-inactive", "page-button");
                 deleteButton.getStyleClass().setAll("page-button-inactive", "page-button");
                 updateButton.setDisable(true);
@@ -238,6 +240,11 @@ public class LabRequestsPage {
 	    requestComboBox.setValue(null);
 	    statusComboBox.setValue(null);
 	    staffComboBox.setValue(null);
+	    
+	    patientComboBox.setDisable(false);
+	    requestComboBox.setDisable(false);
+	    statusComboBox.setDisable(false);
+	    staffComboBox.setDisable(false);
 	    
 	    patientComboBox.setPromptText("Patient");
 	    requestComboBox.setPromptText("Request");
@@ -283,11 +290,11 @@ public class LabRequestsPage {
 	}
 	
 	private void updateListView() { //updates the listview depending on the array list in the hospital
-		 listView.getItems().clear();
-	        List<LabRequest> labRequests = hospital.getLabRequests();
-	        for (LabRequest labRequest : labRequests) {
-	            listView.getItems().add(labRequest);
-	        }
+		listView.getItems().clear();
+        List<LabRequest> labRequests = hospital.getLabRequests();
+        for (LabRequest labRequest : labRequests) {
+            listView.getItems().add(labRequest);
+        }
 	}
 
 	private void loadLabRequestData(LabRequest selectedItem) { //gets the values of the lab request selected from the hospital and sets the values of the combo box to it
