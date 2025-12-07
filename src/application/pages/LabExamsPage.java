@@ -70,13 +70,17 @@ public class LabExamsPage {
 		//Labels and TextFields and ComboBoxes and DatePicker and yes
 		Label labelLabRequest = new Label("Lab Request:");
 		labRequest = new ComboBox<>();
-		for (LabRequest labRequests: this.hospital.getLabRequests()) {
-			labRequest.getItems().add(String.format("%s | ordering physician: %s",labRequests.getID(), labRequests.getStaff()));
+		
+		ObservableList<String> labRequests = FXCollections.observableArrayList();
+		for (LabRequest labRequestItem: this.hospital.getLabRequests()) {
+			if(!labRequestItem.getStatus().equals("done")) {//only adds the lab requests that are not done yet
+				labRequests.add(String.format("%s | ordering physician: %s",labRequestItem.getID(), labRequestItem.getStaff()));	
+			}
 		}
+		labRequest.getItems().addAll(labRequests);
 		
 		Label labelPerformingStaff = new Label("Performing Staff:");
 		performingStaff = new ComboBox<>();
-		performingStaff.getItems().add("hotdog");
 		
 		Label labelDate = new Label("Date:");
 		datePicker = new DatePicker();
@@ -152,7 +156,7 @@ public class LabExamsPage {
 		    if (selectedExam != null) {
 		        fillExamFields(selectedExam); // fill the fields
 		        updateFieldStatusForExam(selectedExam); // enable/disable fields/buttons
-		    }//bug found: when u select one cell, then switch back and forth, the performingStaff disappears.
+		    }
 		});
 		
 		labRequest.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -165,7 +169,51 @@ public class LabExamsPage {
 		        performingStaff.getSelectionModel().clearSelection();
 		    }
 		});
+	
+		//onclick, creates a new LabExam, updates the items list and the listView, resets the input fields. If status is done, update staff and lab request aswell.
+		btnRecord.setOnAction(e -> {			
+			Staff selectedStaff = getSelectedStaff();
+			String selectedStatus = cmbStatus.getValue();
+			
+			selectedStaff.setStatus("active");
+			hospital.addLabExam(new LabExam(hospital, getSelectedLabRequest(), selectedStaff, datePicker.getValue(), cmbStatus.getSelectionModel().getSelectedItem(),txtResults.getText(), txtRemarks.getText()));
+			
+			if(selectedStatus.equals("Finished") || selectedStatus.equals("Cancelled")) {
+				selectedStaff.setStatus("inactive");
+				getSelectedLabRequest().update("done");
+			}
+			
+			items.setAll(hospital.getLabExams());		    
+			//remove the selected labRequest from the list
+			labRequest.getItems().remove(labRequest.getSelectionModel().getSelectedIndex());
+			listView.setItems(FXCollections.observableArrayList(hospital.getLabExams()));
+		    resetInputFields();
+		    labRequest.getSelectionModel().clearSelection();
+		});
 		
+		//updates the value of the lab exam, updates the status of the staff and lab request if done or cancelled. 
+		btnUpdate.setOnAction(e -> {
+			LabExam selectedLabExam = listView.getSelectionModel().getSelectedItem();
+			Staff selectedStaff = getSelectedStaff();
+			String selectedStatus = cmbStatus.getValue();
+			
+			if(selectedStatus.equals("Finished") || selectedStatus.equals("Cancelled")) {
+				selectedStaff.setStatus("inactive");
+				getSelectedLabRequest().update("done");
+			}
+			//setters
+			if(selectedLabExam != null) {
+				selectedLabExam.setDate(datePicker.getValue());
+				selectedLabExam.setStatus(cmbStatus.getValue());
+				selectedLabExam.setResults(txtResults.getText());
+				selectedLabExam.setRemarks(txtRemarks.getText());
+			}
+			//updates the listView
+		    listView.setItems(FXCollections.observableArrayList(hospital.getLabExams()));
+		    resetInputFields();
+		    labRequest.setDisable(false);
+		});
+
 		//main container
 		VBox root = new VBox(20, pageButtons, mainPage); // Add other elements here
 		root.getStyleClass().add("default-bg");
@@ -236,8 +284,9 @@ public class LabExamsPage {
 	    performingStaff.setDisable(true);
 	    btnRecord.setDisable(true);
 	    
-	    //if the exam is cancelled, no more actions can be done
-	    if (exam.getStatus().equalsIgnoreCase("Cancelled")) {
+	    //if the exam is cancelled or finished, no more actions can be done
+	    if (exam.getStatus().equals("Cancelled") || exam.getStatus().equals("Finished")) {
+
 	        datePicker.setDisable(true);
 	        cmbStatus.setDisable(true);
 	        txtResults.setDisable(true);
@@ -252,6 +301,8 @@ public class LabExamsPage {
 	    }
 	}
 	
+
+	//Gets a list of compatible staff 
 	private ArrayList<String> getCompStaff(LabRequest labRequest){
 	    ArrayList<String> compatibleStaffNames = new ArrayList<>();
 	    if(labRequest == null) return compatibleStaffNames; // nothing selected yet
@@ -260,6 +311,8 @@ public class LabExamsPage {
 
 	    for(Staff staff : hospital.getStaffs()) {
 	    	if(staff.getStatus().equals("inactive")) {//only compatible if the staff is inactive, and meets the required type of test.
+	    		
+	    		//cases for compatiblity
 	    		switch(staff.getRole()) {
 	            	case "MedTech" -> {
 	                	if(testType.equals("CBC") || testType.equals("PCR"))
@@ -280,12 +333,16 @@ public class LabExamsPage {
 	        	}
 	    	}
 	    }
-	    
+
 	    return compatibleStaffNames;
 	}
 	
+	//returns the selected LR
 	private LabRequest getSelectedLabRequest() {
 		String selectedText = labRequest.getSelectionModel().getSelectedItem();
+	    if (selectedText == null || selectedText.isEmpty()) {
+	        return null;
+	    }
 	    String selectedID = selectedText.split(" \\| ")[0]; // extract ID part
         LabRequest selectedLabRequest = null;
         
@@ -301,5 +358,33 @@ public class LabExamsPage {
         
 		return null;
 	}
-	//performingStaff need to check if the lab test is appropriate	
+	
+	//returns the selected Staff
+	private Staff getSelectedStaff() {
+		String selectedText = performingStaff.getSelectionModel().getSelectedItem(); 
+        Staff selectedStaff= null;
+        
+        for (Staff staff : hospital.getStaffs()) {
+            if (staff.getName().equals(selectedText)) {
+                selectedStaff = staff;
+                break;
+            }
+        }
+        if(selectedStaff != null) {
+        	return selectedStaff;
+        }
+        
+		return null;
+	}
+	
+	//resets inputFields for buttonActions
+	private void resetInputFields() {
+		labRequest.setValue("");
+		performingStaff.setValue("");
+		datePicker.setValue(LocalDate.now());
+		cmbStatus.setValue("");
+		txtResults.setText("");
+		txtRemarks.setText("");
+		listView.getSelectionModel().clearSelection();
+	}
 }

@@ -8,16 +8,19 @@ public class LabExam implements HospitalElement{
 	private LabRequest labRequest;
 	private String testType;
 	private LocalDate date;
-	private String orderingPhysician;
+	private Staff orderingPhysician;
 	private Staff performingStaff;
-	private String patient;
+	private Patient patient;
+
 	private String status;
 	private String result;
 	private String remarks; 
 	private static int lastId = 0;
 	
 	
-	public LabExam(Hospital hospital, LabRequest labRequest, Staff performingStaff, LocalDate date, String status, String remarks) {
+
+	public LabExam(Hospital hospital, LabRequest labRequest, Staff performingStaff, LocalDate date, String status, String result, String remarks) {
+
 		this.id = this.generateId();
 		this.hospital = hospital;
 		this.labRequest = labRequest;
@@ -27,7 +30,9 @@ public class LabExam implements HospitalElement{
 		this.performingStaff = performingStaff;
 		this.patient = labRequest.getPatient();
 		this.status = status;
-		this.result = null;
+
+		this.result = result;
+
 		this.remarks = remarks;
 		this.addLogToHospital("Added new lab exam");
 	}
@@ -45,13 +50,7 @@ public class LabExam implements HospitalElement{
 	
 	@Override
 	public String toString() {
-		return String.format("%s | testType=%s| patient=%s | orderingPhysician=%s | performingStaff=%s | status=%s",
-                             id, 
-                             testType, 
-                             patient.getName(),
-                             orderingPhysician.getName(), 
-                             performingStaff.getName(),
-                             status);
+		return String.format("%s | testType=%s | orderingPhysician=%s | performingStaff=%s | status=%s", this.id, this.testType, this.orderingPhysician, this.performingStaff, this.status);
 	}
 	
 	@Override
@@ -65,6 +64,13 @@ public class LabExam implements HospitalElement{
 		return "LBE-" + id;
 	}
 	
+
+	//setters
+	public void setDate(LocalDate date) {this.date = date;}
+	public void setStatus (String status) {this.status = status;}
+	public void setResults (String results) {this.result = results;}
+	public void setRemarks (String remark) {this.remarks = remark;}
+
 	//getters
 	public Staff getPerformingStaff() {return performingStaff;}
 	public LabRequest getLabRequest() {return labRequest;}
@@ -72,5 +78,4 @@ public class LabExam implements HospitalElement{
 	public String getStatus() {return status;}
 	public String getResults() {return result;}
 	public String getRemarks() {return remarks;}
-	
 }
