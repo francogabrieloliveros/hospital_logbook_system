@@ -10,31 +10,26 @@ import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
-import application.models.Hospital;
-import application.models.LabExam;
-import application.models.Patient;
-import application.models.Staff;
-import application.models.LabRequest;
+import application.models.*;
 
 public class PatientsPage {
 
-	// patients data (hospital)
 	private Hospital hospital;
 	
-	// form input components
+	// Form input components
 	private TextField nameField;
 	private DatePicker datePicker;
 	private ComboBox<String> sexCombo;
 	private TextArea infoArea;
 	private TextField findField;
 	
+	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
+	
 	public PatientsPage(Hospital hospital) { this.hospital = hospital; }
 
-	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
-
 	public void setStageComponents(Stage stage, Main main) {
-		// buttons display
-		HBox pageButtons = buildPageButtons(main);
+		
+		HBox pageButtons = new HeaderButtons(main, "PATIENTS").get();
 
 		// left panel: list of patients
 		ListView<String> listView = buildPatientListView();
@@ -58,7 +53,6 @@ public class PatientsPage {
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 
 		stage.setScene(staffPageScene);
-		stage.setResizable(false);
 		stage.show();
 	}
 	
@@ -70,32 +64,7 @@ public class PatientsPage {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-	
-	// helper method to build top navigation buttons
-	private HBox buildPageButtons(Main main) {
-		// top navigation buttons functionality
-		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
-		ArrayList<Button> labelButtons = new ArrayList<>();
-		
-		for(String label : labels) {
-			Button newButton = new Button(label);
-			
-			if(label.equals("PATIENTS")) {
-				newButton.getStyleClass().addAll("page-button-active", "page-button"); 
-			} else {
-				newButton.getStyleClass().addAll("page-button-inactive", "page-button");
-				newButton.setOnAction(e -> main.switchPage(label));
-			}
-			
-			labelButtons.add(newButton);
-		}
-		
-		HBox pageButtons = new HBox(10);
-		pageButtons.getChildren().addAll(labelButtons);
-		HBox.setMargin(pageButtons, new Insets(20));
-		
-		return pageButtons;
-	}
+
 	
 	// helper method to set up left panel (patients list)
 	private ListView<String> buildPatientListView() {

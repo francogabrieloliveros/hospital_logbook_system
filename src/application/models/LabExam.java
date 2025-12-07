@@ -3,22 +3,27 @@ package application.models;
 import java.time.LocalDate;
 
 public class LabExam implements HospitalElement{
-	private String id;
+	
+	private static int lastId = 0;
+	
 	private Hospital hospital;
+	private String id;
 	private LabRequest labRequest;
 	private String testType;
 	private LocalDate date;
-	private String orderingPhysician;
+	private Staff orderingPhysician;
 	private Staff performingStaff;
-	private String patient;
+	private Patient patient;
 	private String status;
-	private String result;
-	private String remarks; 
-	private static int lastId = 0;
+	private String resultsAndRemarks;
 	
-	
-	public LabExam(Hospital hospital, LabRequest labRequest, Staff performingStaff, LocalDate date, String status, String remarks) {
-		this.id = this.generateId();
+	public LabExam(Hospital hospital, 
+			       LabRequest labRequest, 
+			       Staff performingStaff, 
+			       LocalDate date, 
+			       String status, 
+			       String resultAndRemarks) {
+		
 		this.hospital = hospital;
 		this.labRequest = labRequest;
 		this.testType = labRequest.getRequest();
@@ -27,20 +32,34 @@ public class LabExam implements HospitalElement{
 		this.performingStaff = performingStaff;
 		this.patient = labRequest.getPatient();
 		this.status = status;
-		this.result = null;
-		this.remarks = remarks;
+		this.resultsAndRemarks = resultAndRemarks;
+		this.id = this.generateId();
+		
+		hospital.addLabExam(this);
 		this.addLogToHospital("Added new lab exam");
 	}
-	void updateResults(String result, String status, String remarks) {
-		this.result = result;
+	
+	public void update(LabRequest labRequest, 
+		       		   Staff performingStaff, 
+		       		   LocalDate date, 
+		       		   String status, 
+		       		   String resultAndRemarks) {
+		
+		this.labRequest = labRequest;
+		this.testType = labRequest.getRequest();
+		this.date = date;
+		this.orderingPhysician = labRequest.getStaff();
+		this.performingStaff = performingStaff;
+		this.patient = labRequest.getPatient();
 		this.status = status;
-		this.remarks = remarks;
-		this.addLogToHospital("Result finalized");
+		this.resultsAndRemarks = resultAndRemarks;
+		
+		this.addLogToHospital(String.format("Updated %s information", id));
 	}
 	
-	
-	public String trackStatus(String test) {
-		return this.status;
+	public void delete() {
+		hospital.removeLabExam(this);
+		this.addLogToHospital(String.format("Deleted %s from labexams", id));
 	}
 	
 	@Override
@@ -56,13 +75,12 @@ public class LabExam implements HospitalElement{
 	
 	@Override
 	public void addLogToHospital(String message) {
-		this.hospital.addLogBook(new LogBook("", "staff", message));
+		this.hospital.addLogBook(new LogBook("", "labexam", message));
 	}
 
 	@Override
 	public String generateId() {
-		String id = String.format("%04d", LabExam.lastId++);
-		return "LBE-" + id;
+		return "LBE-" + String.format("%04d", LabExam.lastId++);
 	}
 	
 	//getters
@@ -70,7 +88,5 @@ public class LabExam implements HospitalElement{
 	public LabRequest getLabRequest() {return labRequest;}
 	public LocalDate getDate() {return date;}
 	public String getStatus() {return status;}
-	public String getResults() {return result;}
-	public String getRemarks() {return remarks;}
-	
+	public String getResultsAndRemarks() {return resultsAndRemarks;}
 }

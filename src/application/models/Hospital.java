@@ -4,11 +4,19 @@ import java.util.*;
 
 public class Hospital {
 	
-	private ArrayList<Staff> staffs = new ArrayList<Staff>();
-	private ArrayList<Patient> patients = new ArrayList<Patient>();
-	private ArrayList<LabRequest> labRequests = new ArrayList<LabRequest>();
-	private ArrayList<LabExam> labExams = new ArrayList<LabExam>();
-	private ArrayList<LogBook> logBooks = new ArrayList<LogBook>();
+	private ArrayList<Staff> staffs;
+	private ArrayList<Patient> patients;
+	private ArrayList<LabRequest> labRequests;
+	private ArrayList<LabExam> labExams;
+	private ArrayList<LogBook> logBooks;
+	
+	public Hospital() {
+		this.staffs = new ArrayList<Staff>();
+		this.patients = new ArrayList<Patient>();
+		this.labRequests = new ArrayList<LabRequest>();
+		this.labExams = new ArrayList<LabExam>();
+		this.logBooks = new ArrayList<LogBook>();
+	}
 	
 	// Adders
 	public void addStaff(Staff staff) { staffs.add(staff); }

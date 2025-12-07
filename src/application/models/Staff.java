@@ -15,9 +15,10 @@ public class Staff implements HospitalElement{
 		this.name = name;
 		this.role = role;
 		this.status = status;
-		
 		this.id = generateId();
-		addLogToHospital("Added new staff");
+		
+		hospital.addStaff(this);
+		addLogToHospital(String.format("Added new staff %s", name));
 	}
 	
 	// Update information
@@ -26,14 +27,20 @@ public class Staff implements HospitalElement{
 		this.role = role;
 		this.status = status;
 		
-		addLogToHospital("Updated staff information");
+		addLogToHospital(String.format("Updated %s information", id));
+	}
+	
+	// Remove class from hospital
+	public void delete() {
+		addLogToHospital(String.format("Deleted %s from staffs", id));
+		hospital.removeStaff(this);
 	}
 	
 	// HospitalElement functions
 	@Override
 	public String toString() {
 		return String.format("%s | fullName=%s | role=%s | status=%s",
-                             id, name, role, status);
+                              id, name, role, status);
 	}
 	
 	@Override
@@ -43,10 +50,7 @@ public class Staff implements HospitalElement{
 	
 	@Override
 	public String generateId() {
-		Staff.lastId++;
-		String idNumber = String.format("%04d", Staff.lastId);
-		
-		return "STF-" + idNumber;
+		return "STF-" + String.format("%04d", Staff.lastId++);
 	}
 	
 	// Getters

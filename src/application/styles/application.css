@@ -36,6 +36,11 @@
 	-fx-text-fill: white;
 }
 
+.page-button-active:disabled{
+	-fx-background-color: white;
+	-fx-text-fill: #736FDC;
+}
+
 .page-button-inactive{
 	-fx-background-color: white;
 	-fx-text-fill: #736FDC;
