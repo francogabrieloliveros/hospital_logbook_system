@@ -3,6 +3,7 @@ package application.models;
 public class Staff implements HospitalElement{
 	
 	public static int lastId = 0;
+	public boolean isOwned;
 	
 	private Hospital hospital;
 	private String id;
@@ -15,12 +16,22 @@ public class Staff implements HospitalElement{
 		this.name = name;
 		this.role = role;
 		this.status = status;
+		this.isOwned = false;
 		this.id = generateId();
 		
 		addLogToHospital(String.format("Added new staff %s", name));
 	}
 	
-	// Update information
+	// Restore constructor
+	public Staff (Hospital hospital, String ID, String name, String role, String status, boolean isOwned) {
+		this.hospital = hospital;
+		this.name = name;
+		this.role = role;
+		this.status = status;
+		this.id = ID;
+	}
+	
+	// Update information 
 	public void update(String name, String role, String status) {
 		this.name = name;
 		this.role = role;

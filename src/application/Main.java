@@ -25,7 +25,6 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) {
 		this.primaryStage = stage;
-
 		stage.setResizable(false); // Make stage unresizable
 		
 		// load fonts
@@ -33,10 +32,14 @@ public class Main extends Application {
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Bold.ttf"), 14);
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-SemiBold.ttf"), 14);
 
-
-		
         // 1. INITIALIZE and SEED the Hospital object first
 		this.hospital = new Hospital();
+		
+		hospital.restore();
+		
+		stage.setOnCloseRequest(e -> {
+			hospital.save();
+		});
         
         // 2. INITIALIZE all Page objects using the NOW-POPULATED Hospital
         this.staffPage = new StaffPage(hospital);

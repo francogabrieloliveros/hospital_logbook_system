@@ -186,22 +186,32 @@ public class StaffPage {
 	}
 	
 	private void updateLoggerButtons() {
+		Staff selected = listView.getSelectionModel().getSelectedItem();
 	    boolean nameFilled = !nameField.getText().isBlank();
 	    boolean roleFilled = roleField.getValue() != "Select role";
 	    boolean statusFilled = statusField.getValue() != "Select status";
-	    boolean listViewSelected = listView.getSelectionModel().getSelectedItem() != null;
+	    boolean listViewSelected =  selected != null;
 
 	    if (nameFilled && roleFilled && statusFilled && listViewSelected) {
 	    	// Enable update and delete button when listViewItem selected
+	    	nameField.setDisable(true);
+	    	roleField.setDisable(true);
+	    	statusField.setDisable(false);
 	    	addButton.setDisable(true);
 			updateButton.setDisable(false);
-			deleteButton.setDisable(false);
+			deleteButton.setDisable(false || selected.isOwned);
 	    } else if (nameFilled && roleFilled && statusFilled && !listViewSelected) {
 	    	// Enable add button when no listViewItem selected (new item)
+	    	nameField.setDisable(false);
+	    	roleField.setDisable(false);
+	    	statusField.setDisable(false);
 	    	addButton.setDisable(false);
 			updateButton.setDisable(true);
 			deleteButton.setDisable(true);
 	    } else {
+	    	nameField.setDisable(false);
+	    	roleField.setDisable(false);
+	    	statusField.setDisable(false);
 	    	addButton.setDisable(true);
 			updateButton.setDisable(true);
 			deleteButton.setDisable(true);

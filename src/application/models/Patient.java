@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public class Patient implements HospitalElement {
 	// class fields
 	public static int lastId = 0;
+	public boolean isOwned;
 	
 	private Hospital hospital;
 	private String id;
@@ -29,6 +30,24 @@ public class Patient implements HospitalElement {
 		this.id = generateId();
 		
 		addLogToHospital(String.format("Added new patient %s", name));
+	}
+	
+	// Restore constructor
+	public Patient(Hospital hospital, 
+				   String ID,
+		           String name, 
+		           LocalDate dob, 
+		           String sex, 
+		           String notes,
+		           boolean isOwned) {
+	
+		this.hospital = hospital;
+		this.name = name;
+		this.dob = dob;
+		this.sex = sex;
+		this.notes = notes;
+		this.isOwned = isOwned;
+		this.id = ID;
 	}
 	
 	// Update information
@@ -70,7 +89,7 @@ public class Patient implements HospitalElement {
 	}
 	
 	// getters
-	public String getId() { return this.id; }
+	public String getID() { return this.id; }
 	public String getName() { return this.name; }
 	public LocalDate getDob() { return this.dob; }
 	public String getSex() { return this.sex; }

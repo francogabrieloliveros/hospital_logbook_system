@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class LabExam implements HospitalElement{
 	
-	private static int lastId = 0;
+	public static int lastId = 0;
 	
 	private Hospital hospital;
 	private String id;
@@ -33,12 +33,33 @@ public class LabExam implements HospitalElement{
 		this.patient = labRequest.getPatient();
 		this.status = status;
 		this.resultsAndRemarks = resultAndRemarks;
-		this.id = this.generateId();
+		this.id = generateId();
 		
 		this.addLogToHospital(String.format("Added new lab exam for patient %s", 
 				                             patient.getName()));
 	}
-	 
+	
+
+	public LabExam(Hospital hospital, 
+			       String ID,
+			       LabRequest labRequest, 
+			       Staff performingStaff, 
+			       LocalDate date, 
+			       String status, 
+			       String resultAndRemarks) {
+
+		this.hospital = hospital;
+		this.labRequest = labRequest;
+		this.testType = labRequest.getRequest();
+		this.date = date;
+		this.orderingPhysician = labRequest.getStaff();
+		this.performingStaff = performingStaff;
+		this.patient = labRequest.getPatient();
+		this.status = status;
+		this.resultsAndRemarks = resultAndRemarks;
+		this.id = ID;
+	}
+	
 	public void update(LabRequest labRequest, 
 		       		   Staff performingStaff, 
 		       		   LocalDate date, 
@@ -85,6 +106,7 @@ public class LabExam implements HospitalElement{
 	}
 	
 	//getters
+	public String getID() { return this.id; }
 	public LabRequest getLabRequest() { return this.labRequest; }
 	public String getTestType() { return this.testType; }
 	public LocalDate getDate() { return this.date; }

@@ -87,6 +87,8 @@ public class LabRequestsPage {
 					                              requestComboBox.getValue(), 
 					                              statusComboBox.getValue(), 
 					                              staffComboBox.getValue()));
+			patientComboBox.getValue().isOwned = true;
+			staffComboBox.getValue().isOwned = true;
 			
 			items.setAll(hospital.getLabRequests());
 			clearInputs();
@@ -191,29 +193,41 @@ public class LabRequestsPage {
 	}
 	
 	private void validateInputs() { //check if all input is complete
+		LabRequest selected = listView.getSelectionModel().getSelectedItem();
 		boolean patientFilled = patientComboBox.getValue() != null;
 		boolean requestFilled = requestComboBox.getValue() != "Select request";
 		boolean statusFilled = statusComboBox.getValue() != "Select status";
 		boolean staffFilled = staffComboBox.getValue() != null;
-		boolean listViewSelected = listView.getSelectionModel().getSelectedItem() != null;
+		boolean listViewSelected =  selected != null;
+		boolean isDoneSelected = listViewSelected ? selected.getStatus().equals("done") : false;
 	    
 	    if(patientFilled &&
 	       requestFilled &&
 	       statusFilled &&
 	       staffFilled &&
 	       listViewSelected) {
+	    	patientComboBox.setDisable(true);
+	    	requestComboBox.setDisable(true);
+	    	staffComboBox.setDisable(true);
+	    	statusComboBox.setDisable(isDoneSelected);
 	        addButton.setDisable(true);
 	        updateButton.setDisable(false);
-	        deleteButton.setDisable(false);
+	        deleteButton.setDisable(false || selected.isOwned);
 	    } else if (patientFilled &&
 	 	       	   requestFilled &&
 		           statusFilled &&
 		           staffFilled &&
 		           !listViewSelected) {
+	    	patientComboBox.setDisable(false);
+	    	requestComboBox.setDisable(false);
+	    	staffComboBox.setDisable(false);
 	    	addButton.setDisable(false);
 	        updateButton.setDisable(true);
 	        deleteButton.setDisable(true);
 	    } else {
+	    	patientComboBox.setDisable(false);
+	    	requestComboBox.setDisable(false);
+	    	staffComboBox.setDisable(false);
 	        addButton.setDisable(true);
 	        updateButton.setDisable(true);
 	        deleteButton.setDisable(true);

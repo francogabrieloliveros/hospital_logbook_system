@@ -15,6 +15,14 @@ public class LogBook{
 		this.message = message;
 	}
 	
+	// Restore constructor
+	public LogBook(LocalDateTime date, String author, String tag, String message) {
+		this.timestamp = date;
+		this.author = author;
+		this.tag = tag;
+		this.message = message;
+	}
+	
 	// Getters
 	public LocalDateTime getTimestamp() { return this.timestamp; }
 	public String getAuthor() { return this.author; }

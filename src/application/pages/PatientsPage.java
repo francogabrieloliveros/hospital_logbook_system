@@ -186,11 +186,12 @@ public class PatientsPage {
 	}
 	
 	private void updateLoggerButtons() {
+		Patient selected = listView.getSelectionModel().getSelectedItem();
 	    boolean nameFilled = !nameField.getText().isBlank();
 	    boolean dateFilled = datePicker.getValue() != null;
 	    boolean sexFilled = sexCombo.getValue() != "Select sex";
 	    boolean infoFilled = !infoArea.getText().isBlank();
-	    boolean listViewSelected = listView.getSelectionModel().getSelectedItem() != null;
+	    boolean listViewSelected =  selected != null;
 
 	    if (nameFilled && 
 	    	dateFilled &&
@@ -200,7 +201,7 @@ public class PatientsPage {
 	    	// Enable update and delete button when listViewItem selected
 	    	addButton.setDisable(true);
 			updateButton.setDisable(false);
-			deleteButton.setDisable(false);
+			deleteButton.setDisable(false || selected.isOwned);
 	    } else if (nameFilled && 
 		    	   dateFilled &&
 		    	   sexFilled &&

@@ -3,6 +3,7 @@ package application.models;
 public class LabRequest implements HospitalElement{
 	
 	public static int lastId = 0;
+	public boolean isOwned = false;
 	
 	private Hospital hospital;
 	private Patient patient;
@@ -26,6 +27,23 @@ public class LabRequest implements HospitalElement{
 		addLogToHospital(String.format("Added new lab request for patient %s", 
 				                        patient.getName()));
 	}
+
+	// Restore constructor
+	public LabRequest(Hospital hospital,
+					  String ID,
+			          Patient patient, 
+			          String request, 
+			          String status, 
+			          Staff orderingStaff, 
+			          boolean isOwned) {
+		this.hospital = hospital;
+		this.patient = patient;
+		this.request = request;
+		this.status = status;
+		this.orderingStaff = orderingStaff;
+		this.isOwned = isOwned;
+		this.id = ID;
+	}	
 
 	public void update(Patient patient, 
       		   		   String request, 

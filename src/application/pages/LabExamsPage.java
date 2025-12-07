@@ -106,6 +106,8 @@ public class LabExamsPage {
 			} else if (selectedStatus.equals("In-Progress")) {
 				selectedLabRequest.setStatus("in progress");
 			}
+			selectedLabRequest.isOwned = true;
+			performingStaffCombo.getValue().isOwned = true;
 			
 			items.setAll(hospital.getLabExams());		    
 		    resetInputFields();
@@ -141,6 +143,7 @@ public class LabExamsPage {
 			LabExam selected = listView.getSelectionModel().getSelectedItem();
 			
 			if(selected != null) {
+				selected.getLabRequest().isOwned = false;
 				selected.delete();
 				items.setAll(hospital.getLabExams());
 				resetInputFields();
@@ -206,17 +209,25 @@ public class LabExamsPage {
 	}
 	
 	private void fieldStatusUpdater() {
+		LabExam selected = listView.getSelectionModel().getSelectedItem();
 	    boolean labRequestSelected = labRequestCombo.getValue() != null;
 	    boolean performingStaffSelected = performingStaffCombo.getValue() != null;
 	    boolean dateSelected = datePicker.getValue() != null;
 	    boolean statusSelected = statusCombo.getValue() != "Select status";
-	    boolean examSelected = listView.getSelectionModel().getSelectedItem() != null;
+	    boolean examSelected = selected != null;
+	    boolean isDoneSelected = examSelected ? selected.getStatus().equals("Finished") || 
+	    		                                selected.getStatus().equals("Cancelled") : false;
 	    
 	    if (labRequestSelected &&
 	    	performingStaffSelected &&
 	    	dateSelected &&
 	    	statusSelected &&
 	    	examSelected) {
+	    	labRequestCombo.setDisable(true);
+	    	performingStaffCombo.setDisable(true);
+	    	datePicker.setDisable(true);
+	    	statusCombo.setDisable(isDoneSelected);
+	    	txtResultsRemarks.setDisable(isDoneSelected);
 	    	btnAdd.setDisable(true);
 	    	btnUpdate.setDisable(false);
 	    	btnDelete.setDisable(false);
@@ -226,10 +237,16 @@ public class LabExamsPage {
 		    	dateSelected &&
 		    	statusSelected &&
 		    	!examSelected){
+	    	labRequestCombo.setDisable(false);
+	    	performingStaffCombo.setDisable(false);
+	    	datePicker.setDisable(false);
 	    	btnAdd.setDisable(false);
 	    	btnUpdate.setDisable(true);
 	    	btnDelete.setDisable(true);
 	    } else {
+	    	labRequestCombo.setDisable(false);
+	    	performingStaffCombo.setDisable(false);
+	    	datePicker.setDisable(false);
 	    	btnAdd.setDisable(true);
 	    	btnUpdate.setDisable(true);
 	    	btnDelete.setDisable(true);
