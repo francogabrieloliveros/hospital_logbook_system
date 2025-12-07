@@ -45,7 +45,13 @@ public class LabExam implements HospitalElement{
 	
 	@Override
 	public String toString() {
-		return String.format("%s | testType=%s | orderingPhysician=%s | performingStaff=%s | status=%s", this.id, this.testType, this.orderingPhysician, this.performingStaff, this.status);
+		return String.format("%s | testType=%s| patient=%s | orderingPhysician=%s | performingStaff=%s | status=%s",
+                             id, 
+                             testType, 
+                             patient.getName(),
+                             orderingPhysician.getName(), 
+                             performingStaff.getName(),
+                             status);
 	}
 	
 	@Override

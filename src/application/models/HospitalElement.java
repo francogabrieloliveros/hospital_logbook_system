@@ -5,7 +5,7 @@ public interface HospitalElement {
 	// Returns a string containing info of the element for viewing
 	// Automatically used by listview
 	// Staff Example: "STF-0001 | fullName=Evan | role=Phlebotomist | status=active"
-	// Patient Example: "PAT-0001 | fullName=Kurt | dob=1565-12-25 | info=gastrointestinal inflammation"
+	// Patient Example: "PAT-0001 | fullName=Kurt | dob=1565-12-25 | sex=male | info=gastrointestinal inflammation"
 	// LabRequest Example: "LBR-0001 | testType=CBC| patient=Thea  | physician=Evan | status=done"
 	// LabExam Example: "LBE-0001 | testType=X-ray| orderingPhysician=Evan | performingStaff=Thea | status=completed"
 	public String toString();

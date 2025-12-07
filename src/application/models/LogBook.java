@@ -2,7 +2,7 @@ package application.models;
 
 import java.time.LocalDateTime;
 
-public class LogBook {
+public class LogBook{
 	private LocalDateTime timestamp;
 	private String author;
 	private String tag;
@@ -15,6 +15,7 @@ public class LogBook {
 		this.message = message;
 	}
 	
+	// Getters
 	public LocalDateTime getTimestamp() { return this.timestamp; }
 	public String getAuthor() { return this.author; }
 	public String getTag() { return this.tag; }
