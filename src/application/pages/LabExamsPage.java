@@ -70,6 +70,7 @@ public class LabExamsPage {
 		//Labels and TextFields and ComboBoxes and DatePicker and yes
 		Label labelLabRequest = new Label("Lab Request:");
 		labRequest = new ComboBox<>();
+		
 		ObservableList<String> labRequests = FXCollections.observableArrayList();
 		for (LabRequest labRequestItem: this.hospital.getLabRequests()) {
 			if(!labRequestItem.getStatus().equals("done")) {//only adds the lab requests that are not done yet
@@ -158,7 +159,6 @@ public class LabExamsPage {
 		    }
 		});
 		
-		//populates the perfomingstaff combo box by checking the lab type from the lab req, then running it through the compStaff method.
 		labRequest.valueProperty().addListener((obs, oldVal, newVal) -> {
 		    LabRequest selectedLabRequest = getSelectedLabRequest();
 		    boolean examSelected = listView.getSelectionModel().getSelectedItem() != null;
@@ -169,7 +169,7 @@ public class LabExamsPage {
 		        performingStaff.getSelectionModel().clearSelection();
 		    }
 		});
-		
+	
 		//onclick, creates a new LabExam, updates the items list and the listView, resets the input fields. If status is done, update staff and lab request aswell.
 		btnRecord.setOnAction(e -> {			
 			Staff selectedStaff = getSelectedStaff();
@@ -213,8 +213,7 @@ public class LabExamsPage {
 		    resetInputFields();
 		    labRequest.setDisable(false);
 		});
-		
-		
+
 		//main container
 		VBox root = new VBox(20, pageButtons, mainPage); // Add other elements here
 		root.getStyleClass().add("default-bg");
@@ -225,7 +224,6 @@ public class LabExamsPage {
 		scene.getStylesheets().add(getClass().getResource("/application/styles/LabExamsPage.css").toExternalForm());
 		stage.setScene(scene);
 		stage.setTitle("Lab Exams View");
-	
 		fieldStatusUpdater();
 		stage.show();
 	}
@@ -288,6 +286,7 @@ public class LabExamsPage {
 	    
 	    //if the exam is cancelled or finished, no more actions can be done
 	    if (exam.getStatus().equals("Cancelled") || exam.getStatus().equals("Finished")) {
+
 	        datePicker.setDisable(true);
 	        cmbStatus.setDisable(true);
 	        txtResults.setDisable(true);
@@ -302,6 +301,7 @@ public class LabExamsPage {
 	    }
 	}
 	
+
 	//Gets a list of compatible staff 
 	private ArrayList<String> getCompStaff(LabRequest labRequest){
 	    ArrayList<String> compatibleStaffNames = new ArrayList<>();
@@ -333,6 +333,7 @@ public class LabExamsPage {
 	        	}
 	    	}
 	    }
+
 	    return compatibleStaffNames;
 	}
 	

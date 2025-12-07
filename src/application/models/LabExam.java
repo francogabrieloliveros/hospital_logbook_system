@@ -11,13 +11,16 @@ public class LabExam implements HospitalElement{
 	private Staff orderingPhysician;
 	private Staff performingStaff;
 	private Patient patient;
+
 	private String status;
 	private String result;
 	private String remarks; 
 	private static int lastId = 0;
 	
 	
+
 	public LabExam(Hospital hospital, LabRequest labRequest, Staff performingStaff, LocalDate date, String status, String result, String remarks) {
+
 		this.id = this.generateId();
 		this.hospital = hospital;
 		this.labRequest = labRequest;
@@ -27,7 +30,9 @@ public class LabExam implements HospitalElement{
 		this.performingStaff = performingStaff;
 		this.patient = labRequest.getPatient();
 		this.status = status;
+
 		this.result = result;
+
 		this.remarks = remarks;
 		this.addLogToHospital("Added new lab exam");
 	}
@@ -59,11 +64,13 @@ public class LabExam implements HospitalElement{
 		return "LBE-" + id;
 	}
 	
+
 	//setters
 	public void setDate(LocalDate date) {this.date = date;}
 	public void setStatus (String status) {this.status = status;}
 	public void setResults (String results) {this.result = results;}
 	public void setRemarks (String remark) {this.remarks = remark;}
+
 	//getters
 	public Staff getPerformingStaff() {return performingStaff;}
 	public LabRequest getLabRequest() {return labRequest;}
@@ -71,5 +78,4 @@ public class LabExam implements HospitalElement{
 	public String getStatus() {return status;}
 	public String getResults() {return result;}
 	public String getRemarks() {return remarks;}
-	
 }
