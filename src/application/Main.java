@@ -3,7 +3,6 @@ package application;
 import application.models.*;
 import application.pages.*;
 
-
 import application.extras.*;
 import javafx.application.Application;
 import javafx.scene.text.Font;
@@ -28,11 +27,13 @@ public class Main extends Application {
 		this.primaryStage = stage;
 
 		stage.setResizable(false); // Make stage unresizable
-
+		
 		// load fonts
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Regular.ttf"), 14);
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-Bold.ttf"), 14);
 		Font.loadFont(getClass().getResourceAsStream("/fonts/Roboto-SemiBold.ttf"), 14);
+
+
 		
         // 1. INITIALIZE and SEED the Hospital object first
 		this.hospital = new Hospital();
@@ -44,7 +45,6 @@ public class Main extends Application {
         this.logbook = new LogBookViewPage(hospital);
         this.labRequests = new LabRequestsPage(hospital);
         this.extraStage = new ExtraStage(this); // extraStage needs 'this' (Main)
-
 		extraStage.start(); // Open intro stage first
 	}
 	

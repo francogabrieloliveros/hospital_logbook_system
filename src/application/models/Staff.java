@@ -53,8 +53,11 @@ public class Staff implements HospitalElement{
 		return "STF-" + String.format("%04d", Staff.lastId++);
 	}
 	
+	// Setters
+	public void setStatus(String status) {this.status = status;}
 	// Getters
 	public String getName() { return this.name; }
 	public String getRole() { return this.role; }
 	public String getStatus() { return this.status; }
+	public String getID() {return this.id;}
 }
