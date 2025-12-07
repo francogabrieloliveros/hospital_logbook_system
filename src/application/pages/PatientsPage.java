@@ -13,6 +13,8 @@ import application.Main;
 import application.models.Hospital;
 import application.models.LabExam;
 import application.models.Patient;
+import application.models.Staff;
+import application.models.LabRequest;
 
 public class PatientsPage {
 
@@ -38,15 +40,14 @@ public class PatientsPage {
 		ListView<String> listView = buildPatientListView();
 
 		// right panel: patient form UI
-		VBox logger = buildLoggerSection(listView);
+		ScrollPane logger = buildLoggerSection(listView);
 		
-		HBox mainLedger = new HBox(50, listView, logger); // refactor HBox main -> mainLedger
+		HBox mainLedger = new HBox(25, listView, logger); // refactor HBox main -> mainLedger
 		HBox.setHgrow(listView, Priority.ALWAYS);
 		HBox.setHgrow(logger, Priority.ALWAYS);
-		VBox.setVgrow(mainLedger, Priority.ALWAYS);
 		
-		listView.prefWidthProperty().bind(mainLedger.widthProperty().subtract(500).divide(2));
-		logger.prefWidthProperty().bind(mainLedger.widthProperty().subtract(50).divide(2));
+		listView.prefWidthProperty().bind(mainLedger.heightProperty().multiply(0.4));
+		logger.prefWidthProperty().bind(mainLedger.heightProperty().multiply(0.6));
 		
 		VBox root = new VBox(20, pageButtons, mainLedger);
 		root.setPadding(new Insets(50));
@@ -112,7 +113,7 @@ public class PatientsPage {
 	}
 	
 	// helper method to set up left panel (input fields)
-	private VBox buildLoggerSection(ListView<String> listView) {
+	private ScrollPane buildLoggerSection(ListView<String> listView) {
 		// name input
 		Label name = new Label("Name");
 		nameField = new TextField();
@@ -138,19 +139,40 @@ public class PatientsPage {
 		// info area
 		infoArea = new TextArea();
 		infoArea.setPromptText("Enter patient information");
-		infoArea.setPrefRowCount(10);
-		
-		// Lab exams list
-		Label labExamLabel = new Label ("Lab Exams");
-		ListView<String> labExamListView = new ListView<>();
-		labExamListView.getStyleClass().addAll("list-view", "containers=shadow");
-		labExamListView.setPrefHeight(50);
+		infoArea.setPrefRowCount(4);
 		
 		// CRUD buttons
 		Button addButton = new Button("Add");
 		Button updateButton = new Button("Update");
 		Button deleteButton = new Button("Delete");
 		HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
+		
+		// Lab exams list
+		Label labExamLabel = new Label ("Lab Exams");
+		ListView<String> labExamListView = new ListView<>();
+		labExamListView.getStyleClass().addAll("list-view", "containers-shadow");
+		labExamListView.setMinHeight(150);
+		labExamListView.setPrefHeight(200);
+		VBox.setVgrow(labExamListView, Priority.ALWAYS);
+		
+		// Lab Exam controls
+		Label staffLabel = new Label("Performing Staff:");
+		ComboBox<Staff> staffCombo = new ComboBox<>();
+		staffCombo.getItems().addAll(hospital.getStaffs());
+		staffCombo.setPromptText("Select Staff");
+		
+		Label requestLabel = new Label("Lab Request:");
+		ComboBox<LabRequest> requestCombo = new ComboBox<>();
+		requestCombo.getItems().addAll(hospital.getLabRequests());
+		requestCombo.setPromptText("Select Lab Request");
+
+		VBox labControlsBox = new VBox(10, staffLabel, staffCombo, requestLabel, requestCombo);
+			
+		Button addLabExamButton = new Button("Add Lab Exam");
+		addLabExamButton.getStyleClass().addAll("page-button-active", "page-button");
+		
+		// Layout for Lab Exams section
+		VBox labExamBox = new VBox(10, labExamLabel, labExamListView, labControlsBox, addLabExamButton);
 		
 		// Search section
 		Label find = new Label("find");
@@ -182,16 +204,22 @@ public class PatientsPage {
 				infoArea.setText(selectedPatient.getNotes());
 				
 				// update lab exams list
-				labExamListView.getItems().clear();
-				for (LabExam le : selectedPatient.getLabExams()) {
-					labExamListView.getItems().add(le.toString());
-				}
+				refreshLabExamsListView(selectedPatient, labExamListView);
 			}
 		});
 
 		// VBOX logger
-	    VBox logger = new VBox(30, nameInput, dateSexRow, infoArea, labExamLabel, labExamListView, loggerButtons, new Separator(), findBox);
+	    VBox logger = new VBox(15, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), labExamBox, new Separator(), findBox);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
+	    
+	    // scroll pane for logger VBox
+	    ScrollPane loggerScroll = new ScrollPane(logger);
+	    loggerScroll.setFitToWidth(true);
+	    loggerScroll.setFitToHeight(true);
+	    loggerScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+	    loggerScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	    
+	    loggerScroll.getStyleClass().add("logger-scroll");
 	    
 	    // ~~~ event handlers ~~~
 	    // add button logic
@@ -279,6 +307,44 @@ public class PatientsPage {
 			listView.getItems().set(selectedIndex, selectedPatient.toString());
 		});
 		
-		return logger;
+		// Add Lab Exam button logic
+		addLabExamButton.setOnAction(e -> {
+			int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+			if (selectedIndex < 0) {
+				showAlert("No Selecton", "Please select a patient to add a lab exam.");
+				return;
+			}
+			
+			Patient selectedPatient = hospital.getPatients().get(selectedIndex);
+			
+			// for demonstration: dummy lab request and staff object
+			// replace with actual form inputs later
+			
+			// public Staff (Hospital hospital, String name, String role, String status)
+			// public LabRequest(Hospital hospital, Patient patient, String request, String status, Staff staff)
+			Staff dummyStaff = new Staff(hospital, "Dr. Thea", "test role", "active");
+			if (!hospital.getStaffs().contains(dummyStaff)) { // add dummy staff to hospital
+				hospital.addStaff(dummyStaff);
+			}
+			
+			LabRequest dummyRequest = new LabRequest(hospital, selectedPatient, "test request", "X-ray", dummyStaff);
+			
+			// create new lab exam
+			// public LabExam (Hospital hospital, LabRequest labRequest, Staff performingStaff, String status)
+			LabExam newExam = new LabExam(hospital, dummyRequest, dummyStaff, "Pending");
+			
+			// patient already adds this exam automatically
+			refreshLabExamsListView(selectedPatient, labExamListView);
+		});
+		
+		return loggerScroll;
+	}
+	
+	// helper method to update/refresh the lab exams list
+	private void refreshLabExamsListView(Patient patient, ListView<String> labExamListView) {
+		labExamListView.getItems().clear();
+		for (LabExam le : patient.getLabExams()) {
+			labExamListView.getItems().add(le.toString());
+		}
 	}
 }

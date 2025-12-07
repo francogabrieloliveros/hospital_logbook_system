@@ -19,6 +19,7 @@ public class LabRequest implements HospitalElement{
 		this.staff = staff;
 		this.id = generateId();
 		
+		hospital.addLabRequest(this); // add lab request to hospital
 		addLogToHospital("Added new lab request");
 	}
 

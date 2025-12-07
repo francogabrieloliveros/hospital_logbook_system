@@ -67,3 +67,13 @@
 .styled-date-picker .arrow-button:hover .arrow {
     -fx-background-color: white;
 }
+
+.logger-scroll {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.logger-scroll .viewport {
+    -fx-background-color: transparent;
+}
