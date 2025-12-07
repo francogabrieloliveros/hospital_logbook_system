@@ -1,81 +1,75 @@
 package application.models;
 
+import java.time.LocalDate;
+
 public class LabExam implements HospitalElement{
-	
-	public static int lastId = 0;
-	
-	private Hospital hospital;
 	private String id;
+	private Hospital hospital;
+	private LabRequest labRequest;
 	private String testType;
-	private Patient patient;
+	private LocalDate date;
 	private Staff orderingPhysician;
 	private Staff performingStaff;
+	private Patient patient;
 	private String status;
-	private LabRequest labRequest;
+	private String result;
+	private String remarks; 
+	private static int lastId = 0;
 	
-	public LabExam (Hospital hospital,
-					LabRequest labRequest,
-			        Staff performingStaff, 
-			        String status) {
-		
+	
+	public LabExam(Hospital hospital, LabRequest labRequest, Staff performingStaff, LocalDate date, String status, String result, String remarks) {
+		this.id = this.generateId();
 		this.hospital = hospital;
 		this.labRequest = labRequest;
 		this.testType = labRequest.getRequest();
-		this.patient = labRequest.getPatient();
+		this.date = date;
 		this.orderingPhysician = labRequest.getStaff();
 		this.performingStaff = performingStaff;
+		this.patient = labRequest.getPatient();
 		this.status = status;
-		
-		this.patient.addLabExam(this);
-		
-		this.id = generateId();
-		addLogToHospital("Added new lab exam");
+		this.result = result;
+		this.remarks = remarks;
+		this.addLogToHospital("Added new lab exam");
+	}
+	void updateResults(String result, String status, String remarks) {
+		this.result = result;
+		this.status = status;
+		this.remarks = remarks;
+		this.addLogToHospital("Result finalized");
 	}
 	
-	public void update (Hospital hospital,
-						Patient patient,
-						LabRequest labRequest,
-						Staff performingStaff, 
-						String status) {
-
-		this.hospital = hospital;
-		this.labRequest = labRequest;
-		this.testType = labRequest.getRequest();
-		this.patient = labRequest.getPatient();
-		this.orderingPhysician = labRequest.getStaff();
-		this.performingStaff = performingStaff;
-		this.status = status;
-		
-		addLogToHospital("Updated lab exam information");
+	
+	public String trackStatus(String test) {
+		return this.status;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("%s | testType=%s| patient=%s | orderingPhysician=%s | performingStaff=%s | status=%s",
-                             id, 
-                             testType, 
-                             patient.getName(),
-                             orderingPhysician.getName(), 
-                             performingStaff.getName(),
-                             status);
+		return String.format("%s | testType=%s | orderingPhysician=%s | performingStaff=%s | status=%s", this.id, this.testType, this.orderingPhysician, this.performingStaff, this.status);
 	}
 	
 	@Override
 	public void addLogToHospital(String message) {
-		hospital.addLogBook(new LogBook("", "labexam", message));
+		this.hospital.addLogBook(new LogBook("", "staff", message));
 	}
-	
+
 	@Override
 	public String generateId() {
-		LabExam.lastId++;
-		String idNumber = String.format("%04d", Staff.lastId);
-		
-		return "LBE-" + idNumber;
+		String id = String.format("%04d", LabExam.lastId++);
+		return "LBE-" + id;
 	}
 	
-	// Getters
-	public String getTestType() { return this.testType; }
-	public Staff getOrderingPhysician() { return this.orderingPhysician; }
-	public Staff getPerformingStaff() { return this.performingStaff; }
-	public String getStatus() { return this.status; }
+	//setters
+	public void setDate(LocalDate date) {this.date = date;}
+	public void setStatus (String status) {this.status = status;}
+	public void setResults (String results) {this.result = results;}
+	public void setRemarks (String remark) {this.remarks = remark;}
+	//getters
+	public Staff getPerformingStaff() {return performingStaff;}
+	public LabRequest getLabRequest() {return labRequest;}
+	public LocalDate getDate() {return date;}
+	public String getStatus() {return status;}
+	public String getResults() {return result;}
+	public String getRemarks() {return remarks;}
+	
 }
