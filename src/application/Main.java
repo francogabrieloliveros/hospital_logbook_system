@@ -47,7 +47,7 @@ public class Main extends Application {
         this.extraStage = new ExtraStage(this); // extraStage needs 'this' (Main)
 		extraStage.start(); // Open intro stage first
 	}
-	
+	 
 	public static void main(String[] args) {
 		launch(args);
 	}

@@ -1,35 +1,34 @@
 package application.pages;
 
-import java.io.*;
-import java.nio.file.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.stage.*;
+
+import java.io.*;
+import java.nio.file.*;
+import java.time.*;
+import java.util.ArrayList;
 
 import application.Main;
 import application.models.*;
 
 public class LogBookViewPage {
-	//initialization so other fxns can access these
+	
 	private Hospital hospital;
-    private TableView<LogBook> table;
-    private ObservableList<LogBook> data;
+	
+	//initialization so other fxns can access these
+	private ObservableList<LogBook> data;
+	private ComboBox<String> authorComboBox;
+	private ComboBox<String> tagComboBox;
+	private TableView<LogBook> table;
     private TextField authorField;
     private TextField tagField;
-    private TextArea messageArea;
     private TextField filterField;
-    private ComboBox<String> authorComboBox;
-    private ComboBox<String> tagComboBox;
+    private TextArea messageArea;
     private DatePicker datePicker;
     private CheckBox matchAllCheckBox;
     private Button appendButton;
@@ -41,28 +40,9 @@ public class LogBookViewPage {
     
 	public LogBookViewPage(Hospital hospital) { this.hospital = hospital; }
 	
-	
-	// 	NOTE:	Main is added as a parameter in setStageComponents so we 
-	//			have a reference when main is called (for the buttons to work)
 	public void setStageComponents(Stage stage, Main main) {
-		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
-		ArrayList<Button> labelButtons = new ArrayList<>();
-		for(String label : labels) {
-			Button newButton = new Button(label);
-			
-			if(label.equals("LOGBOOK")) {
-				newButton.getStyleClass().addAll("page-button-active", "page-button");
-			} else {
-				newButton.getStyleClass().addAll("page-button-inactive", "page-button"); // added functionality (change pages)
-				newButton.setOnAction(e -> main.switchPage(label));
-			}
-			
-			labelButtons.add(newButton);
-		}
 		
-		HBox pageButtons = new HBox(10);
-		pageButtons.getChildren().addAll(labelButtons);
-		HBox.setMargin(pageButtons, new Insets(20));
+		HBox pageButtons = new HeaderButtons(main, "LOGBOOK").get(); // page switching header
 		
 		//author label
 		Label authorLabel = new Label("Author:");
@@ -266,7 +246,7 @@ public class LogBookViewPage {
 		VBox root = new VBox(10, pageButtons ,logger, filterRow, table, exportBox);
 		root.getStyleClass().add("default-bg");
 		root.setPadding(new Insets(50));
-		Scene scene = new Scene(root, 1200, 700);
+		Scene scene = new Scene(root, 1200, 720);
 		scene.getStylesheets().add(getClass().getResource("/application/styles/LogBookPage.css").toExternalForm());
 		scene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		
@@ -521,33 +501,39 @@ public class LogBookViewPage {
 	    	}
 	    } catch (IOException e) { e.printStackTrace(); }
 	}
-
-
+ 
 	private void exportToTXT() {
-		//specify path
-		Path path = Paths.get("src/storage/Logbooks.txt");
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Export to TXT");
+		fileChooser.setInitialFileName("logs.txt");
 		
-		try {
-			Files.createFile(path); //create file first, if it exists then catch will be used
-		}catch(IOException e) {}
+		// Limit to txt files
+		fileChooser.getExtensionFilters().add(
+		    new FileChooser.ExtensionFilter("TXT Files", "*.txt")
+		);
+ 
+		// File selection stage
+		File file = fileChooser.showSaveDialog(new Stage());
+		if (file == null) return;
 		
-		try{
-			//build one string
+		Path path = file.toPath();
+
+	    try (BufferedWriter w = Files.newBufferedWriter(
+	    		path, 
+	    		StandardOpenOption.CREATE,
+	    		StandardOpenOption.TRUNCATE_EXISTING
+	    )) {
+	    	//build one string
 			String content =  "Logbook Records\n";
 			content += String.format("%-20s | %-20s | %-60s | %-25s\n", "Author", "Tag", "Message", "Timestamp");
 			content += String.format("%-20s | %-20s | %-60s | %-25s\n", "--------------------", "--------------------", "--------------------", "-------------------------");
-			ArrayList<LogBook> logbooks = this.hospital.getLogBooks();
-			for(LogBook lb:logbooks) {
+			for(LogBook lb:data) {
 				content += String.format("%-20s | %-20s | %-60s | %-25s\n", lb.getAuthor(), lb.getTag(), lb.getMessage(), lb.getTimestamp().toString());
 			}
 			
-			content += "\nTotal Entries:" + logbooks.size() + "\n";
+			content += "\nTotal Entries:" + data.size() + "\n";
 			content += "Exported on: " + LocalDateTime.now().toString() + "\n";
-			
-			//write the whole string into the file
-			Files.writeString(path, content); //overwrites the prev if there is one
-			showAlert("TXT Export Successful", "Logbook exported successfully!");
-		}catch(IOException e) {}
-
+	    	w.write(content); // Header
+	    } catch (IOException e) { e.printStackTrace(); }
 	}
 }

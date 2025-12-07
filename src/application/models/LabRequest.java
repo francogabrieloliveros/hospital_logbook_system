@@ -23,7 +23,6 @@ public class LabRequest implements HospitalElement{
 		this.orderingStaff = orderingStaff;
 		this.id = generateId();
 		
-		hospital.addLabRequest(this); // add lab request to hospital
 		addLogToHospital(String.format("Added new lab request for patient %s", 
 				                        patient.getName()));
 	}
@@ -67,4 +66,7 @@ public class LabRequest implements HospitalElement{
 	public String getStatus() { return this.status; }
 	public Staff getStaff() { return this.orderingStaff; }
 	public String getRequest() { return this.request; }
+	
+	// Setters
+	public void setStatus(String status) { this.status = status; }
 }

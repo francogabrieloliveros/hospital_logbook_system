@@ -39,6 +39,7 @@
 .page-button-active:disabled{
 	-fx-background-color: white;
 	-fx-text-fill: #736FDC;
+	-fx-opacity:1;
 }
 
 .page-button-inactive{

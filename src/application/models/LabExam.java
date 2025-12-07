@@ -35,10 +35,10 @@ public class LabExam implements HospitalElement{
 		this.resultsAndRemarks = resultAndRemarks;
 		this.id = this.generateId();
 		
-		hospital.addLabExam(this);
-		this.addLogToHospital("Added new lab exam");
+		this.addLogToHospital(String.format("Added new lab exam for patient %s", 
+				                             patient.getName()));
 	}
-	
+	 
 	public void update(LabRequest labRequest, 
 		       		   Staff performingStaff, 
 		       		   LocalDate date, 
@@ -64,7 +64,14 @@ public class LabExam implements HospitalElement{
 	
 	@Override
 	public String toString() {
-		return String.format("%s | testType=%s | orderingPhysician=%s | performingStaff=%s | status=%s", this.id, this.testType, this.orderingPhysician, this.performingStaff, this.status);
+		return String.format("%s | testType=%s | patient=%s | orderingPhysician=%s | performingStaff=%s | status=%s", 
+				              id, 
+				              testType, 
+				              patient.
+				              getName(), 
+				              orderingPhysician.getName(), 
+				              performingStaff.getName(), 
+				              status);
 	}
 	
 	@Override
@@ -78,10 +85,13 @@ public class LabExam implements HospitalElement{
 	}
 	
 	//getters
-	public Staff getPerformingStaff() {return performingStaff;}
-	public LabRequest getLabRequest() {return labRequest;}
-	public LocalDate getDate() {return date;}
-	public String getStatus() {return status;}
+	public LabRequest getLabRequest() { return this.labRequest; }
+	public String getTestType() { return this.testType; }
+	public LocalDate getDate() { return this.date; }
+	public Staff getOrderingPhysician() { return this.orderingPhysician; }
+	public Staff getPerformingStaff() { return this.performingStaff; }
+	public Patient getPatient() { return this.patient; }
+	public String getStatus() { return status; }
 	public String getResultsAndRemarks() { return resultsAndRemarks; }
 	
 }

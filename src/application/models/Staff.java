@@ -17,7 +17,6 @@ public class Staff implements HospitalElement{
 		this.status = status;
 		this.id = generateId();
 		
-		hospital.addStaff(this);
 		addLogToHospital(String.format("Added new staff %s", name));
 	}
 	

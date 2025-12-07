@@ -28,7 +28,6 @@ public class Patient implements HospitalElement {
 		this.notes = notes;
 		this.id = generateId();
 		
-		hospital.addPatient(this);
 		addLogToHospital(String.format("Added new patient %s", name));
 	}
 	

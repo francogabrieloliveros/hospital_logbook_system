@@ -18,68 +18,41 @@ public class StaffPage {
 	private Hospital hospital;
 	
 	// Form input components
-    private TextField nameField;
-    private ComboBox<String> roleField;
+	private ObservableList<Staff> items;
+	private ListView<Staff> listView;
+	private ComboBox<String> roleField;
     private ComboBox<String> statusField;
+    private TextField nameField;
+    private TextField findField;
     private Button addButton;
     private Button updateButton;
     private Button deleteButton;
-    private TextField findField;
     private Button searchButton;
     private Button resetButton;
-    private ListView<Staff> listView;
-    private ObservableList<Staff> items;
+    
+    
 	
 	public StaffPage(Hospital hospital) { this.hospital = hospital; }
 	
 	public void setStageComponents(Stage stage, Main main) {
 		
-		HBox pageButtons = new HeaderButtons(main, "STAFF").get();
+		HBox pageButtons = new HeaderButtons(main, "STAFF").get(); // page switching header
 		
+	    /* ------------------------------------------- MAINPAGE CONTENTS-------------------------------------------*/
+		// Light panel
 		buildListView();
 		
-		
+		// Right panel
 		VBox nameInput = buildNameInput();
 		HBox roleAndStatus = buildRoleAndStatus();
-		/* ------------------------------------------- LOGGER -------------------------------------------*/
+		HBox loggerButtons = buildLoggerButtons();
+	    VBox findInput = buildFindInput();
 	    
-	    // Logger buttons for staff
-	    addButton = new Button("Add");
-	    updateButton = new Button("Update");
-	    deleteButton = new Button("Delete");
-	    addButton.getStyleClass().addAll("page-button-active", "page-button");
-	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
-	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
-	    HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
-	    
-	    // Disable buttons
-	    addButton.setDisable(true);
-		updateButton.setDisable(true);
-		deleteButton.setDisable(true);
-	    
-	    Separator separator = new Separator();
-	    
-	    /* ------------------------------------------- FINDING -------------------------------------------*/
-	    Label find = new Label("Find");
-	    findField = new TextField();
-	    findField.setPromptText("Search name/role/status");
-	    
-	    // Finding/search buttons
-		searchButton = new Button("Search");
-		resetButton = new Button("Reset");
-	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
-	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
-	    HBox findButtons = new HBox(10, resetButton, searchButton);
-	    
-	    searchButton.setDisable(true);
-	    VBox findInput = new VBox(20, find, findField, findButtons);// Finding section
-		
-	    // Adding all inputs in a vbox
-	    VBox logger = new VBox(30, nameInput, roleAndStatus, loggerButtons, separator, findInput);
+	    VBox logger = new VBox(30, nameInput, roleAndStatus, loggerButtons, new Separator(), findInput);
 	    logger.getStyleClass().addAll("logger", "containers-shadow");
-	    
-	    /* ------------------------------------------- MAINPAGE CONTENTS-------------------------------------------*/
-		HBox mainLedger = new HBox(50, listView, logger); // refactor HBox main -> mainLedger
+		
+	    // Main
+		HBox mainLedger = new HBox(50, listView, logger);
 		HBox.setHgrow(listView, Priority.ALWAYS);
 		HBox.setHgrow(logger, Priority.ALWAYS);
 		VBox.setVgrow(mainLedger, Priority.ALWAYS);
@@ -144,12 +117,12 @@ public class StaffPage {
 		// Sets item view to search results
 		searchButton.setOnAction(e -> {
 			ArrayList<Staff> searchResults = new ArrayList<Staff>();
-			String query = findField.getText();
+			String query = findField.getText().trim();
 			
 			for(Staff staff : hospital.getStaffs()) {
-				if(staff.getName().equals(query) ||
-				   staff.getRole().equals(query) ||
-				   staff.getStatus().equals(query)) {
+				if(staff.getName().contains(query) ||
+				   staff.getRole().contains(query) ||
+				   staff.getStatus().contains(query)) {
 					searchResults.add(staff);
 				}
 			}
@@ -181,9 +154,61 @@ public class StaffPage {
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/StaffPage.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		stage.setScene(staffPageScene);
+		stage.setTitle("Staff");
 		stage.show();
 	}
 	
+	private void updateFindButtons() {
+	    boolean findFilled = !findField.getText().isBlank();
+	    
+	    // Enable search button when findField has text
+	    if (findFilled) {
+	    	searchButton.setDisable(false);
+	    } else {
+	    	searchButton.setDisable(true);
+	    }
+	}
+	
+	private void resetInputFields() {
+		nameField.setText("");
+		roleField.setValue("Select role");
+		statusField.setValue("Select status");
+		findField.setText("");
+		nameField.requestFocus();
+		
+		listView.getSelectionModel().clearSelection();
+	}
+	
+	private void deselectOnEsc(KeyEvent e) {
+		if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+	        listView.getSelectionModel().clearSelection();
+	    }
+	}
+	
+	private void updateLoggerButtons() {
+	    boolean nameFilled = !nameField.getText().isBlank();
+	    boolean roleFilled = roleField.getValue() != "Select role";
+	    boolean statusFilled = statusField.getValue() != "Select status";
+	    boolean listViewSelected = listView.getSelectionModel().getSelectedItem() != null;
+
+	    if (nameFilled && roleFilled && statusFilled && listViewSelected) {
+	    	// Enable update and delete button when listViewItem selected
+	    	addButton.setDisable(true);
+			updateButton.setDisable(false);
+			deleteButton.setDisable(false);
+	    } else if (nameFilled && roleFilled && statusFilled && !listViewSelected) {
+	    	// Enable add button when no listViewItem selected (new item)
+	    	addButton.setDisable(false);
+			updateButton.setDisable(true);
+			deleteButton.setDisable(true);
+	    } else {
+	    	addButton.setDisable(true);
+			updateButton.setDisable(true);
+			deleteButton.setDisable(true);
+	    }
+	}
+	
+	/* ------------------------------------------- BUILDERS -------------------------------------------*/
 	private void buildListView(){
 		listView = new ListView<>();
 		listView.getStyleClass().add("list-view");
@@ -235,53 +260,39 @@ public class StaffPage {
 	    return roleAndStatus;
 	}
 	
-	private void updateLoggerButtons() {
-	    boolean nameFilled = !nameField.getText().isBlank();
-	    boolean roleFilled = roleField.getValue() != "Select role";
-	    boolean statusFilled = statusField.getValue() != "Select status";
-	    boolean listViewSelected = listView.getSelectionModel().getSelectedItem() != null;
-
-	    if (nameFilled && roleFilled && statusFilled && listViewSelected) {
-	    	// Enable update and delete button when listViewItem selected
-	    	addButton.setDisable(true);
-			updateButton.setDisable(false);
-			deleteButton.setDisable(false);
-	    } else if (nameFilled && roleFilled && statusFilled && !listViewSelected) {
-	    	// Enable add button when no listViewItem selected (new item)
-	    	addButton.setDisable(false);
-			updateButton.setDisable(true);
-			deleteButton.setDisable(true);
-	    } else {
-	    	addButton.setDisable(true);
-			updateButton.setDisable(true);
-			deleteButton.setDisable(true);
-	    }
-	}
-	
-	private void updateFindButtons() {
-	    boolean findFilled = !findField.getText().isBlank();
+	private HBox buildLoggerButtons() {
+		// Logger buttons for staff
+	    addButton = new Button("Add");
+	    updateButton = new Button("Update");
+	    deleteButton = new Button("Delete");
+	    addButton.getStyleClass().addAll("page-button-active", "page-button");
+	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
+	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
+	    HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
 	    
-	    // Enable search button when findField has text
-	    if (findFilled) {
-	    	searchButton.setDisable(false);
-	    } else {
-	    	searchButton.setDisable(true);
-	    }
-	}
-	
-	private void resetInputFields() {
-		nameField.setText("");
-		roleField.setValue("Select role");
-		statusField.setValue("Select status");
-		findField.setText("");
-		nameField.requestFocus();
+	    // Disable buttons
+	    addButton.setDisable(true);
+		updateButton.setDisable(true);
+		deleteButton.setDisable(true);
 		
-		listView.getSelectionModel().clearSelection();
+		return loggerButtons;
+	} 
+	
+	private VBox buildFindInput() {
+		Label find = new Label("Find");
+	    findField = new TextField();
+	    findField.setPromptText("Search name/role/status");
+	    
+	    // Finding/search buttons
+		searchButton = new Button("Search");
+		resetButton = new Button("Reset");
+	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
+	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
+	    HBox findButtons = new HBox(10, resetButton, searchButton);
+	    
+	    searchButton.setDisable(true);
+	    VBox findInput = new VBox(20, find, findField, findButtons);// Finding section
+		return findInput;
 	}
 	
-	private void deselectOnEsc(KeyEvent e) {
-		if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
-	        listView.getSelectionModel().clearSelection();
-	    }
-	}
 }

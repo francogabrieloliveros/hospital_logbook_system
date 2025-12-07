@@ -1,12 +1,13 @@
 package application.pages;
 
+import javafx.collections.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import application.Main;
@@ -17,303 +18,290 @@ public class PatientsPage {
 	private Hospital hospital;
 	
 	// Form input components
-	private TextField nameField;
-	private DatePicker datePicker;
+	private ObservableList<Patient> items;
+	private ListView<Patient> listView;
 	private ComboBox<String> sexCombo;
-	private TextArea infoArea;
+	private DatePicker datePicker;
+	private TextField nameField;
 	private TextField findField;
-	
-	int[] patientCounter = {1}; // value stored inside array lets the add button increment the counter
+	private TextArea infoArea;
+	private Button addButton;
+    private Button updateButton;
+    private Button deleteButton;
+    private Button searchButton;
+    private Button resetButton;
 	
 	public PatientsPage(Hospital hospital) { this.hospital = hospital; }
 
 	public void setStageComponents(Stage stage, Main main) {
 		
-		HBox pageButtons = new HeaderButtons(main, "PATIENTS").get();
-
-		// left panel: list of patients
-		ListView<String> listView = buildPatientListView();
-
-		// right panel: patient form UI
-		ScrollPane logger = buildLoggerSection(listView);
+		HBox pageButtons = new HeaderButtons(main, "PATIENTS").get(); // page switching header
 		
-		HBox mainLedger = new HBox(25, listView, logger); // refactor HBox main -> mainLedger
+		/* ------------------------------------------- MAINPAGE CONTENTS-------------------------------------------*/
+		// left panel: list of patients
+		buildListView();
+		
+		// right panel: patient form UI
+		VBox nameInput = buildNameInput();
+		HBox dateSexRow = buildDateAndSexInput();
+		buildInfoArea();
+		HBox CRUDButtons = buildCRUDButtons();
+		VBox findBox = buildFindBox();
+		
+		VBox logger = new VBox(15, 
+				               nameInput, 
+				               dateSexRow, 
+				               infoArea, 
+				               CRUDButtons, 
+				               new Separator(), 
+				               findBox);
+	    logger.getStyleClass().addAll("logger", "containers-shadow");
+	    
+	    // Main
+		HBox mainLedger = new HBox(25, listView, logger);
 		HBox.setHgrow(listView, Priority.ALWAYS);
 		HBox.setHgrow(logger, Priority.ALWAYS);
+		VBox.setVgrow(mainLedger, Priority.ALWAYS);
 		
 		listView.prefWidthProperty().bind(mainLedger.heightProperty().multiply(0.4));
 		logger.prefWidthProperty().bind(mainLedger.heightProperty().multiply(0.6));
 		
+		/* ------------------------------------------- FUNCTIONALITY -------------------------------------------*/
+		listView.getSelectionModel().selectedItemProperty().addListener((a, b, selected) -> {
+		    if (selected != null) {
+		        nameField.setText(selected.getName());
+		        datePicker.setValue(selected.getDob());
+		        sexCombo.setValue(selected.getSex());
+		        infoArea.setText(selected.getNotes());
+		    } else {
+		    	resetInputFields();
+		    }
+		});
+		
+		nameField.textProperty().addListener((a, b, c) -> updateLoggerButtons());
+		datePicker.valueProperty().addListener((a, b, c) -> updateLoggerButtons());
+		sexCombo.valueProperty().addListener((a, b, c) ->updateLoggerButtons());
+		infoArea.textProperty().addListener((a, b, c) ->updateLoggerButtons());
+		
+		findField.textProperty().addListener((a, b, c) -> updateFindButtons());
+		
+		addButton.setOnAction(e -> {
+			hospital.addPatient(new Patient(hospital, 
+										nameField.getText(), 
+										datePicker.getValue(),
+										sexCombo.getValue(),
+										infoArea.getText()));
+			
+			items.setAll(hospital.getPatients());
+			resetInputFields();
+		});
+		 
+		updateButton.setOnAction(e -> {
+			Patient selected = listView.getSelectionModel().getSelectedItem();
+					
+			if (selected != null) {
+				selected.update(nameField.getText(), datePicker.getValue(), sexCombo.getValue(), infoArea.getText());
+				items.setAll(hospital.getPatients());
+				resetInputFields();
+			}
+		});
+		
+		deleteButton.setOnAction(e -> {
+			Patient selected = listView.getSelectionModel().getSelectedItem();
+			
+			if(selected != null) {
+				selected.delete();
+				items.setAll(hospital.getPatients());
+				resetInputFields();
+			}
+		});
+		
+		// Sets item view to search results
+		searchButton.setOnAction(e -> {
+			ArrayList<Patient> searchResults = new ArrayList<Patient>();
+			String query = findField.getText().trim();
+			
+			for(Patient patient : hospital.getPatients()) {
+				if(patient.getName().contains(query) ||
+				   patient.getDob().toString().contains(query) ||
+				   patient.getSex().contains(query) ||
+				   patient.getNotes().contains(query)) {
+					searchResults.add(patient);
+				}
+			}
+			
+			items.setAll(searchResults);
+			resetInputFields();
+		});
+		
+		resetButton.setOnAction(e -> {
+			resetInputFields();
+			
+			items.setAll(hospital.getPatients());
+			listView.setItems(items);
+		});
+		
+		listView.setOnKeyPressed(e -> deselectOnEsc(e));
+		
+		/* ------------------------------------------- ROOT & SCENE -------------------------------------------*/
 		VBox root = new VBox(20, pageButtons, mainLedger);
 		root.setPadding(new Insets(50));
 		root.getStyleClass().add("default-bg");
+		root.setOnKeyPressed(e -> deselectOnEsc(e));
 		
 		Scene staffPageScene = new Scene(root, 1200, 720);
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/Patients.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
-
 		stage.setScene(staffPageScene);
+		stage.setTitle("Patients");
 		stage.show();
 	}
 	
-	// helper method to show an alert
-	private void showAlert(String title, String message) {
-		Alert alert = new Alert(Alert.AlertType.WARNING);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
+	private void updateFindButtons() {
+	    boolean findFilled = !findField.getText().isBlank();
+	    
+	    // Enable search button when findField has text
+	    if (findFilled) {
+	    	searchButton.setDisable(false);
+	    } else {
+	    	searchButton.setDisable(true);
+	    }
 	}
-
 	
-	// helper method to set up left panel (patients list)
-	private ListView<String> buildPatientListView() {
-		// list of patients of left side 
-		ListView<String> listView = new ListView<>();
-		// format: "PAT-0001 | fullName=Mylene | dob=2025-10-01"
-		for (Patient p: hospital.getPatients()) {
-			listView.getItems().add(p.toString());
-		}
+	private void resetInputFields() {
+		nameField.setText("");
+		datePicker.setValue(null);
+		sexCombo.setValue("Select sex");
+		infoArea.setText("");
+		findField.setText("");
+		nameField.requestFocus();
 		
+		listView.getSelectionModel().clearSelection();
+	}
+	
+	private void deselectOnEsc(KeyEvent e) {
+		if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+	        listView.getSelectionModel().clearSelection();
+	    }
+	}
+	
+	private void updateLoggerButtons() {
+	    boolean nameFilled = !nameField.getText().isBlank();
+	    boolean dateFilled = datePicker.getValue() != null;
+	    boolean sexFilled = sexCombo.getValue() != "Select sex";
+	    boolean infoFilled = !infoArea.getText().isBlank();
+	    boolean listViewSelected = listView.getSelectionModel().getSelectedItem() != null;
+
+	    if (nameFilled && 
+	    	dateFilled &&
+	    	sexFilled &&
+	    	infoFilled &&
+	    	listViewSelected) {
+	    	// Enable update and delete button when listViewItem selected
+	    	addButton.setDisable(true);
+			updateButton.setDisable(false);
+			deleteButton.setDisable(false);
+	    } else if (nameFilled && 
+		    	   dateFilled &&
+		    	   sexFilled &&
+		    	   infoFilled &&
+		    	   !listViewSelected) {
+	    	// Enable add button when no listViewItem selected (new item)
+	    	addButton.setDisable(false);
+			updateButton.setDisable(true);
+			deleteButton.setDisable(true);
+	    } else {
+	    	addButton.setDisable(true);
+			updateButton.setDisable(true);
+			deleteButton.setDisable(true);
+	    }
+	}
+	
+	/* ------------------------------------------- BUILDERS -------------------------------------------*/
+	// helper method to set up left panel (patients list)
+	private void buildListView(){
+		listView = new ListView<>();
 		listView.getStyleClass().add("list-view");
 		listView.getStyleClass().add("containers-shadow");
 		
-		return listView;
+		// Set list view items
+		items = FXCollections.observableArrayList();
+		items.setAll(hospital.getPatients());
+		listView.setItems(items);
 	}
 	
-	// helper method to set up left panel (input fields)
-	private ScrollPane buildLoggerSection(ListView<String> listView) {
-		// name input
+	private VBox buildNameInput() {
 		Label name = new Label("Name");
 		nameField = new TextField();
 		nameField.setPromptText("Enter patient name");
 		VBox nameInput = new VBox(15, name, nameField);
 		
-		// date of birth (dob)
+		return nameInput;
+	}
+	
+	private HBox buildDateAndSexInput() {
+		// date of birth input
 		Label date = new Label("DOB");
-		datePicker = new DatePicker(LocalDate.now());
+		datePicker = new DatePicker(null);
+		datePicker.setPromptText("Date of Birth");
 		datePicker.setPrefWidth(300);
+		datePicker.getStyleClass().add("styled-date-picker");
 		VBox dateBox = new VBox(5, date, datePicker);
+		
 		
 		// sex ComboBox
 		Label sexLabel = new Label("Sex");
 		sexCombo = new ComboBox<>();
-		sexCombo.setPromptText("Select Sex");
-		sexCombo.getItems().addAll("M", "F", "Other");
+		sexCombo.getItems().addAll("Select sex", "M", "F", "Other");
+		sexCombo.setValue("Select sex");
 		sexCombo.setPrefWidth(120);
 		VBox sexBox = new VBox(5, sexLabel, sexCombo);
 		
 		HBox dateSexRow = new HBox(20, dateBox, sexBox);
 		
-		// info area
+		return dateSexRow;
+	}
+	
+	private void buildInfoArea() {
 		infoArea = new TextArea();
 		infoArea.setPromptText("Enter patient information");
 		infoArea.setPrefRowCount(4);
-		
-		// CRUD buttons
-		Button addButton = new Button("Add");
-		Button updateButton = new Button("Update");
-		Button deleteButton = new Button("Delete");
+	}
+	
+	private HBox buildCRUDButtons() {
+		addButton = new Button("Add");
+		updateButton = new Button("Update");
+		deleteButton = new Button("Delete");
 		HBox loggerButtons = new HBox(10, addButton, updateButton, deleteButton);
-		
-		// Lab exams list
-		Label labExamLabel = new Label ("Lab Exams");
-		ListView<String> labExamListView = new ListView<>();
-		labExamListView.getStyleClass().addAll("list-view", "containers-shadow");
-		labExamListView.setMinHeight(150);
-		labExamListView.setPrefHeight(200);
-		VBox.setVgrow(labExamListView, Priority.ALWAYS);
-		
-		// Lab Exam controls
-		Label staffLabel = new Label("Performing Staff:");
-		ComboBox<Staff> staffCombo = new ComboBox<>();
-		staffCombo.getItems().addAll(hospital.getStaffs());
-		staffCombo.setPromptText("Select Staff");
-		
-		Label requestLabel = new Label("Lab Request:");
-		ComboBox<LabRequest> requestCombo = new ComboBox<>();
-		requestCombo.getItems().addAll(hospital.getLabRequests());
-		requestCombo.setPromptText("Select Lab Request");
-
-		VBox labControlsBox = new VBox(10, staffLabel, staffCombo, requestLabel, requestCombo);
-			
-		Button addLabExamButton = new Button("Add Lab Exam");
-		addLabExamButton.getStyleClass().addAll("page-button-active", "page-button");
-		
-		// Layout for Lab Exams section
-		VBox labExamBox = new VBox(10, labExamLabel, labExamListView, labControlsBox, addLabExamButton);
-		
-		// Search section
-		Label find = new Label("find");
-		findField = new TextField();
-		Button searchButton = new Button("Search");
-		Button resetButton = new Button("Reset");
-		HBox findRow = new HBox(20, findField, searchButton, resetButton);
-		VBox findBox = new VBox(5, find, findRow);
+		addButton.setDisable(true);
+		updateButton.setDisable(true);
+		deleteButton.setDisable(true);
 		
 		// styling
 		addButton.getStyleClass().addAll("page-button-active", "page-button");    
 	    updateButton.getStyleClass().addAll("page-button-active", "page-button");
 	    deleteButton.getStyleClass().addAll("page-button-active", "page-button");
-	    searchButton.getStyleClass().addAll("page-button-active", "page-button");
-	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
-	    datePicker.getStyleClass().add("styled-date-picker");
-	    
-		// listView listener
-		// this will make selecting a patient auto-fill the form (QOF)
-		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-			int index = newVal.intValue();
-			if (index >= 0) {
-				Patient selectedPatient = hospital.getPatients().get(index);
-				
-				// auto-fill form
-				nameField.setText(selectedPatient.getName());
-				datePicker.setValue(selectedPatient.getDob());
-				sexCombo.setValue(selectedPatient.getSex());
-				infoArea.setText(selectedPatient.getNotes());
-				
-				// update lab exams list
-				refreshLabExamsListView(selectedPatient, labExamListView);
-			}
-		});
-
-		// VBOX logger
-	    VBox logger = new VBox(15, nameInput, dateSexRow, infoArea, loggerButtons, new Separator(), labExamBox, new Separator(), findBox);
-	    logger.getStyleClass().addAll("logger", "containers-shadow");
-	    
-	    // scroll pane for logger VBox
-	    ScrollPane loggerScroll = new ScrollPane(logger);
-	    loggerScroll.setFitToWidth(true);
-	    loggerScroll.setFitToHeight(true);
-	    loggerScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-	    loggerScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	    
-	    loggerScroll.getStyleClass().add("logger-scroll");
-	    
-	    // ~~~ event handlers ~~~
-	    // add button logic
-		addButton.setOnAction(e -> {
-			String patientName = nameField.getText().trim();
-			LocalDate patientDob = datePicker.getValue();
-			String patientSex = sexCombo.getValue();
-			String patientNotes = infoArea.getText().trim();
-			
-			// check for empty fields
-			if (patientName.isEmpty() || patientDob == null || patientSex == null) {
-				showAlert("Missing Fields", "Please fill out name, date of birth, and sex.");
-				return;
-			}
-			
-			// Create patient (should auto-add to hospital and l)
-			Patient newPatient = new Patient(hospital, patientName, patientDob, patientSex, patientNotes);
-			
-			// update listView
-			listView.getItems().add(newPatient.toString());
-			
-			// clear form
-			nameField.clear();
-			datePicker.setValue(null);
-			sexCombo.getSelectionModel().clearSelection();
-			infoArea.clear();
-		});
 		
-		// reset button logic
-		resetButton.setOnAction(e -> {
-		    nameField.clear();
-		    datePicker.setValue(null);
-		    sexCombo.getSelectionModel().clearSelection();
-		    infoArea.clear();
-		    findField.clear();
-		});
-		
-		// update button logic
-		updateButton.setOnAction(e -> {
-			int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-			if (selectedIndex < 0) {
-				showAlert("No Selection", "Please select a patient to update.");
-				return;
-			}
-			
-			Patient selectedPatient = hospital.getPatients().get(selectedIndex);
-			
-			// validation
-			String updatedName = nameField.getText().trim();
-			LocalDate updatedDob = datePicker.getValue();
-			String updatedSex = sexCombo.getValue();
-			
-			if (updatedName.isEmpty() || updatedDob == null || updatedSex == null) {
-				showAlert("Missing Fields", "Please fill out name, date of birth, and sex.");
-				return;
-			}
-			
-			selectedPatient.setName(updatedName);
-			selectedPatient.setDob(updatedDob);
-			selectedPatient.setSex(updatedSex);
-			selectedPatient.setNotes(infoArea.getText().trim());
-			
-			// add to log
-			selectedPatient.addLogToHospital("Updated patient information");
-			// refresh list
-			listView.getItems().set(selectedIndex, selectedPatient.toString());
-		});
-		
-		// delete button logic
-		deleteButton.setOnAction(e -> {
-			int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-			if (selectedIndex < 0) {
-				showAlert("No Selection", "Please select a patient to delete.");
-				return;
-			}
-			
-			Patient selectedPatient = hospital.getPatients().get(selectedIndex);
-			
-			hospital.removePatient(selectedPatient);
-			listView.getItems().remove(selectedIndex);
-			
-			// add to log
-			selectedPatient.addLogToHospital("Deleted patient");
-			// refresh list
-			listView.getItems().set(selectedIndex, selectedPatient.toString());
-		});
-		
-		// Add Lab Exam button logic
-		addLabExamButton.setOnAction(e -> {
-			int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-			if (selectedIndex < 0) {
-				showAlert("No Selecton", "Please select a patient to add a lab exam.");
-				return;
-			}
-			
-			Patient selectedPatient = hospital.getPatients().get(selectedIndex);
-			
-			// for demonstration: dummy lab request and staff object
-			// replace with actual form inputs later
-			
-			// public Staff (Hospital hospital, String name, String role, String status)
-			// public LabRequest(Hospital hospital, Patient patient, String request, String status, Staff staff)
-			Staff dummyStaff = new Staff(hospital, "Dr. Thea", "test role", "active");
-			if (!hospital.getStaffs().contains(dummyStaff)) { // add dummy staff to hospital
-				hospital.addStaff(dummyStaff);
-			}
-			
-			LabRequest dummyRequest = new LabRequest(hospital, selectedPatient, "test request", "X-ray", dummyStaff);
-			
-			// create new lab exam
-			// public LabExam (Hospital hospital, LabRequest labRequest, Staff performingStaff, String status)
-			LabExam newExam = new LabExam(hospital, dummyRequest, dummyStaff, "Pending");
-			
-			// patient already adds this exam automatically
-			refreshLabExamsListView(selectedPatient, labExamListView);
-		});
-		
-		return loggerScroll;
+		return loggerButtons;
 	}
 	
-	// helper method to update/refresh the lab exams list
-	private void refreshLabExamsListView(Patient patient, ListView<String> labExamListView) {
-		labExamListView.getItems().clear();
-		for (LabExam le : patient.getLabExams()) {
-			labExamListView.getItems().add(le.toString());
-		}
+	private VBox buildFindBox() {
+		// Search section
+		Label find = new Label("find");
+		findField = new TextField();
+		findField.setPromptText("Search name/dob/sex/info");
+		findField.setPrefWidth(300);
+		searchButton = new Button("Search");
+		resetButton = new Button("Reset");
+		HBox findRow = new HBox(20, findField, searchButton, resetButton);
+		VBox findBox = new VBox(5, find, findRow);
+		searchButton.setDisable(true);
+		
+		//styling
+		searchButton.getStyleClass().addAll("page-button-active", "page-button");
+	    resetButton.getStyleClass().addAll("page-button-active", "page-button");
+		
+		return findBox;
 	}
+		
 }

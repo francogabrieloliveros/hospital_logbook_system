@@ -1,390 +1,400 @@
 package application.pages;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.collections.*;
+import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.time.LocalDate;
-import java.util.*;
-
 import application.Main;
-import application.models.Hospital;
-import application.models.LabExam;
-import application.models.LabRequest;
-import application.models.Patient;
-import application.models.Staff;
+import application.models.*;
 
 public class LabExamsPage {
 	
-	//initialize the attributes here pare magamit sa methods
 	private Hospital hospital;
-	private ComboBox<String> labRequest;
-	private ComboBox<String> performingStaff;
-	private DatePicker datePicker;
-	private ComboBox<String> cmbStatus;
-	private TextArea txtResults;
-	private TextArea txtRemarks;
-	private Button btnRecord;
-	private Button btnUpdate;
+	
+	//initialize the attributes here pare magamit sa methods
+	ObservableList<LabRequest> labRequests;
+	ObservableList<LabExam> items;
+	ObservableList<Staff> staffs;
 	private ListView<LabExam> listView;
-
+	private ComboBox<LabRequest> labRequestCombo;
+	private ComboBox<Staff> performingStaffCombo;
+	private ComboBox<String> statusCombo;
+	private DatePicker datePicker;
+	private TextArea txtResultsRemarks;
+	private Button btnAdd;
+	private Button btnUpdate;
+	private Button btnDelete;
+	private VBox labRequestBox;
 	
 	public LabExamsPage(Hospital hospital) { this.hospital = hospital; }
 	
 	public void setStageComponents(Stage stage, Main main) {
-		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
-		ArrayList<Button> labelButtons = new ArrayList<>();
-		for(String label : labels) {
-			Button newButton = new Button(label);
-			
-			if(label.equals("LAB EXAMS")) {
-				newButton.getStyleClass().addAll("page-button-active", "page-button");
-			} else {
-				newButton.getStyleClass().addAll("page-button-inactive", "page-button"); // added functionality (change pages)
-				newButton.setOnAction(e -> main.switchPage(label));
-			}
-			
-			labelButtons.add(newButton);
-		}
 		
-		HBox pageButtons = new HBox(10);
-		pageButtons.getChildren().addAll(labelButtons);
-		HBox.setMargin(pageButtons, new Insets(20));
+		HBox pageButtons = new HeaderButtons(main, "LAB EXAMS").get(); // page switching header
 		
-		// Work here
+		/* ------------------------------------------- MAINPAGE CONTENTS-------------------------------------------*/
+		// Left panel
+		buildListView();
 		
-		//listView
-        listView = new ListView<>();
-		listView.getStyleClass().add("list-view");
-		listView.getStyleClass().add("containers-shadow");
-		
-		ObservableList<LabExam> items = FXCollections.observableArrayList();
-		items.setAll(this.hospital.getLabExams());
-		listView.setItems(items);
-
-		//Labels and TextFields and ComboBoxes and DatePicker and yes
-		Label labelLabRequest = new Label("Lab Request:");
-		labRequest = new ComboBox<>();
-		
-		ObservableList<String> labRequests = FXCollections.observableArrayList();
-		for (LabRequest labRequestItem: this.hospital.getLabRequests()) {
-			if(!labRequestItem.getStatus().equals("done")) {//only adds the lab requests that are not done yet
-				labRequests.add(String.format("%s | ordering physician: %s",labRequestItem.getID(), labRequestItem.getStaff()));	
-			}
-		}
-		labRequest.getItems().addAll(labRequests);
-		
-		Label labelPerformingStaff = new Label("Performing Staff:");
-		performingStaff = new ComboBox<>();
-		
-		Label labelDate = new Label("Date:");
-		datePicker = new DatePicker();
-		datePicker.setValue(LocalDate.now());
-		datePicker.setPromptText("Select Date");
-		datePicker.getStyleClass().add("styled-date-picker");
-		
-		Label labelStatus = new Label("Status:");
-		cmbStatus = new ComboBox<>();
-		cmbStatus.getItems().addAll("Finished", "In-Progress", "Cancelled");
-		
-		Label labelResults= new Label("Results:");
-		txtResults= new TextArea();
-		txtResults.setPrefHeight(75); 
-		
-		Label labelRemarks = new Label("Remarks:");
-		txtRemarks = new TextArea();
-		txtRemarks.setPrefHeight(150); 
-		
-		//Buttons
-		btnRecord = new Button("Record");
-		btnRecord.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
-		btnRecord.setDisable(true);
-		btnUpdate = new Button("Update");
-		btnUpdate.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
-		btnUpdate.setDisable(true);
-		
-		//vbucks for the form
-		VBox labRequestBox = new VBox(5, labelLabRequest, labRequest);
-		labRequest.setMaxWidth(Double.MAX_VALUE);
-		VBox performingStaffBox = new VBox(5, labelPerformingStaff, performingStaff);
-		VBox dateBox= new VBox(5, labelDate, datePicker);
-		VBox statusBox = new VBox(5, labelStatus, cmbStatus);
-		VBox results = new VBox(5, labelResults, txtResults);
-		VBox remarks = new VBox(5, labelRemarks, txtRemarks);
-		
-		//Grouping buttons
-		HBox buttonBox = new HBox(10, btnRecord, btnUpdate);
-		buttonBox.setAlignment(Pos.CENTER_RIGHT); // Align buttons to the right
-
-		//Grouping date and status
-		HBox grpBox = new HBox(10, dateBox, statusBox);
+		// Right panel
+		labRequestBox = buildLabRequestBox();
+		VBox performingStaffBox = buildPerformingStaffBox();
+		HBox grpBox = buildDateStatus();
+		VBox resultsRemarks = buildResultsRemarks();
+		HBox buttonBox = buildButtonBox();
 		
 		//one final vbuck for the grouping of all elements inside the form
-		VBox recordDetailsFull = new VBox(20, labRequestBox, performingStaffBox, grpBox, results ,remarks, buttonBox);
+		VBox recordDetailsFull = new VBox(20, labRequestBox, performingStaffBox, grpBox, resultsRemarks, buttonBox);
 		recordDetailsFull.getStyleClass().add("record-box");
 		recordDetailsFull.setPrefWidth(500); 
 		recordDetailsFull.setMaxWidth(400);
 		
 		//https://stackoverflow.com/questions/29489880/javafx-how-to-make-combobox-hgrow
 		HBox mainPage = new HBox(20, listView, recordDetailsFull);
-		labRequest.setMaxWidth(Double.MAX_VALUE);
-		performingStaff.setMaxWidth(Double.MAX_VALUE);
+		labRequestCombo.setMaxWidth(Double.MAX_VALUE);
+		performingStaffCombo.setMaxWidth(Double.MAX_VALUE);
 		HBox.setHgrow(listView, Priority.ALWAYS);
 		VBox.setVgrow(mainPage, Priority.ALWAYS);
 		
+		/* ------------------------------------------- FUNCTIONALITY -------------------------------------------*/
+		// Set input field values to selected values
+		listView.getSelectionModel().selectedItemProperty().addListener((a, b, selected) -> {
+		    if (selected != null) {
+	            labRequestCombo.setValue(selected.getLabRequest());
+	    		performingStaffCombo.setValue(selected.getPerformingStaff());
+	    		datePicker.setValue(selected.getDate());
+	    		statusCombo.setValue(selected.getStatus());
+	    		txtResultsRemarks.setText(selected.getResultsAndRemarks());
+		    } else {
+		    	resetInputFields();
+		    }
+		});
 		
-		//functionality
-		//disable and enable fields
-
-		txtResults.setDisable(true);
-		txtRemarks.setDisable(true);
-		
-		labRequest.valueProperty().addListener((a, b, c) -> fieldStatusUpdater());
-		performingStaff.valueProperty().addListener((a, b, c) -> fieldStatusUpdater());
-		cmbStatus.valueProperty().addListener((a, b, c) -> fieldStatusUpdater());
+		labRequestCombo.valueProperty().addListener((a, b, selected) -> {
+			if(selected != null) {
+				fieldStatusUpdater();
+				staffs.setAll(createStaffList(selected));
+			} else {
+				staffs.clear();
+			}
+		});
+		performingStaffCombo.valueProperty().addListener((a, b, c) -> fieldStatusUpdater());
+		statusCombo.valueProperty().addListener((a, b, c) -> fieldStatusUpdater());
 		datePicker.valueProperty().addListener((a, b, c) -> fieldStatusUpdater());
-		txtResults.textProperty().addListener((a, b, c) -> fieldStatusUpdater());
-		txtRemarks.textProperty().addListener((a, b, c) -> fieldStatusUpdater());
+		txtResultsRemarks.textProperty().addListener((a, b, c) -> fieldStatusUpdater());
 		
-		listView.setOnMouseClicked(event -> {
-		    LabExam selectedExam = listView.getSelectionModel().getSelectedItem();
-		    if (selectedExam != null) {
-		        fillExamFields(selectedExam); // fill the fields
-		        updateFieldStatusForExam(selectedExam); // enable/disable fields/buttons
-		    }
-		});
-		
-		labRequest.valueProperty().addListener((obs, oldVal, newVal) -> {
-		    LabRequest selectedLabRequest = getSelectedLabRequest();
-		    boolean examSelected = listView.getSelectionModel().getSelectedItem() != null;
-		    if(selectedLabRequest != null && !examSelected) {
-		        ObservableList<String> compStaff = FXCollections.observableArrayList();
-		        compStaff.setAll(getCompStaff(selectedLabRequest));
-		        performingStaff.setItems(compStaff);
-		        performingStaff.getSelectionModel().clearSelection();
-		    }
-		});
-	
-		//onclick, creates a new LabExam, updates the items list and the listView, resets the input fields. If status is done, update staff and lab request aswell.
-		btnRecord.setOnAction(e -> {			
-			Staff selectedStaff = getSelectedStaff();
-			String selectedStatus = cmbStatus.getValue();
+		// onclick, creates a new LabExam, updates the items list and the listView, 
+		// resets the input fields. If status is done, update staff and lab request aswell.
+		btnAdd.setOnAction(e -> {
+			String selectedStatus = statusCombo.getValue(); 
+			LabRequest selectedLabRequest = labRequestCombo.getValue();
 			
-			selectedStaff.setStatus("active");
-			hospital.addLabExam(new LabExam(hospital, getSelectedLabRequest(), selectedStaff, datePicker.getValue(), cmbStatus.getSelectionModel().getSelectedItem(),txtResults.getText(), txtRemarks.getText()));
+			hospital.addLabExam(new LabExam(hospital, 
+					                        selectedLabRequest, 
+					                        performingStaffCombo.getValue(), 
+					                        datePicker.getValue(), 
+					                        selectedStatus, 
+					                        txtResultsRemarks.getText()));
+			
 			
 			if(selectedStatus.equals("Finished") || selectedStatus.equals("Cancelled")) {
-				selectedStaff.setStatus("inactive");
-				getSelectedLabRequest().update("done");
+				selectedLabRequest.setStatus("done");
+			} else if (selectedStatus.equals("In-Progress")) {
+				selectedLabRequest.setStatus("in progress");
 			}
 			
 			items.setAll(hospital.getLabExams());		    
-			//remove the selected labRequest from the list
-			labRequest.getItems().remove(labRequest.getSelectionModel().getSelectedIndex());
-			listView.setItems(FXCollections.observableArrayList(hospital.getLabExams()));
 		    resetInputFields();
-		    labRequest.getSelectionModel().clearSelection();
 		});
 		
 		//updates the value of the lab exam, updates the status of the staff and lab request if done or cancelled. 
 		btnUpdate.setOnAction(e -> {
 			LabExam selectedLabExam = listView.getSelectionModel().getSelectedItem();
-			Staff selectedStaff = getSelectedStaff();
-			String selectedStatus = cmbStatus.getValue();
 			
-			if(selectedStatus.equals("Finished") || selectedStatus.equals("Cancelled")) {
-				selectedStaff.setStatus("inactive");
-				getSelectedLabRequest().update("done");
-			}
-			//setters
 			if(selectedLabExam != null) {
-				selectedLabExam.setDate(datePicker.getValue());
-				selectedLabExam.setStatus(cmbStatus.getValue());
-				selectedLabExam.setResults(txtResults.getText());
-				selectedLabExam.setRemarks(txtRemarks.getText());
+				String selectedStatus = statusCombo.getValue();
+				LabRequest selectedLabRequest = labRequestCombo.getValue();
+				
+				selectedLabExam.update(selectedLabRequest, 
+						               performingStaffCombo.getValue(), 
+						               datePicker.getValue(), 
+						               selectedStatus, 
+						               txtResultsRemarks.getText());
+				
+				if(selectedStatus.equals("Finished") || selectedStatus.equals("Cancelled")) {
+					selectedLabRequest.setStatus("done");
+				} else if (selectedStatus.equals("In-Progress")) {
+					selectedLabRequest.setStatus("in progress");
+				}
+				
+				//updates the listView
+			    items.setAll(hospital.getLabExams());
+			    resetInputFields();
 			}
-			//updates the listView
-		    listView.setItems(FXCollections.observableArrayList(hospital.getLabExams()));
-		    resetInputFields();
-		    labRequest.setDisable(false);
 		});
-
+		
+		btnDelete.setOnAction(e -> {
+			LabExam selected = listView.getSelectionModel().getSelectedItem();
+			
+			if(selected != null) {
+				selected.delete();
+				items.setAll(hospital.getLabExams());
+				resetInputFields();
+			}
+		});
+		
+		listView.setOnKeyPressed(e -> deselectOnEsc(e));
+		
+		/* ------------------------------------------- ROOT & SCENE -------------------------------------------*/
 		//main container
 		VBox root = new VBox(20, pageButtons, mainPage); // Add other elements here
 		root.getStyleClass().add("default-bg");
+		root.setOnKeyPressed(e -> deselectOnEsc(e));
 		root.setPadding(new Insets(50));
 		Scene scene = new Scene(root, 1200, 700);
 		// Add LabExams css
 		scene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		scene.getStylesheets().add(getClass().getResource("/application/styles/LabExamsPage.css").toExternalForm());
 		stage.setScene(scene);
-		stage.setTitle("Lab Exams View");
-		fieldStatusUpdater();
+		stage.setTitle("Lab Exams");
 		stage.show();
 	}
 	
+	// Verifies staff compatibility
+	private boolean isCompatibleStaff(Staff staff, LabRequest labRequest){
+		String role = staff.getRole();
+		String testType = labRequest.getRequest();
+
+		//cases for compatiblity
+		switch(role) {
+	    	case "MedTech" -> {
+	        	if(testType.equals("CBC") || testType.equals("PCR"))
+	        		return true;
+	        	else
+	        		return false;
+	    	}
+	    	case "Pathologist" -> {
+	    		if(testType.equals("Urinalysis"))
+	        		return true;
+	        	else
+	        		return false;
+	    	}
+	    	case "Phlebotomist" -> {
+	    		if(testType.equals("FBS") || testType.equals("Lipid Profile"))
+	        		return true;
+	        	else
+	        		return false;
+	    	}
+	    	case "RadTech" -> {
+	    		if(testType.equals("X-Ray"))
+	        		return true;
+	        	else
+	        		return false;
+	    	}
+		}
+		return false;
+	}
+	
+	private void deselectOnEsc(KeyEvent e) {
+		if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+	        listView.getSelectionModel().clearSelection();
+	    }
+	}
+	
 	private void fieldStatusUpdater() {
-	    boolean labRequestSelected = labRequest.getSelectionModel().getSelectedIndex() >= 0;
-	    boolean performingStaffSelected = performingStaff.getSelectionModel().getSelectedIndex() >= 0;
+	    boolean labRequestSelected = labRequestCombo.getValue() != null;
+	    boolean performingStaffSelected = performingStaffCombo.getValue() != null;
 	    boolean dateSelected = datePicker.getValue() != null;
-	    boolean statusSelected = cmbStatus.getSelectionModel().getSelectedIndex() >= 0;
+	    boolean statusSelected = statusCombo.getValue() != "Select status";
 	    boolean examSelected = listView.getSelectionModel().getSelectedItem() != null;
 	    
-	    // ComboBox Selection (Record)
-	    if (labRequestSelected && !examSelected) {
-	        performingStaff.setDisable(false);
-	        datePicker.setDisable(false);
-	        cmbStatus.setDisable(false);
-	        
-	        //optional fields
-	        txtResults.setDisable(false); 
-	        txtRemarks.setDisable(false); 
-
-	        // Record button enabled only if required fields are filled
-	        btnRecord.setDisable(!(performingStaffSelected && dateSelected && statusSelected));
-	        btnUpdate.setDisable(true); // nothing selected to update
+	    if (labRequestSelected &&
+	    	performingStaffSelected &&
+	    	dateSelected &&
+	    	statusSelected &&
+	    	examSelected) {
+	    	btnAdd.setDisable(true);
+	    	btnUpdate.setDisable(false);
+	    	btnDelete.setDisable(false);
 	    }
-	    // nothing selected
-	    else if(!labRequestSelected && !examSelected){
-	        performingStaff.setDisable(true);
-	        datePicker.setDisable(true);
-	        cmbStatus.setDisable(true);
-	        txtResults.setDisable(true);
-	        txtRemarks.setDisable(true);
-	        btnRecord.setDisable(true);
-	        btnUpdate.setDisable(true);
-	        labRequest.setDisable(false);
-	    }
-	}
-	
-	//fills the field when theres a selection from the listView
-	private void fillExamFields(LabExam exam) {
-	    LabRequest request = exam.getLabRequest();
-	    labRequest.setValue(String.format("%s | ordering physician: %s", request.getID(), request.getStaff()));
-	    performingStaff.setValue(exam.getPerformingStaff().getName());
-	    datePicker.setValue(exam.getDate());
-	    cmbStatus.setValue(exam.getStatus());
-	    
-	    if (exam.getResults() != null) {txtResults.setText(exam.getResults());} 
-	    else {txtResults.setText("");}
-
-	    if (exam.getRemarks() != null) {txtRemarks.setText(exam.getRemarks());} 
-	    else {txtRemarks.setText("");}
-	}
-	
-	//updates the status of the fields and buttons when a selection is made from the listView
-	private void updateFieldStatusForExam(LabExam exam) {
-		//cannot edit the labRequest and Staff, and also no record button here
-	    labRequest.setDisable(true);
-	    performingStaff.setDisable(true);
-	    btnRecord.setDisable(true);
-	    
-	    //if the exam is cancelled or finished, no more actions can be done
-	    if (exam.getStatus().equals("Cancelled") || exam.getStatus().equals("Finished")) {
-
-	        datePicker.setDisable(true);
-	        cmbStatus.setDisable(true);
-	        txtResults.setDisable(true);
-	        txtRemarks.setDisable(true);
-	        btnUpdate.setDisable(true);
+	    else if(labRequestSelected &&
+		    	performingStaffSelected &&
+		    	dateSelected &&
+		    	statusSelected &&
+		    	!examSelected){
+	    	btnAdd.setDisable(false);
+	    	btnUpdate.setDisable(true);
+	    	btnDelete.setDisable(true);
 	    } else {
-	        datePicker.setDisable(false);
-	        cmbStatus.setDisable(false);
-	        txtResults.setDisable(false);
-	        txtRemarks.setDisable(false);
-	        btnUpdate.setDisable(false);
+	    	btnAdd.setDisable(true);
+	    	btnUpdate.setDisable(true);
+	    	btnDelete.setDisable(true);
 	    }
-	}
-	
-
-	//Gets a list of compatible staff 
-	private ArrayList<String> getCompStaff(LabRequest labRequest){
-	    ArrayList<String> compatibleStaffNames = new ArrayList<>();
-	    if(labRequest == null) return compatibleStaffNames; // nothing selected yet
-
-	    String testType = labRequest.getRequest(); 
-
-	    for(Staff staff : hospital.getStaffs()) {
-	    	if(staff.getStatus().equals("inactive")) {//only compatible if the staff is inactive, and meets the required type of test.
-	    		
-	    		//cases for compatiblity
-	    		switch(staff.getRole()) {
-	            	case "MedTech" -> {
-	                	if(testType.equals("CBC") || testType.equals("PCR"))
-	                		compatibleStaffNames.add(staff.getName());
-	            	}
-	            	case "Pathologist" -> {
-	                	if(testType.equals("Urinalysis"))
-	                		compatibleStaffNames.add(staff.getName());
-	            	}
-	            	case "Phlebotomist" -> {
-	                	if(testType.equals("FBS") || testType.equals("Lipid Profile"))
-	                    	compatibleStaffNames.add(staff.getName());
-	            	}
-	            	case "RadTech" -> {
-	                	if(testType.equals("X-RAY"))
-	                		compatibleStaffNames.add(staff.getName());
-	            	}
-	        	}
-	    	}
-	    }
-
-	    return compatibleStaffNames;
-	}
-	
-	//returns the selected LR
-	private LabRequest getSelectedLabRequest() {
-		String selectedText = labRequest.getSelectionModel().getSelectedItem();
-	    if (selectedText == null || selectedText.isEmpty()) {
-	        return null;
-	    }
-	    String selectedID = selectedText.split(" \\| ")[0]; // extract ID part
-        LabRequest selectedLabRequest = null;
-        
-        for (LabRequest lr : hospital.getLabRequests()) {
-            if (lr.getID().equals(selectedID)) {
-                selectedLabRequest = lr;
-                break;
-            }
-        }
-        if(selectedLabRequest != null) {
-        	return selectedLabRequest;
-        }
-        
-		return null;
-	}
-	
-	//returns the selected Staff
-	private Staff getSelectedStaff() {
-		String selectedText = performingStaff.getSelectionModel().getSelectedItem(); 
-        Staff selectedStaff= null;
-        
-        for (Staff staff : hospital.getStaffs()) {
-            if (staff.getName().equals(selectedText)) {
-                selectedStaff = staff;
-                break;
-            }
-        }
-        if(selectedStaff != null) {
-        	return selectedStaff;
-        }
-        
-		return null;
 	}
 	
 	//resets inputFields for buttonActions
 	private void resetInputFields() {
-		labRequest.setValue("");
-		performingStaff.setValue("");
-		datePicker.setValue(LocalDate.now());
-		cmbStatus.setValue("");
-		txtResults.setText("");
-		txtRemarks.setText("");
+		labRequests.setAll(createLabRequestList());
+		labRequestCombo.setValue(null);
+		performingStaffCombo.setValue(null);
+		datePicker.setValue(null);
+		statusCombo.setValue("Select status");
+		txtResultsRemarks.setText("");
 		listView.getSelectionModel().clearSelection();
+	}
+	
+	private ObservableList<Staff> createStaffList(LabRequest request){
+		ObservableList<Staff> activeStaff = FXCollections.observableArrayList();
+		
+		if (request == null) return activeStaff;
+		
+		for(Staff staff : hospital.getStaffs()) {
+			if(staff.getStatus().equals("active") && isCompatibleStaff(staff, request)) {
+				activeStaff.add(staff);	
+			}
+		}
+		
+		return activeStaff;
+	}
+	
+	private ObservableList<LabRequest> createLabRequestList(){
+		ObservableList<LabRequest> activeLabRequests = FXCollections.observableArrayList();
+		for(LabRequest labRequest : hospital.getLabRequests()) {
+			if(!labRequest.getStatus().equals("done")) {
+				activeLabRequests.add(labRequest);	
+			}
+		}
+		
+		return activeLabRequests;
+	}
+	
+	/* ------------------------------------------- BUILDERS -------------------------------------------*/
+	public void buildListView() {
+		//listView
+	    listView = new ListView<>();
+		listView.getStyleClass().add("list-view");
+		listView.getStyleClass().add("containers-shadow");
+		
+		items = FXCollections.observableArrayList();
+		items.setAll(hospital.getLabExams());
+		listView.setItems(items);	
+	}
+	
+	public VBox buildLabRequestBox() {
+		//Labels and TextFields and ComboBoxes and DatePicker and yes
+		Label labelLabRequest = new Label("Lab Request");
+		labRequestCombo = new ComboBox<LabRequest>();
+		labRequestCombo.setPromptText("Select request");
+		
+		labRequests = createLabRequestList();
+		labRequestCombo.setItems(labRequests);
+		
+		VBox labRequestBox = new VBox(5, labelLabRequest, labRequestCombo);
+		labRequestCombo.setMaxWidth(Double.MAX_VALUE);
+		
+		labRequestCombo.setButtonCell(new ListCell<LabRequest>() {
+		    @Override
+		    protected void updateItem(LabRequest item, boolean empty) {
+		        super.updateItem(item, empty);
+		        setText(item == null ? "Select request" : String.format("%s request by %s for %s", 
+		        		                                                 item.getRequest(), 
+		        		                                                 item.getStaff().getName(), 
+		        		                                                 item.getPatient().getName()));
+		    }
+		});
+	    
+	    labRequestCombo.setCellFactory(list -> new ListCell<LabRequest>() {
+	        @Override
+	        protected void updateItem(LabRequest item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(item == null ? "Select request" : String.format("%s request by %s for %s", 
+                        												 item.getRequest(), 
+                        												 item.getStaff().getName(), 
+                        												 item.getPatient().getName()));	
+	        }
+	    });
+		
+		return labRequestBox;
+	}
+	
+	private VBox buildPerformingStaffBox() {
+		Label labelPerformingStaff = new Label("Performing Staff");
+		performingStaffCombo = new ComboBox<Staff>();
+		performingStaffCombo.setPromptText("Select performing staff");
+		
+		staffs = FXCollections.observableArrayList();
+		staffs.setAll(createStaffList(labRequestCombo.getValue()));
+		performingStaffCombo.setItems(staffs);
+		
+		VBox performingStaffBox = new VBox(5, labelPerformingStaff, performingStaffCombo);
+		
+		performingStaffCombo.setButtonCell(new ListCell<Staff>() {
+		    @Override
+		    protected void updateItem(Staff item, boolean empty) {
+		        super.updateItem(item, empty);
+		        setText(item == null ? "Select staff" : item.getName());
+		    }
+		});
+	    
+	    performingStaffCombo.setCellFactory(list -> new ListCell<Staff>() {
+	        @Override
+	        protected void updateItem(Staff item, boolean empty) {
+	            super.updateItem(item, empty);
+	            setText(item == null ? "Select staff" : item.getName());	
+	        }
+	    });
+		
+		return performingStaffBox;
+	}
+	
+	private HBox buildDateStatus() {
+		Label labelDate = new Label("Date");
+		datePicker = new DatePicker();
+		datePicker.setValue(null);
+		datePicker.setPromptText("Select Date");
+		datePicker.getStyleClass().add("styled-date-picker");
+		VBox dateBox= new VBox(5, labelDate, datePicker);
+		
+		Label labelStatus = new Label("Status");
+		statusCombo = new ComboBox<String>();
+		statusCombo.getItems().setAll("Select status", "Finished", "In-Progress", "Cancelled");
+		statusCombo.setValue("Select status");
+		VBox statusBox = new VBox(5, labelStatus, statusCombo);
+		
+		HBox grpBox = new HBox(10, dateBox, statusBox);
+		return grpBox;
+	}
+	
+	private VBox buildResultsRemarks() {
+		Label labelResultsRemarks = new Label("Results and Remarks");
+		txtResultsRemarks = new TextArea();
+		VBox resultsRemarks = new VBox(5, labelResultsRemarks, txtResultsRemarks);
+		
+		return resultsRemarks;
+	}
+
+	private HBox buildButtonBox() {
+		//Buttons
+		btnAdd = new Button("Add");
+		btnAdd.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
+		btnAdd.setDisable(true);
+		
+		btnUpdate = new Button("Update");
+		btnUpdate.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
+		btnUpdate.setDisable(true);
+		
+		btnDelete = new Button("Delete");
+		btnDelete.getStyleClass().addAll("page-button","page-button:pressed", "page-button-active", "page-button:hover");
+		btnDelete.setDisable(true);
+		
+		//Grouping buttons
+		HBox buttonBox = new HBox(10, btnAdd, btnUpdate, btnDelete);
+		buttonBox.setAlignment(Pos.CENTER_RIGHT); // Align buttons to the right
+		
+		return buttonBox;
 	}
 }
