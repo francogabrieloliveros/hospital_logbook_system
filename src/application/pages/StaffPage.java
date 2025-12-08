@@ -154,8 +154,8 @@ public class StaffPage {
 		
 		// Create scene and add styles
 		Scene staffPageScene = new Scene(root, 1200, 720);
-		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/StaffPage.css").toExternalForm());
 		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
+		staffPageScene.getStylesheets().add(getClass().getResource("/application/styles/StaffPage.css").toExternalForm());
 		stage.setScene(staffPageScene);
 		stage.setTitle("Staff");
 		stage.show();

@@ -24,6 +24,10 @@ public class LogBook{
 	}
 	
 	// Getters
+	public String toString() {
+		return String.format("%s | author=%s | tag=%s | message=%s", 
+				timestamp.toString(), author, tag, message);
+	}
 	public LocalDateTime getTimestamp() { return this.timestamp; }
 	public String getAuthor() { return this.author; }
 	public String getTag() { return this.tag; }
