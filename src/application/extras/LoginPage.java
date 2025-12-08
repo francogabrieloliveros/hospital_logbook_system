@@ -44,7 +44,6 @@ public class LoginPage {
 		
 		Scene loginPageScene = new Scene(root, 1080, 720);
 		loginPageScene.getStylesheets().add(getClass().getResource("/application/styles/extras.css").toExternalForm());
-		
 		return loginPageScene;
 	}
 	

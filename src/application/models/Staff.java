@@ -28,6 +28,7 @@ public class Staff implements HospitalElement{
 		this.name = name;
 		this.role = role;
 		this.status = status;
+		this.isOwned = isOwned;
 		this.id = ID;
 	}
 	
@@ -44,6 +45,26 @@ public class Staff implements HospitalElement{
 	public void delete() {
 		addLogToHospital(String.format("Deleted %s from staffs", id));
 		hospital.removeStaff(this);
+	}
+	
+	public boolean stillOwned() {
+		boolean stillOwnedLR = false, stillOwnedLB = false;
+		
+		for(LabRequest request : hospital.getLabRequests()) {
+			if(request.getStaff().equals(this)) {
+				stillOwnedLR = true;
+				break;
+			}
+		}
+		
+		for(LabExam exam : hospital.getLabExams()) {
+			if(exam.getOrderingPhysician().equals(this) || exam.getPerformingStaff().equals(this)) {
+				stillOwnedLB = true;
+				break;
+			}
+		}
+		
+		return stillOwnedLR || stillOwnedLB;
 	}
 	
 	// HospitalElement functions

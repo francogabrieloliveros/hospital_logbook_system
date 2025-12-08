@@ -112,6 +112,8 @@ public class LabRequestsPage {
 			
 			if(selected != null) {
 				selected.delete();
+				selected.getStaff().isOwned = selected.getStaff().stillOwned();
+				selected.getPatient().isOwned = selected.getStaff().stillOwned();
 				items.setAll(hospital.getLabRequests());
 				clearInputs();
 			}
@@ -157,6 +159,8 @@ public class LabRequestsPage {
 		stage.setTitle("Lab Requests");
 		stage.show();
 	}
+	
+	
 	
 	private void clearInputs() {
 	    patientComboBox.setValue(null);

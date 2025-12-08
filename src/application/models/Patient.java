@@ -69,6 +69,26 @@ public class Patient implements HospitalElement {
 		hospital.removePatient(this);
 	}
 	
+	public boolean stillOwned() {
+		boolean stillOwnedLR = false, stillOwnedLB = false;
+		
+		for(LabRequest request : hospital.getLabRequests()) {
+			if(request.getPatient().equals(this)) {
+				stillOwnedLR = true;
+				break;
+			}
+		}
+		
+		for(LabExam exam : hospital.getLabExams()) {
+			if(exam.getPatient().equals(this)) {
+				stillOwnedLB = true;
+				break;
+			}
+		}
+		
+		return stillOwnedLR || stillOwnedLB;
+	}
+	
 	// Turn info into a string for the list
     @Override
     public String toString() {

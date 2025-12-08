@@ -143,8 +143,11 @@ public class LabExamsPage {
 			LabExam selected = listView.getSelectionModel().getSelectedItem();
 			
 			if(selected != null) {
-				selected.getLabRequest().isOwned = false;
 				selected.delete();
+				selected.getLabRequest().isOwned = false;
+				selected.getPerformingStaff().isOwned = selected.getPerformingStaff().stillOwned();
+				selected.getOrderingPhysician().isOwned = selected.getOrderingPhysician().stillOwned();
+				selected.getPatient().isOwned = selected.getPatient().stillOwned();
 				items.setAll(hospital.getLabExams());
 				resetInputFields();
 			}

@@ -40,7 +40,7 @@ public class Hospital {
 	    		w.write(staff.getName() + "\n");
 	    		w.write(staff.getRole() + "\n");
 	    		w.write(staff.getStatus() + "\n");
-	    		w.write(staff.isOwned ? "true" : "false" + "\n");
+	    		w.write(staff.isOwned ? "true\n" : "false\n");
 	    	}
 	    } catch (IOException e) {}
 	    
@@ -57,7 +57,7 @@ public class Hospital {
 	    		w.write(patient.getDob().toString() + "\n");
 	    		w.write(patient.getSex() + "\n");
 	    		w.write(patient.getNotes() + "\n");
-	    		w.write(patient.isOwned ? "true" : "false" + "\n");
+	    		w.write(patient.isOwned ? "true\n" : "false\n");
 	    	}
 	    } catch (IOException e) {}
 	    
@@ -74,7 +74,7 @@ public class Hospital {
 	    		w.write(request.getRequest() + "\n");
 	    		w.write(request.getStatus() + "\n");
 	    		w.write(request.getStaff().getID() + "\n");
-	    		w.write(request.isOwned ? "true" : "false" + "\n");
+	    		w.write(request.isOwned ? "true\n" : "false\n");
 	    	}
 	    } catch (IOException e) {}
 	    
@@ -133,7 +133,7 @@ public class Hospital {
 		                				r.readLine(), // Name
 		                				r.readLine(), // Role
 		                				r.readLine(), // Status
-		                				r.readLine() == "true" ? true : false); //isOwned 
+		                				r.readLine().equals("true" ) ? true : false); //isOwned 
 	    		this.addStaff(staff);
 	    		staffMap.put(staff.getID(), staff);
 	    		line = r.readLine();
@@ -152,7 +152,7 @@ public class Hospital {
 		                					  LocalDate.parse(r.readLine()), // Dob
 		                					  r.readLine(), // Sex
 		                					  r.readLine(), // Notes
-	    									  r.readLine() == "true" ? true : false); //isOwned 
+	    									  r.readLine().equals("true") ? true : false); //isOwned 
 	    		this.addPatient(patient);
 	    		patientMap.put(patient.getID(), patient);
 	    		line = r.readLine();
@@ -172,7 +172,7 @@ public class Hospital {
 		                					  		   r.readLine(), // Request
 		                					  		   r.readLine(), // Status
 		                					  		   staffMap.get(r.readLine()), // Staff
-	    											   r.readLine() == "true" ? true : false); //isOwned 
+	    											   r.readLine().equals("true") ? true : false); //isOwned 
 	    		this.addLabRequest(labRequest);
 	    		labRequestMap.put(labRequest.getID(), labRequest);
 	    		line = r.readLine();

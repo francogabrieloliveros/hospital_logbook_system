@@ -2,13 +2,8 @@ package application.extras;
 
 import application.Main;
 
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import java.util.*;
 
 public class ExtraStage {
 	
@@ -39,12 +34,22 @@ public class ExtraStage {
 		welcome = new WelcomePage(this);
 		
 		stage.setScene(login.getScene());
+		stage.setTitle("Login");
 		stage.show();
 	}
 	
-	public void openWelcomeScene() { stage.setScene(welcome.getScene()); }
-	public void openCreditsScene() { stage.setScene(credits.getScene()); }
-	public void openAboutScene() { stage.setScene(about.getScene()); }
+	public void openWelcomeScene() { 
+		stage.setScene(welcome.getScene());
+		stage.setTitle("Welcome");
+	}
+	public void openCreditsScene() { 
+		stage.setScene(credits.getScene());
+		stage.setTitle("Credits");
+	}
+	public void openAboutScene() { 
+		stage.setScene(about.getScene());
+		stage.setTitle("About");
+	}
 	
 	public void openMain() { 
 		main.switchPage("STAFF");
