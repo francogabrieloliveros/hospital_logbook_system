@@ -209,7 +209,7 @@ public class StaffPage {
 	    	roleField.setDisable(true);
 	    	statusField.setDisable(false);
 	    	addButton.setDisable(true);
-			updateButton.setDisable(false);
+			updateButton.setDisable(false || selected.isOwned);
 			deleteButton.setDisable(false || selected.isOwned);
 	    } else if (nameFilled && roleFilled && statusFilled && !listViewSelected) {
 	    	// Enable add button when no listViewItem selected (new item)

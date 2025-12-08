@@ -296,7 +296,7 @@ public class LabExamsPage {
 	private ObservableList<LabRequest> createLabRequestList(){
 		ObservableList<LabRequest> activeLabRequests = FXCollections.observableArrayList();
 		for(LabRequest labRequest : hospital.getLabRequests()) {
-			if(labRequest.getStatus().equals("new")) {
+			if(!labRequest.getStatus().equals("done")) {
 				activeLabRequests.add(labRequest);	
 			}
 		}
