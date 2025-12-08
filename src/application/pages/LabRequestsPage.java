@@ -92,6 +92,7 @@ public class LabRequestsPage {
 			
 			items.setAll(hospital.getLabRequests());
 			clearInputs();
+			showAlert("Successful!","Successfully added new lab request.");
 		});
 		
 		updateButton.setOnAction(e -> {
@@ -104,6 +105,7 @@ public class LabRequestsPage {
                                 staffComboBox.getValue());
 				items.setAll(hospital.getLabRequests());
 				clearInputs();
+				showAlert("Successful!","Successfully updated lab request information.");
 			}
 		});
 		
@@ -116,6 +118,7 @@ public class LabRequestsPage {
 				selected.getPatient().isOwned = selected.getStaff().stillOwned();
 				items.setAll(hospital.getLabRequests());
 				clearInputs();
+				showAlert("Successful!","Successfully deleted lab request.");
 			}
 		});
 		
@@ -159,8 +162,6 @@ public class LabRequestsPage {
 		stage.setTitle("Lab Requests");
 		stage.show();
 	}
-	
-	
 	
 	private void clearInputs() {
 	    patientComboBox.setValue(null);

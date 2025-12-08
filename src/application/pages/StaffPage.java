@@ -90,6 +90,7 @@ public class StaffPage {
 			
 			items.setAll(hospital.getStaffs());
 			resetInputFields();
+			showAlert("Successful!","Successfully added new staff.");
 		});
 		
 		// Updates selected staff from hospital staffs and updates list view
@@ -100,6 +101,7 @@ public class StaffPage {
 				selected.update(nameField.getText(), roleField.getValue(), statusField.getValue());
 				items.setAll(hospital.getStaffs());
 				resetInputFields();
+				showAlert("Successful!","Successfully updated staff information.");
 			}
 		});
 		
@@ -111,6 +113,7 @@ public class StaffPage {
 				selected.delete();
 				items.setAll(hospital.getStaffs());
 				resetInputFields();
+				showAlert("Successful!","Successfully deleted staff.");
 			}
 		});
 		
@@ -156,6 +159,14 @@ public class StaffPage {
 		stage.setScene(staffPageScene);
 		stage.setTitle("Staff");
 		stage.show();
+	}
+	
+	private void showAlert(String title, String message) {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
 	}
 	
 	private void updateFindButtons() {

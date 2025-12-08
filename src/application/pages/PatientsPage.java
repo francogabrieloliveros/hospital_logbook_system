@@ -94,6 +94,7 @@ public class PatientsPage {
 			
 			items.setAll(hospital.getPatients());
 			resetInputFields();
+			showAlert("Successful!","Successfully added new patient.");
 		});
 		 
 		updateButton.setOnAction(e -> {
@@ -103,6 +104,7 @@ public class PatientsPage {
 				selected.update(nameField.getText(), datePicker.getValue(), sexCombo.getValue(), infoArea.getText());
 				items.setAll(hospital.getPatients());
 				resetInputFields();
+				showAlert("Successful!","Successfully updated patient information.");
 			}
 		});
 		
@@ -113,6 +115,7 @@ public class PatientsPage {
 				selected.delete();
 				items.setAll(hospital.getPatients());
 				resetInputFields();
+				showAlert("Successful!","Successfully deleted patient.");
 			}
 		});
 		
@@ -155,6 +158,14 @@ public class PatientsPage {
 		stage.setScene(staffPageScene);
 		stage.setTitle("Patients");
 		stage.show();
+	}
+	
+	private void showAlert(String title, String message) {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
 	}
 	
 	private void updateFindButtons() {

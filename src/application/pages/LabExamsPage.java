@@ -111,6 +111,7 @@ public class LabExamsPage {
 			
 			items.setAll(hospital.getLabExams());		    
 		    resetInputFields();
+		    showAlert("Successful!","Successfully added new lab exam.");
 		});
 		
 		//updates the value of the lab exam, updates the status of the staff and lab request if done or cancelled. 
@@ -136,6 +137,7 @@ public class LabExamsPage {
 				//updates the listView
 			    items.setAll(hospital.getLabExams());
 			    resetInputFields();
+			    showAlert("Successful!","Successfully updated lab exam information.");
 			}
 		});
 		
@@ -150,6 +152,7 @@ public class LabExamsPage {
 				selected.getPatient().isOwned = selected.getPatient().stillOwned();
 				items.setAll(hospital.getLabExams());
 				resetInputFields();
+				showAlert("Successful!","Successfully deleted lab exam.");
 			}
 		});
 		
@@ -168,6 +171,14 @@ public class LabExamsPage {
 		stage.setScene(scene);
 		stage.setTitle("Lab Exams");
 		stage.show();
+	}
+	
+	private void showAlert(String title, String message) {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
 	}
 	
 	// Verifies staff compatibility
