@@ -164,7 +164,7 @@ public class LabExamsPage {
 		root.getStyleClass().add("default-bg");
 		root.setOnKeyPressed(e -> deselectOnEsc(e));
 		root.setPadding(new Insets(50));
-		Scene scene = new Scene(root, 1200, 700);
+		Scene scene = new Scene(root, 1200, 720);
 		// Add LabExams css
 		scene.getStylesheets().add(getClass().getResource("/application/styles/application.css").toExternalForm());
 		scene.getStylesheets().add(getClass().getResource("/application/styles/LabExamsPage.css").toExternalForm());

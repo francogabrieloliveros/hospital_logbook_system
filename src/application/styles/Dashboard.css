@@ -1,0 +1,99 @@
+.list-view{
+	-fx-background-radius: 20;
+	-fx-background-color: white;
+	-fx-border-radius: 20;
+	-fx-border-color: transparent;
+}
+
+.list-cell{
+	-fx-background-color: transparent;
+	-fx-border-radius: 20;
+	-fx-background-radius: 20;
+}
+
+.list-cell:selected{
+	-fx-background-color: transparent;
+	-fx-text-fill:black;
+}
+
+.box {
+	-fx-background-color:white;
+	-fx-border-radius: 20;
+	-fx-background-radius: 20;
+	-fx-padding:30;
+}
+
+.text-field{
+	-fx-padding: 10;
+	-fx-border-radius: 50;
+	-fx-background-radius: 50;
+}
+
+.combo-box{
+	-fx-padding: 5;
+	-fx-border-radius: 50;
+	-fx-background-radius: 50;
+	-fx-background-color: #736FDC;
+}
+
+.combo-box .arrow {
+    -fx-background-color: white;
+}
+
+
+.label {
+	-fx-text-fill: #736FDC;
+	-fx-font-weight: bold;
+}
+
+.containers-shadow {
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 7, 0.5, 1, 2);
+}
+
+.black-label {
+	-fx-text-fill: black;
+	-fx-font-size: 20;
+}
+
+.big-number {
+	-fx-font-size: 70;
+}
+
+.bold {
+	-fx-font-weight: bold;
+}
+
+.progress-bar {
+	-fx-background-color: #d9d9d9;
+	-fx-background-insets: 0;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-height: 10px;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: #736FDC;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-pref-height: 10px;   
+}
+
+.data0.chart-pie {
+    -fx-pie-color: #736FDC;
+}
+
+.data1.chart-pie {
+    -fx-pie-color: #9592d7;
+}
+
+.data2.chart-pie {
+    -fx-pie-color: #c5c4de;
+}
+
+.data3.chart-pie {
+    -fx-pie-color: #dddcec;
+}

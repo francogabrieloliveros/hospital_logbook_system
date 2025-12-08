@@ -17,7 +17,7 @@ public class HeaderButtons {
 		this.labelButtons = new ArrayList<>();
 		this.pageButtons = new HBox(10);
 		
-		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK"};
+		String[] labels = {"STAFF", "PATIENTS", "LAB EXAMS", "LAB REQUESTS", "LOGBOOK", "DASHBOARD"};
 		for(String label : labels) {
 			Button newButton = new Button(label);
 			

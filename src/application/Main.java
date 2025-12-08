@@ -18,6 +18,7 @@ public class Main extends Application {
 	private LabExamsPage labExams;
 	private LogBookViewPage logbook;
 	private LabRequestsPage labRequests;
+	private Dashboard dashboard;
     
 	private ExtraStage extraStage;
 	private Stage primaryStage;
@@ -47,6 +48,7 @@ public class Main extends Application {
         this.labExams = new LabExamsPage(hospital);
         this.logbook = new LogBookViewPage(hospital);
         this.labRequests = new LabRequestsPage(hospital);
+        this.dashboard = new Dashboard(hospital);
         this.extraStage = new ExtraStage(this); // extraStage needs 'this' (Main)
 		extraStage.start(); // Open intro stage first
 	}
@@ -68,6 +70,8 @@ public class Main extends Application {
 			labRequests.setStageComponents(primaryStage, this);
 		} else if (pageName.equals("PATIENTS")) {
 			patients.setStageComponents(primaryStage, this);
+		} else if (pageName.equals("DASHBOARD")) {
+			dashboard.setStageComponents(primaryStage, this);
 		} 
 	}
 }
