@@ -42,7 +42,9 @@ public class Hospital {
 	    		w.write(staff.getStatus() + "\n");
 	    		w.write(staff.isOwned ? "true\n" : "false\n");
 	    	}
-	    } catch (IOException e) {}
+	    } catch (IOException e) {
+	    	e.printStackTrace(); // show error for easier debugging
+	    }
 	    
 	    // Patient saving
 	    try (BufferedWriter w = Files.newBufferedWriter(patientPath, 
@@ -59,7 +61,9 @@ public class Hospital {
 	    		w.write(patient.getNotes() + "\n");
 	    		w.write(patient.isOwned ? "true\n" : "false\n");
 	    	}
-	    } catch (IOException e) {}
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
 	    
 	    // Lab request saving
 	    try (BufferedWriter w = Files.newBufferedWriter(labRequestPath, 
@@ -76,7 +80,9 @@ public class Hospital {
 	    		w.write(request.getStaff().getID() + "\n");
 	    		w.write(request.isOwned ? "true\n" : "false\n");
 	    	}
-	    } catch (IOException e) {}
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
 	    
 	    // Lab exam saving
 	    try (BufferedWriter w = Files.newBufferedWriter(labExamPath, 
@@ -93,7 +99,9 @@ public class Hospital {
 	    		w.write(exam.getStatus() + "\n");
 	    		w.write(exam.getResultsAndRemarks() + "\n");
 	    	}
-	    } catch (IOException e) {}
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
 	    
 	    // Log book saving
 	    try (BufferedWriter w = Files.newBufferedWriter(logBookPath, 
@@ -107,7 +115,9 @@ public class Hospital {
 	    		w.write(log.getTag() + "\n");
 	    		w.write(log.getMessage() + "\n");
 	    	}
-	    } catch (IOException e) {}
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
 	}
 	
 	public void restore() {
@@ -138,8 +148,9 @@ public class Hospital {
 	    		staffMap.put(staff.getID(), staff);
 	    		line = r.readLine();
 	    	}
-	    } catch (IOException e) {} 
-	    catch (NumberFormatException e) {}
+	    } catch (IOException | NumberFormatException e) {
+	    	e.printStackTrace();
+	    } 
 	    
 	    // Patient restore
 	    try (BufferedReader r = Files.newBufferedReader(patientPath)) {
