@@ -147,6 +147,7 @@ public class LabExamsPage {
 			if(selected != null) {
 				selected.delete();
 				selected.getLabRequest().isOwned = false;
+				selected.getLabRequest().setStatus("new");
 				selected.getPerformingStaff().isOwned = selected.getPerformingStaff().stillOwned();
 				selected.getOrderingPhysician().isOwned = selected.getOrderingPhysician().stillOwned();
 				selected.getPatient().isOwned = selected.getPatient().stillOwned();
@@ -243,7 +244,7 @@ public class LabExamsPage {
 	    	statusCombo.setDisable(isDoneSelected);
 	    	txtResultsRemarks.setDisable(isDoneSelected);
 	    	btnAdd.setDisable(true);
-	    	btnUpdate.setDisable(false);
+	    	btnUpdate.setDisable(false || isDoneSelected);
 	    	btnDelete.setDisable(false);
 	    }
 	    else if(labRequestSelected &&
@@ -295,7 +296,7 @@ public class LabExamsPage {
 	private ObservableList<LabRequest> createLabRequestList(){
 		ObservableList<LabRequest> activeLabRequests = FXCollections.observableArrayList();
 		for(LabRequest labRequest : hospital.getLabRequests()) {
-			if(!labRequest.getStatus().equals("done")) {
+			if(labRequest.getStatus().equals("new")) {
 				activeLabRequests.add(labRequest);	
 			}
 		}
