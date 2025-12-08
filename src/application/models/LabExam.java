@@ -102,7 +102,7 @@ public class LabExam implements HospitalElement{
 
 	@Override
 	public String generateId() {
-		return "LBE-" + String.format("%04d", LabExam.lastId++);
+		return "LBE-" + String.format("%04d", ++LabExam.lastId);
 	}
 	
 	//getters

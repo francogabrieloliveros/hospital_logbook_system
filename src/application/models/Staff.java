@@ -81,7 +81,7 @@ public class Staff implements HospitalElement{
 	
 	@Override
 	public String generateId() {
-		return "STF-" + String.format("%04d", Staff.lastId++);
+		return "STF-" + String.format("%04d", ++Staff.lastId);
 	}
 	
 	// Setters

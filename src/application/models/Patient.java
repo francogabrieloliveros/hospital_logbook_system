@@ -105,7 +105,7 @@ public class Patient implements HospitalElement {
 	// Generate an id for the patient
 	@Override
 	public String generateId() {
-		return "PAT-" + String.format("%04d", Patient.lastId++);
+		return "PAT-" + String.format("%04d", ++Patient.lastId);
 	}
 	
 	// getters
