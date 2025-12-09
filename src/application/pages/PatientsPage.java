@@ -212,7 +212,7 @@ public class PatientsPage {
 	    	// Enable update and delete button when listViewItem selected
 	    	addButton.setDisable(true);
 			updateButton.setDisable(false);
-			deleteButton.setDisable(false || selected.isOwned);
+			deleteButton.setDisable(false || selected.stillOwned());
 	    } else if (nameFilled && 
 		    	   dateFilled &&
 		    	   sexFilled &&

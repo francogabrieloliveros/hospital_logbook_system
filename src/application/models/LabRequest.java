@@ -84,6 +84,7 @@ public class LabRequest implements HospitalElement{
 	public String getStatus() { return this.status; }
 	public Staff getStaff() { return this.orderingStaff; }
 	public String getRequest() { return this.request; }
+	public boolean getIsOwned() {return this.isOwned;}
 	
 	// Setters
 	public void setStatus(String status) { this.status = status; }

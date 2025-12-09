@@ -205,7 +205,8 @@ public class LabRequestsPage {
 		boolean staffFilled = staffComboBox.getValue() != null;
 		boolean listViewSelected =  selected != null;
 		boolean isDoneSelected = listViewSelected ? selected.getStatus().equals("done") : false;
-	    
+		boolean isOwnedSelected = listViewSelected ? selected.getIsOwned() : false;
+		
 	    if(patientFilled &&
 	       requestFilled &&
 	       statusFilled &&
@@ -214,9 +215,9 @@ public class LabRequestsPage {
 	    	patientComboBox.setDisable(true);
 	    	requestComboBox.setDisable(true);
 	    	staffComboBox.setDisable(true);
-	    	statusComboBox.setDisable(isDoneSelected);
+	    	statusComboBox.setDisable(isDoneSelected || isOwnedSelected);
 	        addButton.setDisable(true);
-	        updateButton.setDisable(false);
+	        updateButton.setDisable(isDoneSelected || isOwnedSelected);
 	        deleteButton.setDisable(false || selected.isOwned);
 	    } else if (patientFilled &&
 	 	       	   requestFilled &&
