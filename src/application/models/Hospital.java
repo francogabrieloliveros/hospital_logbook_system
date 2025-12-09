@@ -148,9 +148,8 @@ public class Hospital {
 	    		staffMap.put(staff.getID(), staff);
 	    		line = r.readLine();
 	    	}
-	    } catch (IOException | NumberFormatException e) {
-	    	e.printStackTrace();
-	    } 
+	    } catch (IOException e) {} 
+	    catch (NumberFormatException e) {}
 	    
 	    // Patient restore
 	    try (BufferedReader r = Files.newBufferedReader(patientPath)) {
