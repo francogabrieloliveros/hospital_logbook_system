@@ -1,3 +1,18 @@
+/*
+ * The Hospital Laboratory Digital Logbook is a JavaFX- based system
+ * created to aid hospital laboratories in organizing and managing their daily operations.
+ * It provides a structured way to record staff, patients, laboratory exams, and requests
+ * while maintaining a complete audit trail for transparency and accountability.
+ *
+ * @author Evan C. Gregorio
+ * @author Kurt Dylan M. Larano
+ * @author Franco Gabriel P. Oliveros
+ * @author Tuazon M. Thea
+ * 
+ * @created_date 2025-11-20 19:50
+ *   
+ * */
+
 package application;
 
 import application.models.*;
